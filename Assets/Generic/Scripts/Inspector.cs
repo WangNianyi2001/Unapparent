@@ -10,14 +10,20 @@ namespace Unapparent {
 	}
 
 	public static class IGUI {
-		public static void Indent(float left, float right, Action content) {
-			GUILayout.BeginHorizontal();
-			GUILayout.Space(left);
-			GUILayout.BeginVertical();
+		public static void Indent(Action content) {
+			++EditorGUI.indentLevel;
 			content();
-			GUILayout.EndVertical();
-			GUILayout.Space(right);
+			--EditorGUI.indentLevel;
+		}
+		public static void Center(Action content) {
+			GUILayout.BeginHorizontal();
+			GUILayout.FlexibleSpace();
+			content();
+			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
+		}
+		public static void LineSep() {
+			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 		}
 	}
 }

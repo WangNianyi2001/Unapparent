@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Unapparent {
 	public class State : MonoBehaviour {
 		public static List<Type> actionTypes = new List<Type> {
-			//
+			typeof(Sequential)
 		};
 
 		public abstract class Action {
@@ -36,7 +36,9 @@ namespace Unapparent {
 	public class StateInspector : Inspector<State> {
 		public override void OnInspectorGUI() {
 			target.enter.Inspect();
+			IGUI.LineSep();
 			target.update.Inspect();
+			IGUI.LineSep();
 			target.exit.Inspect();
 		}
 	}
