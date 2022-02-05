@@ -12,8 +12,8 @@ namespace Unapparent {
 		};
 
 		[Serializable]
-		public abstract class Action {
-			public static readonly System.Action Nil = delegate() { };
+		public abstract class Action : IInspectable {
+			public static readonly System.Action Nil = delegate () { };
 			public static Action Make(Type t) {
 				if(!t.IsSubclassOf(typeof(Action))) {
 					throw new ConstraintException("" + t.Name + " is not a derived class from Action.");
@@ -24,9 +24,6 @@ namespace Unapparent {
 			public virtual void Inspect(System.Action header, System.Action footer) {
 				// TODO: default inspector view
 			}
-			public void Inspect() {
-				Inspect(Nil, Nil);
-			}
 		}
 
 		public class ActionList : Sequential {
@@ -34,9 +31,9 @@ namespace Unapparent {
 			public ActionList(string name) {
 				this.name = name;
 			}
-			public new void Inspect() {
+			public void Inspect() {
 				IGUI.Bold(name);
-				base.Inspect();
+				base.Inspect(Nil, Nil);
 			}
 		}
 

@@ -1,8 +1,12 @@
+using System;
 using UnityEngine;
 using UnityEditor;
-using System;
 
 namespace Unapparent {
+	public interface IInspectable {
+		public void Inspect(Action header, Action footer);
+	}
+
 	public class Inspector<T> : Editor where T : UnityEngine.Object {
 		public new T target {
 			get { return base.target as T; }
@@ -56,8 +60,12 @@ namespace Unapparent {
 		public static void VerticalLine() {
 			EditorGUILayout.LabelField("", GUI.skin.verticalSlider,
 				GUILayout.Width(8),
+				GUILayout.ExpandWidth(false),
 				GUILayout.ExpandHeight(true)
 			);
+		}
+		public static void Label(string text) {
+			GUILayout.Label(text, EditorStyles.label, GUILayout.ExpandWidth(false));
 		}
 		public static void Bold(string text) {
 			GUILayout.Label(text, EditorStyles.boldLabel, GUILayout.ExpandWidth(false));

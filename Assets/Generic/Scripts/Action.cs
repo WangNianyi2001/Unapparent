@@ -5,6 +5,7 @@ using UnityEditor;
 using System.Linq;
 
 namespace Unapparent {
+
 	public class Sequential : State.Action {
 		public List<State.Action> sequence = new List<State.Action>();
 		public override void Execute() {
@@ -56,7 +57,7 @@ namespace Unapparent {
 		public override void Inspect(Action header, Action footer) {
 			GUILayout.BeginHorizontal();
 			header();
-			GUILayout.Label("Switch to");
+			IGUI.Label("Switch to");
 			destination = EditorGUILayout.ObjectField(destination, typeof(GameObject), true) as GameObject;
 			footer();
 			GUILayout.EndHorizontal();
