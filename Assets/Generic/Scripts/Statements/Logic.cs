@@ -5,23 +5,23 @@ using UnityEditor;
 using System.Linq;
 
 namespace Unapparent {
-
-	public class Sequential : State.Action {
-		public List<State.Action> sequence = new List<State.Action>();
+	public class Sequence : Statement {
+		public List<Statement> sequence = new List<Statement>();
 		public override void Execute() {
 			// TODO
 		}
 		int typeIndexToAdd = 0;
 		public override void Inspect(Action header, Action footer) {
 			IGUI.Indent(header, delegate {
+				IGUI.Label("Sequence");
 				if(sequence.Count == 0) {
 					IGUI.Center(delegate {
-						IGUI.Italic("Empty sequence");
+						IGUI.Italic("Empty");
 					});
 				} else {
 					for(int i = 0; i < sequence.Count; ++i) {
 						sequence[i].Inspect(delegate {
-							IGUI.Bold(i.ToString());
+							IGUI.Bold(i.ToString(), GUILayout.MinWidth(18));
 						}, delegate {
 							int j = i;
 							if(IGUI.Button("-")) {
@@ -46,21 +46,6 @@ namespace Unapparent {
 				footer();
 				GUILayout.EndHorizontal();
 			});
-		}
-	}
-
-	public class SwitchState : State.Action {
-		GameObject destination = null;
-		public override void Execute() {
-			// TODO
-		}
-		public override void Inspect(Action header, Action footer) {
-			GUILayout.BeginHorizontal();
-			header();
-			IGUI.Label("Switch to");
-			destination = EditorGUILayout.ObjectField(destination, typeof(GameObject), true) as GameObject;
-			footer();
-			GUILayout.EndHorizontal();
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 namespace Unapparent {
 	public interface IInspectable {
@@ -33,6 +34,18 @@ namespace Unapparent {
 	}
 
 	public static class IGUI {
+		public static readonly GUILayoutOption
+			noExWidth = GUILayout.ExpandWidth(false),
+			noExHeight = GUILayout.ExpandHeight(false),
+			exWidth = GUILayout.ExpandWidth(true),
+			exHeight = GUILayout.ExpandHeight(true);
+		public static GUILayoutOption[] mergeOptions(GUILayoutOption[] a, params GUILayoutOption[] b) {
+			var list = new List<GUILayoutOption>(a);
+			list.InsertRange(0, b);
+			return list.ToArray();
+		}
+
+		// Layout
 		public static void Indent(Action header, Action content) {
 			GUILayout.BeginHorizontal();
 			GUILayout.BeginVertical();
@@ -45,7 +58,7 @@ namespace Unapparent {
 			GUILayout.EndHorizontal();
 		}
 		public static void Indent(Action content) {
-			Indent(State.Action.Nil, content);
+			Indent(Statement.Nil, content);
 		}
 		public static void Center(Action content) {
 			GUILayout.BeginHorizontal();
@@ -59,25 +72,27 @@ namespace Unapparent {
 		}
 		public static void VerticalLine() {
 			EditorGUILayout.LabelField("", GUI.skin.verticalSlider,
-				GUILayout.Width(8),
-				GUILayout.ExpandWidth(false),
-				GUILayout.ExpandHeight(true)
+				GUILayout.Width(8), noExWidth, exHeight
 			);
 		}
-		public static void Label(string text) {
-			GUILayout.Label(text, EditorStyles.label, GUILayout.ExpandWidth(false));
+
+		// Controls
+		public static void Label(string text, params GUILayoutOption[] options) {
+			GUILayout.Label(text, EditorStyles.label, mergeOptions(options, noExWidth));
 		}
-		public static void Bold(string text) {
-			GUILayout.Label(text, EditorStyles.boldLabel, GUILayout.ExpandWidth(false));
+		public static void Bold(string text, params GUILayoutOption[] options) {
+			GUILayout.Label(text, EditorStyles.boldLabel, mergeOptions(options, noExWidth));
 		}
-		public static void Italic(string text) {
+		public static void Italic(string text, params GUILayoutOption[] options) {
 			GUILayout.Label(text, new GUIStyle(GUI.skin.label) {
 				fontStyle = FontStyle.Italic
-			}, GUILayout.ExpandWidth(false));
+			}, mergeOptions(options, noExWidth));
 		}
-		public static bool Button(string text) {
-			return GUILayout.Button(text, GUI.skin.button, GUILayout.ExpandWidth(false));
+		public static bool Button(string text, params GUILayoutOption[] options) {
+			return GUILayout.Button(text, GUI.skin.button, mergeOptions(options, noExWidth));
 		}
+
+		// Misc
 		public static bool Confirm(string text) {
 			return EditorUtility.DisplayDialog("Confirm", text, "Proceed", "Cancel");
 		}
