@@ -29,13 +29,19 @@ namespace Unapparent {
 	}
 
 	public static class IGUI {
-		public static void Indent(Action content) {
+		public static void Indent(Action header, Action content) {
 			GUILayout.BeginHorizontal();
-			GUILayout.Space(10);
+			GUILayout.BeginVertical();
+			header();
+			VerticalLine();
+			GUILayout.EndVertical();
 			GUILayout.BeginVertical();
 			content();
 			GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
+		}
+		public static void Indent(Action content) {
+			Indent(State.Action.Nil, content);
 		}
 		public static void Center(Action content) {
 			GUILayout.BeginHorizontal();
@@ -44,8 +50,28 @@ namespace Unapparent {
 			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
 		}
-		public static void LineSep() {
+		public static void HorizontalLine() {
 			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+		}
+		public static void VerticalLine() {
+			EditorGUILayout.LabelField("", GUI.skin.verticalSlider,
+				GUILayout.Width(8),
+				GUILayout.ExpandHeight(true)
+			);
+		}
+		public static void Bold(string text) {
+			GUILayout.Label(text, EditorStyles.boldLabel, GUILayout.ExpandWidth(false));
+		}
+		public static void Italic(string text) {
+			GUILayout.Label(text, new GUIStyle(GUI.skin.label) {
+				fontStyle = FontStyle.Italic
+			}, GUILayout.ExpandWidth(false));
+		}
+		public static bool Button(string text) {
+			return GUILayout.Button(text, GUI.skin.button, GUILayout.ExpandWidth(false));
+		}
+		public static bool Confirm(string text) {
+			return EditorUtility.DisplayDialog("Confirm", text, "Proceed", "Cancel");
 		}
 	}
 }

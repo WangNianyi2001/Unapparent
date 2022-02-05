@@ -7,10 +7,13 @@ using System.Data;
 namespace Unapparent {
 	public class State : MonoBehaviour {
 		public static List<Type> actionTypes = new List<Type> {
-			typeof(Sequential)
+			typeof(Sequential),
+			typeof(SwitchState),
 		};
 
+		[Serializable]
 		public abstract class Action {
+			public static readonly System.Action Nil = delegate() { };
 			public static Action Make(Type t) {
 				if(!t.IsSubclassOf(typeof(Action))) {
 					throw new ConstraintException("" + t.Name + " is not a derived class from Action.");
@@ -18,7 +21,12 @@ namespace Unapparent {
 				return (Action)Activator.CreateInstance(t);
 			}
 			public abstract void Execute();
-			public abstract void Inspect();
+			public virtual void Inspect(System.Action header, System.Action footer) {
+				// TODO: default inspector view
+			}
+			public void Inspect() {
+				Inspect(Nil, Nil);
+			}
 		}
 
 		public class ActionList : Sequential {
@@ -27,7 +35,7 @@ namespace Unapparent {
 				this.name = name;
 			}
 			public new void Inspect() {
-				GUILayout.Label(name, EditorStyles.boldLabel);
+				IGUI.Bold(name);
 				base.Inspect();
 			}
 		}
@@ -43,9 +51,9 @@ namespace Unapparent {
 	public class StateInspector : Inspector<State> {
 		public override void OnInspectorGUI() {
 			target.enter.Inspect();
-			IGUI.LineSep();
+			IGUI.HorizontalLine();
 			target.update.Inspect();
-			IGUI.LineSep();
+			IGUI.HorizontalLine();
 			target.exit.Inspect();
 		}
 	}

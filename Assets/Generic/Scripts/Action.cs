@@ -11,22 +11,25 @@ namespace Unapparent {
 			// TODO
 		}
 		int typeIndexToAdd = 0;
-		public override void Inspect() {
-			IGUI.Indent(delegate {
-				if(sequence.Count != 0) {
-					for(int i = 0; i < sequence.Count; ++i) {
-						GUILayout.Label(i.ToString());
-						sequence[i].Inspect();
-					}
-				} else {
+		public override void Inspect(Action header, Action footer) {
+			IGUI.Indent(header, delegate {
+				if(sequence.Count == 0) {
 					IGUI.Center(delegate {
-						GUILayout.Label(
-							"Empty sequence",
-							new GUIStyle(GUI.skin.label){
-								fontStyle= FontStyle.Italic
-							}
-						);
+						IGUI.Italic("Empty sequence");
 					});
+				} else {
+					for(int i = 0; i < sequence.Count; ++i) {
+						sequence[i].Inspect(delegate {
+							IGUI.Bold(i.ToString());
+						}, delegate {
+							int j = i;
+							if(IGUI.Button("-")) {
+								if(!IGUI.Confirm("Removing action, proceed?"))
+									return;
+								sequence.RemoveAt(j);
+							}
+						});
+					}
 				}
 				GUILayout.BeginHorizontal();
 				typeIndexToAdd = EditorGUILayout.Popup(
@@ -35,20 +38,28 @@ namespace Unapparent {
 						return type.Name;
 					}).ToArray()
 				);
-				if(GUILayout.Button("Add action")) {
+				if(IGUI.Button("+")) {
 					Type type = State.actionTypes[typeIndexToAdd];
 					sequence.Add(Make(type));
 				}
+				footer();
 				GUILayout.EndHorizontal();
 			});
 		}
 	}
+
 	public class SwitchState : State.Action {
+		GameObject destination = null;
 		public override void Execute() {
 			// TODO
 		}
-		public override void Inspect() {
-			GUILayout.Label("Switch to state");
+		public override void Inspect(Action header, Action footer) {
+			GUILayout.BeginHorizontal();
+			header();
+			GUILayout.Label("Switch to");
+			destination = EditorGUILayout.ObjectField(destination, typeof(GameObject), true) as GameObject;
+			footer();
+			GUILayout.EndHorizontal();
 		}
 	}
 }
