@@ -30,9 +30,12 @@ namespace Unapparent {
 
 	public static class IGUI {
 		public static void Indent(Action content) {
-			++EditorGUI.indentLevel;
+			GUILayout.BeginHorizontal();
+			GUILayout.Space(10);
+			GUILayout.BeginVertical();
 			content();
-			--EditorGUI.indentLevel;
+			GUILayout.EndVertical();
+			GUILayout.EndHorizontal();
 		}
 		public static void Center(Action content) {
 			GUILayout.BeginHorizontal();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Data;
 
 namespace Unapparent {
 	public class State : MonoBehaviour {
@@ -10,6 +11,12 @@ namespace Unapparent {
 		};
 
 		public abstract class Action {
+			public static Action Make(Type t) {
+				if(!t.IsSubclassOf(typeof(Action))) {
+					throw new ConstraintException("" + t.Name + " is not a derived class from Action.");
+				}
+				return (Action)Activator.CreateInstance(t);
+			}
 			public abstract void Execute();
 			public abstract void Inspect();
 		}

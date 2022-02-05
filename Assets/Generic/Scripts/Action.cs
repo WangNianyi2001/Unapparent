@@ -4,10 +4,9 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 
-
 namespace Unapparent {
 	public class Sequential : State.Action {
-		List<State.Action> sequence = new List<State.Action>();
+		public List<State.Action> sequence = new List<State.Action>();
 		public override void Execute() {
 			// TODO
 		}
@@ -15,8 +14,10 @@ namespace Unapparent {
 		public override void Inspect() {
 			IGUI.Indent(delegate {
 				if(sequence.Count != 0) {
-					foreach(State.Action action in sequence)
-						action.Inspect();
+					for(int i = 0; i < sequence.Count; ++i) {
+						GUILayout.Label(i.ToString());
+						sequence[i].Inspect();
+					}
 				} else {
 					IGUI.Center(delegate {
 						GUILayout.Label(
@@ -35,10 +36,19 @@ namespace Unapparent {
 					}).ToArray()
 				);
 				if(GUILayout.Button("Add action")) {
-					// TODO
+					Type type = State.actionTypes[typeIndexToAdd];
+					sequence.Add(Make(type));
 				}
 				GUILayout.EndHorizontal();
 			});
+		}
+	}
+	public class SwitchState : State.Action {
+		public override void Execute() {
+			// TODO
+		}
+		public override void Inspect() {
+			GUILayout.Label("Switch to state");
 		}
 	}
 }
