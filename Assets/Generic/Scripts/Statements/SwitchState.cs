@@ -5,9 +5,11 @@ using UnityEditor;
 namespace Unapparent {
 	public class SwitchState : Statement {
 		GameObject destination = null;
+
 		public override void Execute() {
 			// TODO
 		}
+
 		public override void Inspect(Action header, Action footer) {
 			GUILayout.BeginHorizontal();
 			header();
@@ -21,6 +23,14 @@ namespace Unapparent {
 			GUILayout.FlexibleSpace();
 			footer();
 			GUILayout.EndHorizontal();
+		}
+
+		public override void OnAfterDeserialize() {
+			// TODO
+		}
+
+		public override void OnBeforeSerialize() {
+			// TODO
 		}
 	}
 }

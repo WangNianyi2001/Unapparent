@@ -17,7 +17,7 @@ namespace Unapparent {
 	[CustomEditor(typeof(State))]
 	public class StateInspector : Inspector<State> {
 		public override void OnInspectorGUI() {
-			target.sequence.Inspect(Statement.Nil, Statement.Nil);
+			target.sequence.Inspect(IGUI.Nil, IGUI.Nil);
 		}
 	}
 }

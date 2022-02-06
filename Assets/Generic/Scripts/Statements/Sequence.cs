@@ -7,10 +7,12 @@ using System.Linq;
 namespace Unapparent {
 	public class Sequence : Statement {
 		public List<Statement> sequence = new List<Statement>();
+
 		public override void Execute() {
 			// TODO
 		}
-		int typeIndexToAdd = 0;
+
+		int typeIndexToAdd = 0;	// Used in inspector
 		public override void Inspect(Action header, Action footer) {
 			IGUI.Indent(header, delegate {
 				IGUI.Label("Sequence");
@@ -46,6 +48,14 @@ namespace Unapparent {
 				footer();
 				GUILayout.EndHorizontal();
 			});
+		}
+
+		public override void OnAfterDeserialize() {
+			throw new NotImplementedException();
+		}
+
+		public override void OnBeforeSerialize() {
+			throw new NotImplementedException();
 		}
 	}
 }

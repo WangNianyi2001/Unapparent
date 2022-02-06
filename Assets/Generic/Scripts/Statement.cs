@@ -3,9 +3,12 @@ using System.Data;
 using UnityEngine;
 
 namespace Unapparent {
+	public interface IStatement : IInspectable, ISerializationCallbackReceiver {
+		public void Execute();
+	}
+
 	[Serializable]
-	public abstract class Statement : IInspectable, ISerializationCallbackReceiver {
-		public static readonly System.Action Nil = delegate () { };
+	public abstract class Statement : IStatement {
 		public static Statement Make(Type t) {
 			if(!t.IsSubclassOf(typeof(Statement))) {
 				throw new ConstraintException("" + t.Name + " is not a derived class from Action.");
@@ -13,14 +16,8 @@ namespace Unapparent {
 			return (Statement)Activator.CreateInstance(t);
 		}
 		public abstract void Execute();
-		public virtual void Inspect(System.Action header, System.Action footer) {
-			// TODO: default inspector view
-		}
-		public virtual void OnBeforeSerialize() {
-			// TODO
-		}
-		public virtual void OnAfterDeserialize() {
-			// TODO
-		}
+		public abstract void Inspect(Action header, Action footer);
+		public abstract void OnAfterDeserialize();
+		public abstract void OnBeforeSerialize();
 	}
 }

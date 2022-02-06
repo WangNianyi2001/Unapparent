@@ -34,6 +34,7 @@ namespace Unapparent {
 	}
 
 	public static class IGUI {
+		public static void Nil() { }
 		public static readonly GUILayoutOption
 			noExWidth = GUILayout.ExpandWidth(false),
 			noExHeight = GUILayout.ExpandHeight(false),
@@ -58,7 +59,7 @@ namespace Unapparent {
 			GUILayout.EndHorizontal();
 		}
 		public static void Indent(Action content) {
-			Indent(Statement.Nil, content);
+			Indent(Nil, content);
 		}
 		public static void Center(Action content) {
 			GUILayout.BeginHorizontal();
