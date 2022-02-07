@@ -10,7 +10,7 @@ namespace Unapparent {
 
 	public class Inspector<T> : Editor where T : UnityEngine.Object {
 		public new T target {
-			get { return base.target as T; }
+			get => base.target as T;
 		}
 	}
 
@@ -63,66 +63,49 @@ namespace Unapparent {
 
 		public static Action FillLine = GUILayout.FlexibleSpace;
 
-		public static void Indent(Action header, Action content) {
-			Inline(delegate {
-				Block(delegate {
-					header();
-					VerticalLine();
-				});
-				Block(content);
+		public static void Indent(Action header, Action content) => Inline(delegate {
+			Block(delegate {
+				header();
+				VerticalLine();
 			});
-		}
+			Block(content);
+		});
 
-		public static void Indent(Action content) {
-			Indent(Nil, content);
-		}
+		public static void Indent(Action content) => Indent(Nil, content);
 
-		public static void Center(Action content) {
-			Inline(delegate {
-				GUILayout.FlexibleSpace();
-				content();
-				GUILayout.FlexibleSpace();
-			});
-		}
+		public static void Center(Action content) => Inline(delegate {
+			GUILayout.FlexibleSpace();
+			content();
+			GUILayout.FlexibleSpace();
+		});
 
-		public static void HorizontalLine() {
-			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-		}
+		public static void HorizontalLine() => EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
-		public static void VerticalLine() {
-			EditorGUILayout.LabelField("", GUI.skin.verticalSlider,
-				GUILayout.Width(8), noExWidth, exHeight
-			);
-		}
+		public static void VerticalLine() => EditorGUILayout.LabelField(
+			"", GUI.skin.verticalSlider,
+			GUILayout.Width(8), noExWidth, exHeight
+		);
 
 		// Controls
-		public static void Label(string text, params GUILayoutOption[] options) {
+		public static void Label(string text, params GUILayoutOption[] options) =>
 			GUILayout.Label(text, EditorStyles.label, mergeOptions(options, noExWidth));
-		}
 
-		public static void Bold(string text, params GUILayoutOption[] options) {
+		public static void Bold(string text, params GUILayoutOption[] options) =>
 			GUILayout.Label(text, EditorStyles.boldLabel, mergeOptions(options, noExWidth));
-		}
 
-		public static void Italic(string text, params GUILayoutOption[] options) {
+		public static void Italic(string text, params GUILayoutOption[] options) =>
 			GUILayout.Label(text, new GUIStyle(GUI.skin.label) {
 				fontStyle = FontStyle.Italic
 			}, mergeOptions(options, noExWidth));
-		}
 
-		public static bool Button(string text, params GUILayoutOption[] options) {
-			return GUILayout.Button(text, GUI.skin.button, mergeOptions(options, noExWidth));
-		}
+		public static bool Button(string text, params GUILayoutOption[] options) =>
+			GUILayout.Button(text, GUI.skin.button, mergeOptions(options, noExWidth));
 
 		public class MenuEntry<T> {
 			public string text = null;
 			public T element;
-			public MenuEntry(T element) {
-				this.element = element;
-			}
-			public MenuEntry(string text) {
-				this.text = text;
-			}
+			public MenuEntry(T element) => this.element = element;
+			public MenuEntry(string text) => this.text = text;
 			public static implicit operator MenuEntry<T>(T element) => new MenuEntry<T>(element);
 			public static implicit operator MenuEntry<T>(string text) => new MenuEntry<T>(text);
 			public void AddTo(GenericMenu menu, Action<T> callback) {

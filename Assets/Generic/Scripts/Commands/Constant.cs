@@ -4,9 +4,7 @@ namespace Unapparent {
 	public class BoolConstant : Condition {
 		bool value = false;
 
-		public override bool Execute(object arg) {
-			return value;
-		}
+		public override bool Execute(object arg) => value;
 
 		public override void Inspect(Action header, Action footer) {
 			header();

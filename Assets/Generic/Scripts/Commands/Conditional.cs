@@ -10,7 +10,7 @@ namespace Unapparent {
 				if(statement == null) {
 					IGUI.Inline(delegate {
 						header();
-						IGUI.SelectButton("Set branch", types, delegate (Type type) {
+						IGUI.SelectButton("Set branch", types, delegate (CommandType type) {
 							statement = (Statement)Activator.CreateInstance(type);
 						}, IGUI.exWidth);
 						footer();
@@ -39,7 +39,7 @@ namespace Unapparent {
 				IGUI.Inline(delegate {
 					IGUI.Label("If");
 					if(condition == null) {
-						IGUI.SelectButton("Set condition", Condition.types, delegate (Type type) {
+						IGUI.SelectButton("Set condition", Condition.types, delegate (CommandType type) {
 							condition = (Condition)Activator.CreateInstance(type);
 						});
 					} else {
