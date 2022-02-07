@@ -35,11 +35,13 @@ namespace Unapparent {
 
 	public static class IGUI {
 		public static void Nil() { }
+
 		public static readonly GUILayoutOption
 			noExWidth = GUILayout.ExpandWidth(false),
 			noExHeight = GUILayout.ExpandHeight(false),
 			exWidth = GUILayout.ExpandWidth(true),
 			exHeight = GUILayout.ExpandHeight(true);
+
 		public static GUILayoutOption[] mergeOptions(GUILayoutOption[] a, params GUILayoutOption[] b) {
 			var list = new List<GUILayoutOption>(a);
 			list.InsertRange(0, b);
@@ -52,12 +54,15 @@ namespace Unapparent {
 			content();
 			GUILayout.EndHorizontal();
 		}
+
 		public static void Block(Action content) {
 			GUILayout.BeginVertical();
 			content();
 			GUILayout.EndVertical();
 		}
+
 		public static Action FillLine = GUILayout.FlexibleSpace;
+
 		public static void Indent(Action header, Action content) {
 			Inline(delegate {
 				Block(delegate {
@@ -67,9 +72,11 @@ namespace Unapparent {
 				Block(content);
 			});
 		}
+
 		public static void Indent(Action content) {
 			Indent(Nil, content);
 		}
+
 		public static void Center(Action content) {
 			Inline(delegate {
 				GUILayout.FlexibleSpace();
@@ -77,9 +84,11 @@ namespace Unapparent {
 				GUILayout.FlexibleSpace();
 			});
 		}
+
 		public static void HorizontalLine() {
 			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 		}
+
 		public static void VerticalLine() {
 			EditorGUILayout.LabelField("", GUI.skin.verticalSlider,
 				GUILayout.Width(8), noExWidth, exHeight
@@ -90,27 +99,65 @@ namespace Unapparent {
 		public static void Label(string text, params GUILayoutOption[] options) {
 			GUILayout.Label(text, EditorStyles.label, mergeOptions(options, noExWidth));
 		}
+
 		public static void Bold(string text, params GUILayoutOption[] options) {
 			GUILayout.Label(text, EditorStyles.boldLabel, mergeOptions(options, noExWidth));
 		}
+
 		public static void Italic(string text, params GUILayoutOption[] options) {
 			GUILayout.Label(text, new GUIStyle(GUI.skin.label) {
 				fontStyle = FontStyle.Italic
 			}, mergeOptions(options, noExWidth));
 		}
+
 		public static bool Button(string text, params GUILayoutOption[] options) {
 			return GUILayout.Button(text, GUI.skin.button, mergeOptions(options, noExWidth));
 		}
-		public static void SelectButton<T, L>(string text, L list, Action<T> callback, params GUILayoutOption[] options)
-			where L : IList<T> {
+
+		public class MenuEntry<T> {
+			public string text = null;
+			public T element;
+			public MenuEntry(T element) {
+				this.element = element;
+			}
+			public MenuEntry(string text) {
+				this.text = text;
+			}
+			public static implicit operator MenuEntry<T>(T element) => new MenuEntry<T>(element);
+			public static implicit operator MenuEntry<T>(string text) => new MenuEntry<T>(text);
+			public void AddTo(GenericMenu menu, Action<T> callback) {
+				if(text != null)
+					menu.AddSeparator(text + "/");
+				else
+					menu.AddItem(new GUIContent(element.ToString()), false, delegate (object element) {
+						callback((T)element);
+					}, element);
+			}
+		}
+		public class SelectMenu<T> : List<MenuEntry<T>> {
+			public void AddTo(GenericMenu menu, Action<T> callback) {
+				string path = "";
+				foreach(MenuEntry<T> entry in this) {
+					if(entry.text != null) {
+						if(entry.text == "") {
+							path = "";
+						} else {
+							path = entry.text + "/";
+							menu.AddSeparator(path);
+						}
+					} else
+						menu.AddItem(new GUIContent(path + entry.element.ToString()), false, delegate (object element) {
+							callback((T)element);
+						}, entry.element);
+				}
+			}
+		}
+
+		public static void SelectButton<T>(string text, SelectMenu<T> list, Action<T> callback, params GUILayoutOption[] options) {
 			if(!Button(text, options))
 				return;
 			GenericMenu menu = new GenericMenu();
-			foreach(T element in list) {
-				menu.AddItem(new GUIContent(element.ToString()), false, delegate(object element) {
-					callback((T)element);
-				}, element);
-			}
+			list.AddTo(menu, callback);
 			menu.ShowAsContext();
 		}
 		public static void Toggle(ref bool value, GUIContent label, params GUILayoutOption[] options) {

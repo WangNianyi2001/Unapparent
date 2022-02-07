@@ -17,9 +17,11 @@ namespace Unapparent {
 	}
 
 	public abstract class Statement : Command<Void, Void> {
-		public static List<Type> types = new List<Type> {
+		public static IGUI.SelectMenu<Type> types = new IGUI.SelectMenu<Type> {
+			"Control flow",
 			typeof(Sequential),
 			typeof(Conditional),
+			"Action",
 			typeof(SwitchState),
 		};
 	}
@@ -27,7 +29,8 @@ namespace Unapparent {
 	public abstract class Expression<Ret> : Command<object, Ret> { }
 
 	public abstract class Condition : Expression<bool> {
-		public static List<Type> types = new List<Type> {
+		public static IGUI.SelectMenu<Type> types = new IGUI.SelectMenu<Type> {
+			"Constant",
 			typeof(BoolConstant),
 		};
 	}
