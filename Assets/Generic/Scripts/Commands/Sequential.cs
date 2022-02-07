@@ -1,21 +1,17 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using System.Linq;
 
 namespace Unapparent {
-	public class Sequence : Statement {
+	public class Sequential : Statement {
 		public List<Statement> sequence = new List<Statement>();
 
-		public override void Execute() {
+		public override Void Execute(Void arg) {
 			// TODO
+			return null;
 		}
 
-		int typeIndexToAdd = 0;	// Used in inspector
 		public override void Inspect(Action header, Action footer) {
 			IGUI.Indent(header, delegate {
-				IGUI.Label("Sequence");
 				if(sequence.Count == 0) {
 					IGUI.Center(delegate {
 						IGUI.Italic("Empty");
@@ -23,30 +19,23 @@ namespace Unapparent {
 				} else {
 					for(int i = 0; i < sequence.Count; ++i) {
 						sequence[i].Inspect(delegate {
-							IGUI.Bold(i.ToString(), GUILayout.MinWidth(18));
+							IGUI.Bold(i.ToString(), UnityEngine.GUILayout.MinWidth(18));
 						}, delegate {
 							int j = i;
-							if(IGUI.Button("-")) {
-								if(!IGUI.Confirm("Removing action, proceed?"))
+							if(IGUI.Button("Remove")) {
+								if(!IGUI.Confirm("Removing command, proceed?"))
 									return;
 								sequence.RemoveAt(j);
 							}
 						});
 					}
 				}
-				GUILayout.BeginHorizontal();
-				typeIndexToAdd = EditorGUILayout.Popup(
-					typeIndexToAdd,
-					State.actionTypes.Select(delegate (Type type) {
-						return type.Name;
-					}).ToArray()
-				);
-				if(IGUI.Button("+")) {
-					Type type = State.actionTypes[typeIndexToAdd];
-					sequence.Add(Make(type));
-				}
-				footer();
-				GUILayout.EndHorizontal();
+				IGUI.Inline(delegate {
+					IGUI.SelectButton("Add command", types, delegate (Type type) {
+						sequence.Add((Statement)Activator.CreateInstance(type));
+					}, IGUI.exWidth);
+					footer();
+				});
 			});
 		}
 

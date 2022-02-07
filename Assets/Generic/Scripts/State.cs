@@ -4,13 +4,10 @@ using UnityEngine;
 using UnityEditor;
 
 namespace Unapparent {
+	[Serializable]
 	public class State : MonoBehaviour {
-		public static List<Type> actionTypes = new List<Type> {
-			typeof(Sequence),
-			typeof(SwitchState),
-		};
-
-		public Sequence sequence = new Sequence();
+		[SerializeField]
+		public Sequential sequence = new Sequential();
 	}
 
 	[DisallowMultipleComponent]

@@ -47,26 +47,35 @@ namespace Unapparent {
 		}
 
 		// Layout
-		public static void Indent(Action header, Action content) {
+		public static void Inline(Action content) {
 			GUILayout.BeginHorizontal();
-			GUILayout.BeginVertical();
-			header();
-			VerticalLine();
-			GUILayout.EndVertical();
+			content();
+			GUILayout.EndHorizontal();
+		}
+		public static void Block(Action content) {
 			GUILayout.BeginVertical();
 			content();
 			GUILayout.EndVertical();
-			GUILayout.EndHorizontal();
+		}
+		public static Action FillLine = GUILayout.FlexibleSpace;
+		public static void Indent(Action header, Action content) {
+			Inline(delegate {
+				Block(delegate {
+					header();
+					VerticalLine();
+				});
+				Block(content);
+			});
 		}
 		public static void Indent(Action content) {
 			Indent(Nil, content);
 		}
 		public static void Center(Action content) {
-			GUILayout.BeginHorizontal();
-			GUILayout.FlexibleSpace();
-			content();
-			GUILayout.FlexibleSpace();
-			GUILayout.EndHorizontal();
+			Inline(delegate {
+				GUILayout.FlexibleSpace();
+				content();
+				GUILayout.FlexibleSpace();
+			});
 		}
 		public static void HorizontalLine() {
 			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -91,6 +100,21 @@ namespace Unapparent {
 		}
 		public static bool Button(string text, params GUILayoutOption[] options) {
 			return GUILayout.Button(text, GUI.skin.button, mergeOptions(options, noExWidth));
+		}
+		public static void SelectButton<T, L>(string text, L list, Action<T> callback, params GUILayoutOption[] options)
+			where L : IList<T> {
+			if(!Button(text, options))
+				return;
+			GenericMenu menu = new GenericMenu();
+			foreach(T element in list) {
+				menu.AddItem(new GUIContent(element.ToString()), false, delegate(object element) {
+					callback((T)element);
+				}, element);
+			}
+			menu.ShowAsContext();
+		}
+		public static void Toggle(ref bool value, GUIContent label, params GUILayoutOption[] options) {
+			value = GUILayout.Toggle(value, label, options);
 		}
 
 		// Misc

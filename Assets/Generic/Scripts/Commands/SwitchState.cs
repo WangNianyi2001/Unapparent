@@ -6,23 +6,24 @@ namespace Unapparent {
 	public class SwitchState : Statement {
 		GameObject destination = null;
 
-		public override void Execute() {
+		public override Void Execute(Void args) {
 			// TODO
+			return null;
 		}
 
 		public override void Inspect(Action header, Action footer) {
-			GUILayout.BeginHorizontal();
-			header();
-			IGUI.Label("Switch to state");
-			destination = EditorGUILayout.ObjectField(
-				destination,
-				typeof(GameObject),
-				true,
-				GUILayout.ExpandWidth(true)
-			) as GameObject;
-			GUILayout.FlexibleSpace();
-			footer();
-			GUILayout.EndHorizontal();
+			IGUI.Inline(delegate {
+				header();
+				IGUI.Label("Switch to state");
+				destination = EditorGUILayout.ObjectField(
+					destination,
+					typeof(GameObject),
+					true,
+					GUILayout.ExpandWidth(true)
+				) as GameObject;
+				IGUI.FillLine();
+				footer();
+			});
 		}
 
 		public override void OnAfterDeserialize() {
