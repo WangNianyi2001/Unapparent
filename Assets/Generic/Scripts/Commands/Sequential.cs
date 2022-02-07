@@ -31,7 +31,7 @@ namespace Unapparent {
 					}
 				}
 				IGUI.Inline(delegate {
-					IGUI.SelectButton("Add command", types, delegate (CommandType type) {
+					IGUI.SelectButton("Add command", menu, delegate (CommandType type) {
 						sequence.Add((Statement)Activator.CreateInstance(type));
 					}, IGUI.exWidth);
 					footer();
