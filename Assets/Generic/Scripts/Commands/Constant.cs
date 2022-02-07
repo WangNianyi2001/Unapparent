@@ -1,9 +1,11 @@
 using System;
 
 namespace Unapparent {
-	public class BoolConstant : Condition {
-		bool value = false;
+	public abstract class Constant<Type> : Condition {
+		public Type value = default(Type);
+	}
 
+	public class BoolConstant : Constant<bool> {
 		public override bool Execute(object arg) => value;
 
 		public override void Inspect(Action header, Action footer) {
