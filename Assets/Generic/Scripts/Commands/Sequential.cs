@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 
 namespace Unapparent {
+	[Serializable]
 	public class Sequential : Statement {
 		public List<Statement> sequence = new List<Statement>();
 
-		public override Void Execute(Void arg) {
+		public override Void Execute() {
 			// TODO
 			return null;
 		}
@@ -37,14 +38,6 @@ namespace Unapparent {
 					footer();
 				});
 			});
-		}
-
-		public override void OnAfterDeserialize() {
-			throw new NotImplementedException();
-		}
-
-		public override void OnBeforeSerialize() {
-			throw new NotImplementedException();
 		}
 	}
 }

@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
 namespace Unapparent {
 	[Serializable]
 	public class State : MonoBehaviour {
-		[SerializeField]
-		public Sequential sequence = new Sequential();
+		[SerializeField] public Sequential sequence = new Sequential();
 	}
 
 	[DisallowMultipleComponent]

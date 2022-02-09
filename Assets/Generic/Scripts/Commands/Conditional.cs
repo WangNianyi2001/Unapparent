@@ -29,7 +29,7 @@ namespace Unapparent {
 		}
 		Branch trueBranch = new Branch(), falseBranch = new Branch();
 
-		public override Void Execute(Void args) {
+		public override Void Execute() {
 			// TODO
 			return null;
 		}
@@ -53,14 +53,6 @@ namespace Unapparent {
 				falseBranch.Inspect("Else");
 				footer();
 			});
-		}
-
-		public override void OnAfterDeserialize() {
-			// TODO
-		}
-
-		public override void OnBeforeSerialize() {
-			// TODO
 		}
 	}
 }

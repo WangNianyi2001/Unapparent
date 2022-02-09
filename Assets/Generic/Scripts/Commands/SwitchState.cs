@@ -6,7 +6,7 @@ namespace Unapparent {
 	public class SwitchState : Statement {
 		GameObject destination = null;
 
-		public override Void Execute(Void args) {
+		public override Void Execute() {
 			// TODO
 			return null;
 		}
@@ -24,14 +24,6 @@ namespace Unapparent {
 				IGUI.FillLine();
 				footer();
 			});
-		}
-
-		public override void OnAfterDeserialize() {
-			// TODO
-		}
-
-		public override void OnBeforeSerialize() {
-			// TODO
 		}
 	}
 }
