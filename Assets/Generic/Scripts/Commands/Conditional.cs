@@ -10,7 +10,7 @@ namespace Unapparent {
 				if(statement == null) {
 					IGUI.Inline(delegate {
 						header();
-						IGUI.SelectButton("Set branch", menu, delegate (CommandType type) {
+						IGUI.SelectButton<Type, TypeMenu, TypeMenu.Labelizer>("Set branch", menu, delegate (Type type) {
 							statement = (Statement)Activator.CreateInstance(type);
 						}, IGUI.exWidth);
 						footer();
@@ -29,7 +29,7 @@ namespace Unapparent {
 		}
 		Branch trueBranch = new Branch(), falseBranch = new Branch();
 
-		public override Void Execute() {
+		public override object Execute() {
 			// TODO
 			return null;
 		}
@@ -39,9 +39,13 @@ namespace Unapparent {
 				IGUI.Inline(delegate {
 					IGUI.Label("If");
 					if(condition == null) {
-						IGUI.SelectButton("Set condition", Condition.menu, delegate (CommandType type) {
-							condition = (Condition)Activator.CreateInstance(type);
-						});
+						IGUI.SelectButton<Type, TypeMenu, TypeMenu.Labelizer>(
+							"Set condition",
+							Condition.menu,
+							delegate (Type type) {
+								condition = (Condition)Activator.CreateInstance(type);
+							}
+						);
 					} else {
 						condition.Inspect(IGUI.Nil, delegate {
 							IGUI.Button("Clear condition");

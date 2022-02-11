@@ -6,7 +6,7 @@ namespace Unapparent {
 	public class Sequential : Statement {
 		public List<Statement> sequence = new List<Statement>();
 
-		public override Void Execute() {
+		public override object Execute() {
 			// TODO
 			return null;
 		}
@@ -32,7 +32,7 @@ namespace Unapparent {
 					}
 				}
 				IGUI.Inline(delegate {
-					IGUI.SelectButton("Add command", menu, delegate (CommandType type) {
+					IGUI.SelectButton<Type, TypeMenu, TypeMenu.Labelizer>("Add command", menu, delegate (Type type) {
 						sequence.Add((Statement)Activator.CreateInstance(type));
 					}, IGUI.exWidth);
 					footer();

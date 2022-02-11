@@ -6,7 +6,7 @@ namespace Unapparent {
 	}
 
 	public class BoolConstant : Constant<bool> {
-		public override bool Execute() => value;
+		public override object Execute() => value;
 
 		public override void Inspect(Action header, Action footer) {
 			header();

@@ -6,7 +6,7 @@ namespace Unapparent {
 	public class SwitchState : Statement {
 		GameObject destination = null;
 
-		public override Void Execute() {
+		public override object Execute() {
 			// TODO
 			return null;
 		}
