@@ -32,7 +32,7 @@ namespace Unapparent {
 					}
 				}
 				IGUI.Inline(delegate {
-					IGUI.SelectButton<Type, TypeMenu, TypeMenu.Labelizer>("Add command", menu, delegate (Type type) {
+					IGUI.SelectButton("Add command", menu, delegate (Type type) {
 						sequence.Add((Statement)Activator.CreateInstance(type));
 					}, IGUI.exWidth);
 					footer();

@@ -8,7 +8,7 @@ namespace Unapparent {
 	public class TypeMenu : IGUI.SelectMenu<Type, TypeMenu.Labelizer> { 
 		public class Labelizer : IGUI.Labelizer<Type> {
 			public new static string Labelize(Type type) {
-				return type.FullName;
+				return type.Name;
 			}
 		}
 	}

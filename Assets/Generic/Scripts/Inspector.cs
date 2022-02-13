@@ -131,7 +131,12 @@ namespace Unapparent {
 			}
 		}
 
-		public class SelectMenu<T, Labelizer> : List<MenuEntry<T>> where Labelizer : Labelizer<T> {
+		public interface ISelectMenu<T> {
+			public void AddTo(GenericMenu menu, Action<T> callback);
+		}
+
+		public class SelectMenu<T, Labelizer> : List<MenuEntry<T>>, ISelectMenu<T>
+			where Labelizer : Labelizer<T> {
 			public SelectMenu() { }
 			public SelectMenu(IEnumerable<T> entries) : base(
 				entries.Select(
@@ -164,11 +169,9 @@ namespace Unapparent {
 
 		public class SelectMenu<T> : SelectMenu<T, Labelizer<T>> { }
 
-		public static void SelectButton<T, Menu, Labelizer>(
-			string text, Menu list, Action<T> callback,
-			params GUILayoutOption[] options)
-				where Labelizer : Labelizer<T>
-				where Menu : SelectMenu<T, Labelizer> {
+		public static void SelectButton<T>(
+			string text, ISelectMenu<T> list, Action<T> callback,
+			params GUILayoutOption[] options) {
 			if(!Button(text, options))
 				return;
 			GenericMenu menu = new GenericMenu();
