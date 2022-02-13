@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace Unapparent {
 	[Serializable]
-	public class Sequential : Statement {
-		public List<Statement> sequence = new List<Statement>();
+	public class Sequential : ICommand {
+		public List<ICommand> sequence = new List<ICommand>();
 
-		public override object Execute() {
+		public object Execute() {
 			// TODO
 			return null;
 		}
 
-		public override void Inspect(Action header, Action footer) {
+		public void Inspect(Action header, Action footer) {
 			IGUI.Indent(header, delegate {
 				if(sequence.Count == 0) {
 					IGUI.Center(delegate {
@@ -32,8 +32,8 @@ namespace Unapparent {
 					}
 				}
 				IGUI.Inline(delegate {
-					IGUI.SelectButton("Add command", menu, delegate (Type type) {
-						sequence.Add((Statement)Activator.CreateInstance(type));
+					IGUI.SelectButton("Add command", Command.statement, delegate (Type type) {
+						sequence.Add((ICommand)Activator.CreateInstance(type));
 					}, IGUI.exWidth);
 					footer();
 				});

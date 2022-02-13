@@ -5,31 +5,26 @@ namespace Unapparent {
 		public object Execute();
 	}
 
-	public class TypeMenu : IGUI.SelectMenu<Type, TypeMenu.Labelizer> { 
-		public class Labelizer : IGUI.Labelizer<Type> {
-			public new static string Labelize(Type type) {
-				return type.Name;
+	public class Command : ICommand {
+		ICommand command = null;
+
+		public object Execute() => command.Execute();
+		public void Inspect(Action header, Action footer) => command.Inspect(header, footer);
+
+
+		public class TypeMenu : IGUI.SelectMenu<Type, TypeMenu.Labelizer> { 
+			public class Labelizer : IGUI.Labelizer<Type> {
+				public new static string Labelize(Type type) => type.Name;
 			}
 		}
-	}
 
-	public abstract class Command : ICommand {
-		public abstract object Execute();
-		public abstract void Inspect(Action header, Action footer);
-	}
-
-	public abstract class Statement : Command {
-		public static TypeMenu menu = new TypeMenu {
+		public static TypeMenu statement = new TypeMenu {
 			"Control flow",
 			typeof(Sequential),
 			typeof(Conditional),
 			"Action",
 			typeof(SwitchState),
-		};
-	}
-
-	public abstract class Condition : Command {
-		public static TypeMenu menu = new TypeMenu {
+		}, condition = new TypeMenu {
 			"Constant",
 			typeof(BoolConstant),
 		};

@@ -1,17 +1,17 @@
 using System;
 
 namespace Unapparent {
-	public class Conditional : Statement {
-		Condition condition = null;
+	public class Conditional : ICommand {
+		ICommand condition = null;
 
 		public class Branch : IInspectable {
-			public Statement statement = null;
+			public ICommand statement = null;
 			public void Inspect(Action header, Action footer) {
 				if(statement == null) {
 					IGUI.Inline(delegate {
 						header();
-						IGUI.SelectButton("Set branch", menu, delegate (Type type) {
-							statement = (Statement)Activator.CreateInstance(type);
+						IGUI.SelectButton("Set branch", Command.statement, delegate (Type type) {
+							statement = (ICommand)Activator.CreateInstance(type);
 						}, IGUI.exWidth);
 						footer();
 					});
@@ -29,21 +29,21 @@ namespace Unapparent {
 		}
 		Branch trueBranch = new Branch(), falseBranch = new Branch();
 
-		public override object Execute() {
+		public object Execute() {
 			// TODO
 			return null;
 		}
 
-		public override void Inspect(Action header, Action footer) {
+		public void Inspect(Action header, Action footer) {
 			IGUI.Indent(header, delegate {
 				IGUI.Inline(delegate {
 					IGUI.Label("If");
 					if(condition == null) {
 						IGUI.SelectButton(
 							"Set condition",
-							Condition.menu,
+							Command.condition,
 							delegate (Type type) {
-								condition = (Condition)Activator.CreateInstance(type);
+								condition = (ICommand)Activator.CreateInstance(type);
 							}
 						);
 					} else {
