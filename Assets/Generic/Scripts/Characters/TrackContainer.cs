@@ -15,10 +15,6 @@ namespace Unapparent {
 	public class TrackContainer : MonoBehaviour {
 		public Track track;
 
-		private void Awake() {
-			track = new Track();
-		}
-
 		/// <summary>
 		/// 在Scene界面绘制轨道
 		/// </summary>
