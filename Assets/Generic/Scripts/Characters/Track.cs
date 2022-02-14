@@ -43,6 +43,7 @@ namespace Unapparent {
 		public void InsertNode(Node from) {
 			Node node = new Node();
 			GameObject obj = new GameObject();
+			obj.name = "Node #" + nodes.Count;
 			obj.transform.parent = gameObject.transform;
 			obj.transform.localPosition = from == null ? Vector3.zero : (from.LocalPos + Vector3.right);
 			node.gameObject = obj;
@@ -98,7 +99,7 @@ namespace Unapparent {
 
 			nodes.drawElementCallback = (Rect rect, int index, bool selected, bool focused) => {
 				SerializedProperty item = nodes.serializedProperty.GetArrayElementAtIndex(index);
-				EditorGUI.PropertyField(rect, item);
+				EditorGUI.ObjectField(rect, item.FindPropertyRelative("gameObject"), new GUIContent(index.ToString()));
 			};
 
 			nodes.onAddCallback = (ReorderableList list) => target.InsertNodeAtEnd();
