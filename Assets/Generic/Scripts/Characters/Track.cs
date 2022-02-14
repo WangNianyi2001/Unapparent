@@ -21,13 +21,24 @@ namespace Unapparent {
 				if(to != null)
 					to.next = this;
 			}
+			public bool Terminal => from == null || to == null;
+			public float Length => Terminal ? 0 : (from.LocalPos - to.LocalPos).magnitude;
+			public Segment Prev => from == null ? this : from.prev;
+			public Segment Next => to == null ? this : to.next;
+			public Vector3 GetPosition(float distance) {
+				return Terminal ?
+					(from != null ? from : to).Pos :
+					from.Pos + (to.Pos - from.Pos).normalized * distance;
+			}
 		}
 
 		[Serializable]
 		public class Node {
 			[HideInInspector] public Track track = null;
 			[SerializeField] [ReadOnly] public GameObject gameObject = null;
-			[HideInInspector] public Segment prev = null, next = null;
+			[HideInInspector] public Segment prev, next;
+			public Node PrevNode => prev.from;
+			public Node NextNode => next.to;
 
 			public Node(Track track) {
 				this.track = track;
@@ -50,7 +61,7 @@ namespace Unapparent {
 			obj.transform.localPosition = from == null ? Vector3.zero : (from.LocalPos + Vector3.right);
 			node.gameObject = obj;
 			if(from != null) {
-				new Segment(node, from.next.to);
+				new Segment(node, from.NextNode);
 				new Segment(from, node);
 			}
 			nodes.Add(node);
@@ -58,11 +69,11 @@ namespace Unapparent {
 
 		public void RemoveNode(Node node) {
 			if(node.prev != null) {
-				new Segment(node.prev.from, null);
+				new Segment(node.PrevNode, null);
 				node.prev = null;
 			}
 			if(node.next != null) {
-				new Segment(null, node.next.to);
+				new Segment(null, node.NextNode);
 				node.next = null;
 			}
 			if(Application.isEditor) DestroyImmediate(node.gameObject);
