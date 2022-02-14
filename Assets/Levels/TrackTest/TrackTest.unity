@@ -416,16 +416,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c39928256ec7a4195afc2e7e1b2bf258, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  track:
-    zLayer: -0.1
-    nodes:
-    - position: {x: -1, y: 0}
-      pathType: 0
-    - position: {x: 1, y: 0}
-      pathType: 0
-    distanceList:
-    - 0
-    - 2
+  zLayer: 0
+  nodes:
+  - position: {x: 0, y: 0}
+    pathType: 0
+  - position: {x: 1, y: 0}
+    pathType: 0
+  distanceList:
+  - 0
+  - 1
 --- !u!4 &1877728727
 Transform:
   m_ObjectHideFlags: 0
@@ -472,18 +471,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecf11eb7a2ac34c2693a9b7cb0df4115, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultTrack: {fileID: 1877728726}
+  defaultTrack: {fileID: 0}
   defaultDistance: 2
-  track:
-    zLayer: -0.1
-    nodes:
-    - position: {x: -1, y: 0}
-      pathType: 0
-    - position: {x: 1, y: 0}
-      pathType: 0
-    distanceList:
-    - 0
-    - 2
+  track: {fileID: 0}
 --- !u!64 &2079761616
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -555,10 +545,10 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2079761614}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0.7071068, w: 0}
-  m_LocalPosition: {x: 1, y: 0, z: -0.1}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}

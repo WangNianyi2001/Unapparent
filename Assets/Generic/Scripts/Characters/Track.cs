@@ -1,54 +1,18 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEditorInternal;
 using UnityEngine;
 
 namespace Unapparent {
 	/// <summary>
-	/// 轨道容器，用于存放，编辑，在编辑器中绘制轨道的MonoBehavior
-	/// 只在编辑器中运行
-	/// </summary>
-	[DisallowMultipleComponent]
-	[ExecuteInEditMode]
-	public class TrackContainer : MonoBehaviour {
-		public Track track;
-
-		/// <summary>
-		/// 在Scene界面绘制轨道
-		/// </summary>
-		private void Update() {
-			if(track.nodes.Length == 0)
-				return;
-			for(int i = 1; i < track.nodes.Length; ++i) {
-				Track.Node node = track.nodes[i - 1];
-				Vector3 root = node.position;
-				Vector3 direction = (Vector3)track.nodes[i].position - root;
-				root += gameObject.transform.position;
-				Color color = Track.Node.pathGizmosColor[node.pathType];
-				Debug.DrawRay(root, direction, color);
-			}
-		}
-
-#if UNITY_EDITOR
-		private void OnValidate() {
-			track.CalcDistanceList();
-		}
-
-		[MenuItem("GameObject/轨道")]
-		public static void CreateTrack() {
-			new GameObject("Track").AddComponent<TrackContainer>();
-		}
-#endif
-	}
-
-	/// <summary>
 	/// 轨道是人物可以运动的轨迹
 	/// 轨道由多个节点组成
 	/// </summary>
+	[DisallowMultipleComponent]
+	[ExecuteInEditMode]
 	[Serializable]
-	public class Track {
+	public class Track : MonoBehaviour {
 		/// <summary>
 		/// 节点规定了一段直线轨道的位置和属性
 		/// </summary>
@@ -101,36 +65,56 @@ namespace Unapparent {
 		/// <returns>世界坐标下的位置</returns>
 		public Vector3 GetPosition(float distance, int index = 0) {
 			int size = nodes.Length;
-			if(size == 0) return new Vector3(0, 0, zLayer);
-			if(index < 0) return NodePosition(0);
-			if(index >= size) return NodePosition(size - 1);
-			if(distance < distanceList[index]) {
-				for(int i = index - 1; i >= 0; i--)
-					if(distance >= distanceList[i])
-						return InterPosition(i, distance);
-			} else {
-				for(int i = index + 1; i < size; i++)
-					if(distance < distanceList[i])
-						return InterPosition(i - 1, distance);
+			if(size == 0)
+				return new Vector3(0, 0, zLayer);
+			if(index < 0)
+				return NodePosition(0);
+			if(index >= size)
+				return NodePosition(size - 1);
+			if(distance < distanceList[index]) for(int i = index - 1; i >= 0; i--) {
+				if(distance >= distanceList[i])
+					return InterPosition(i, distance);
+			} else for(int i = index + 1; i < size; i++) {
+				if(distance < distanceList[i])
+					return InterPosition(i - 1, distance);
 			}
 			return NodePosition(size - 1);
 		}
 
-		public void CalcDistanceList() {
+		public void OnValidate() {
 			distanceList = new float[nodes.Length];
 			distanceList[0] = 0f;
 			for(int i = 1, size = nodes.Length; i < size; i++)
 				distanceList[i] = distanceList[i - 1] + (nodes[i].position - nodes[i - 1].position).magnitude;
 		}
+
+		void DrawGizmo() {
+			if(nodes.Length == 0)
+				return;
+			for(int i = 1; i < nodes.Length; ++i) {
+				Node node = nodes[i - 1];
+				Vector3 root = node.position;
+				Vector3 direction = (Vector3)nodes[i].position - root;
+				root += gameObject.transform.position;
+				Color color = Node.pathGizmosColor[node.pathType];
+				Debug.DrawRay(root, direction, color);
+			}
+		}
+
+		public void Update() {
+			if(Application.isEditor) {
+				DrawGizmo();
+			}
+		}
 	}
 
-	[CustomEditor(typeof(TrackContainer))]
-	public class TrackContainerEditor : Editor {
+	[CustomEditor(typeof(Track))]
+	public class TrackEditor : Editor {
 		private ReorderableList nodeList;
 
 		private void OnEnable() {
 			nodeList = new ReorderableList(serializedObject,
-				serializedObject.FindProperty("track.nodes"),
+				serializedObject.FindProperty("nodes"),
 				true, false, true, true);
 
 			//定义元素的高度
@@ -142,7 +126,7 @@ namespace Unapparent {
 				SerializedProperty item = nodeList.serializedProperty.GetArrayElementAtIndex(index);
 				rect.height = 20;
 				rect.y += 2;
-				EditorGUI.PropertyField(rect, item.FindPropertyRelative("position"), new GUIContent("节点 " + index));
+				EditorGUI.PropertyField(rect, item.FindPropertyRelative("position"), new GUIContent("Node " + index));
 				if(index != nodeList.count - 1) {
 					rect.y += 20;
 					EditorGUI.PropertyField(rect, item.FindPropertyRelative("pathType"), GUIContent.none);
@@ -152,7 +136,7 @@ namespace Unapparent {
 
 		public override void OnInspectorGUI() {
 			serializedObject.Update();
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("track.zLayer"), new GUIContent("Z轴位置"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("zLayer"), new GUIContent("Z coordinate"));
 			nodeList.DoLayoutList();
 			serializedObject.ApplyModifiedProperties();
 		}
