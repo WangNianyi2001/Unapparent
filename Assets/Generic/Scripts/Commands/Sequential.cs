@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Unapparent {
 	[Serializable]
 	public class Sequential : ICommand {
-		public List<ICommand> sequence = new List<ICommand>();
+		public List<Command> sequence = new List<Command>();
 
 		public object Execute() {
 			// TODO
@@ -32,8 +32,8 @@ namespace Unapparent {
 					}
 				}
 				IGUI.Inline(delegate {
-					IGUI.SelectButton("Add command", Command.statement, delegate (Type type) {
-						sequence.Add((ICommand)Activator.CreateInstance(type));
+					IGUI.SelectButton("Add command", Command.TypeMenu.statement, delegate (Type type) {
+						sequence.Add(new Command(type));
 					}, IGUI.exWidth);
 					footer();
 				});

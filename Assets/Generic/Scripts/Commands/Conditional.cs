@@ -2,16 +2,16 @@ using System;
 
 namespace Unapparent {
 	public class Conditional : ICommand {
-		ICommand condition = null;
+		Command condition = null;
 
 		public class Branch : IInspectable {
-			public ICommand statement = null;
+			public Command statement = null;
 			public void Inspect(Action header, Action footer) {
 				if(statement == null) {
 					IGUI.Inline(delegate {
 						header();
-						IGUI.SelectButton("Set branch", Command.statement, delegate (Type type) {
-							statement = (ICommand)Activator.CreateInstance(type);
+						IGUI.SelectButton("Set branch", Command.TypeMenu.statement, delegate (Type type) {
+							statement = new Command(type);
 						}, IGUI.exWidth);
 						footer();
 					});
@@ -41,9 +41,9 @@ namespace Unapparent {
 					if(condition == null) {
 						IGUI.SelectButton(
 							"Set condition",
-							Command.condition,
+							Command.TypeMenu.condition,
 							delegate (Type type) {
-								condition = (ICommand)Activator.CreateInstance(type);
+								condition = new Command(type);
 							}
 						);
 					} else {

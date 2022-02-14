@@ -1,11 +1,9 @@
-using System;
 using UnityEngine;
 using UnityEditor;
 
 namespace Unapparent {
-	[Serializable]
 	public class State : MonoBehaviour {
-		[SerializeField] public Sequential sequence = new Sequential();
+		public Command sequence = typeof(Sequential);
 	}
 
 	[DisallowMultipleComponent]
