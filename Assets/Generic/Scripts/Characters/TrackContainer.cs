@@ -71,17 +71,16 @@ namespace Unapparent {
 		[Serializable]
 		public struct Node {
 			public enum PathType {
-				[EnumLabel("平地")] Level,
-				[EnumLabel("向上台阶")] UpStair,
-				[EnumLabel("向下台阶")] DownStair,
-				[EnumLabel("左侧梯子")] LeftLadder,
-				[EnumLabel("右侧梯子")] RightLadder
+				Level,
+				UpStair,
+				DownStair,
+				LeftLadder,
+				RightLadder
 			}
 			public Vector2 position;
 			/// <summary>
 			/// 路径种类决定了角色在上面运动时播放的动画
 			/// </summary>
-			[EnumLabel("", 0, 1, 2, 3, 4)]
 			public PathType pathType;
 		}
 
