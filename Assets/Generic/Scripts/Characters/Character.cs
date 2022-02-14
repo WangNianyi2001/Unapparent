@@ -2,20 +2,13 @@ using UnityEngine;
 
 namespace Unapparent {
 	public class Character : MonoBehaviour {
-		Track track;
-		float distance;
-		int nodeIndex;
+		public GameObject initNodeObject = null;
+		public Track.Node InitNode => initNodeObject.GetComponentInParent<Track>().nodes.Find(
+			(Track.Node node) => node.gameObject == initNodeObject
+		);
 
-		public Track defaultTrack;
-		public float defaultDistance;
-		public float Distance => distance;
-
-		private void OnValidate() {
-			if(defaultTrack == null)
-				return;
-			track = defaultTrack;
-			// Clamp position
-			// Init position
+		public void OnValidate() {
+			transform.position = InitNode.Pos;
 		}
 	}
 }

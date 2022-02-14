@@ -507,9 +507,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nodes:
-  - gameObject: {fileID: 1065925240}
-  - gameObject: {fileID: 1783202286}
-  - gameObject: {fileID: 1051733021}
+  - track: {fileID: 0}
+    gameObject: {fileID: 1065925240}
+  - track: {fileID: 0}
+    gameObject: {fileID: 1783202286}
+  - track: {fileID: 0}
+    gameObject: {fileID: 1051733021}
 --- !u!4 &1877728727
 Transform:
   m_ObjectHideFlags: 0
@@ -559,8 +562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecf11eb7a2ac34c2693a9b7cb0df4115, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultTrack: {fileID: 0}
-  defaultDistance: 2
+  initNodeObject: {fileID: 1065925240}
 --- !u!64 &2079761616
 MeshCollider:
   m_ObjectHideFlags: 0

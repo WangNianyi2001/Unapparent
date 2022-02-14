@@ -25,10 +25,12 @@ namespace Unapparent {
 
 		[Serializable]
 		public class Node {
+			[HideInInspector] public Track track = null;
 			[SerializeField] [ReadOnly] public GameObject gameObject = null;
 			[HideInInspector] public Segment prev = null, next = null;
 
-			public Node() {
+			public Node(Track track) {
+				this.track = track;
 				prev = new Segment(null, this);
 				next = new Segment(this, null);
 			}
@@ -41,7 +43,7 @@ namespace Unapparent {
 		public List<Node> nodes = new List<Node>();
 
 		public void InsertNode(Node from) {
-			Node node = new Node();
+			Node node = new Node(this);
 			GameObject obj = new GameObject();
 			obj.name = "Node #" + nodes.Count;
 			obj.transform.parent = gameObject.transform;
@@ -99,7 +101,9 @@ namespace Unapparent {
 
 			nodes.drawElementCallback = (Rect rect, int index, bool selected, bool focused) => {
 				SerializedProperty item = nodes.serializedProperty.GetArrayElementAtIndex(index);
+				EditorGUI.BeginDisabledGroup(true);
 				EditorGUI.ObjectField(rect, item.FindPropertyRelative("gameObject"), new GUIContent(index.ToString()));
+				EditorGUI.EndDisabledGroup();
 			};
 
 			nodes.onAddCallback = (ReorderableList list) => target.InsertNodeAtEnd();
