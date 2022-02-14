@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEditorInternal;
 using UnityEngine;
 
@@ -21,29 +23,15 @@ namespace Unapparent {
 		/// 在Scene界面绘制轨道
 		/// </summary>
 		private void Update() {
-			int size = track.nodes.Length - 1;
-			if(size == -1) return;
-			for(int i = 0; i < size; i++) {
-				Vector3 pos1 = track.nodes[i].position;
-				Vector3 pos2 = track.nodes[i + 1].position;
-				pos1.z = pos2.z = track.zLayer;
-				switch(track.nodes[i].pathType) {
-					case Track.Node.PathType.Level:
-						Debug.DrawLine(pos1, pos2, new Color(0f, 1f, 0f));
-						break;
-					case Track.Node.PathType.UpStair:
-						Debug.DrawLine(pos1, pos2, new Color(1f, 1f, 0f));
-						break;
-					case Track.Node.PathType.DownStair:
-						Debug.DrawLine(pos1, pos2, new Color(0f, 1f, 1f));
-						break;
-					case Track.Node.PathType.LeftLadder:
-						Debug.DrawLine(pos1, pos2, new Color(1f, 0f, 0f));
-						break;
-					case Track.Node.PathType.RightLadder:
-						Debug.DrawLine(pos1, pos2, new Color(0f, 0f, 1f));
-						break;
-				}
+			if(track.nodes.Length == 0)
+				return;
+			for(int i = 1; i < track.nodes.Length; ++i) {
+				Track.Node node = track.nodes[i - 1];
+				Vector3 root = node.position;
+				Vector3 direction = (Vector3)track.nodes[i].position - root;
+				root += gameObject.transform.position;
+				Color color = Track.Node.pathGizmosColor[node.pathType];
+				Debug.DrawRay(root, direction, color);
 			}
 		}
 
@@ -82,6 +70,13 @@ namespace Unapparent {
 			/// 路径种类决定了角色在上面运动时播放的动画
 			/// </summary>
 			public PathType pathType;
+			public static Dictionary<PathType, Color> pathGizmosColor = new Dictionary<PathType, Color> {
+				{ PathType.Level, new Color(0f, 1f, 0f) },
+				{ PathType.UpStair, new Color(1f, 1f, 0f) },
+				{ PathType.DownStair, new Color(0f, 1f, 1f) },
+				{ PathType.LeftLadder, new Color(1f, 0f, 0f) },
+				{ PathType.RightLadder, new Color(0f, 0f, 1f) },
+			};
 		}
 
 		public float zLayer;

@@ -423,7 +423,9 @@ MonoBehaviour:
       pathType: 0
     - position: {x: 1, y: 0}
       pathType: 0
-    distanceList: []
+    distanceList:
+    - 0
+    - 2
 --- !u!4 &1877728727
 Transform:
   m_ObjectHideFlags: 0
