@@ -23,8 +23,6 @@ namespace Unapparent {
 			}
 			public bool Terminal => from == null || to == null;
 			public float Length => Terminal ? 0 : (from.LocalPos - to.LocalPos).magnitude;
-			public Segment Prev => from == null ? this : from.prev;
-			public Segment Next => to == null ? this : to.next;
 			public Vector3 GetPosition(float distance) {
 				return Terminal ?
 					(from != null ? from : to).Pos :
@@ -33,17 +31,22 @@ namespace Unapparent {
 		}
 
 		[Serializable]
-		public class Node {
+		public class Node : IDisposable {
 			[HideInInspector] public Track track = null;
 			[SerializeField] [ReadOnly] public GameObject gameObject = null;
 			[HideInInspector] public Segment prev, next;
-			public Node PrevNode => prev.from;
-			public Node NextNode => next.to;
+			public Node From => prev.from;
+			public Node Next => next.to;
 
 			public Node(Track track) {
 				this.track = track;
 				prev = new Segment(null, this);
 				next = new Segment(this, null);
+			}
+
+			public void Dispose() {
+				if(Application.isEditor) DestroyImmediate(gameObject);
+				else Destroy(gameObject);
 			}
 
 			public Vector3 LocalPos => gameObject.transform.localPosition;
@@ -61,23 +64,22 @@ namespace Unapparent {
 			obj.transform.localPosition = from == null ? Vector3.zero : (from.LocalPos + Vector3.right);
 			node.gameObject = obj;
 			if(from != null) {
-				new Segment(node, from.NextNode);
+				new Segment(node, from.Next);
 				new Segment(from, node);
 			}
 			nodes.Add(node);
 		}
 
 		public void RemoveNode(Node node) {
-			if(node.prev != null) {
-				new Segment(node.PrevNode, null);
+			if(node.From != null) {
+				new Segment(node.From, null);
 				node.prev = null;
 			}
-			if(node.next != null) {
-				new Segment(null, node.NextNode);
+			if(node.Next != null) {
+				new Segment(null, node.Next);
 				node.next = null;
 			}
-			if(Application.isEditor) DestroyImmediate(node.gameObject);
-			else Destroy(node.gameObject);
+			node.Dispose();
 			nodes.Remove(node);
 		}
 
@@ -98,6 +100,11 @@ namespace Unapparent {
 			if(Application.isEditor) {
 				DrawGizmo();
 			}
+		}
+
+		public void OnDestroy() {
+			foreach(Node node in nodes)
+				node.Dispose();
 		}
 	}
 

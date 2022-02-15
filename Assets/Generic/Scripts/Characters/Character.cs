@@ -1,52 +1,42 @@
-using System;
 using UnityEngine;
 
 namespace Unapparent {
 	public class Character : MonoBehaviour {
 		public GameObject nodeObject = null;
-		public Track.Node Node => nodeObject.GetComponentInParent<Track>().nodes.Find(
-			(Track.Node node) => node.gameObject == nodeObject
-		);
-
-		Track.Segment segment;
-		float distance = 0;
+		public float distance = 0;
+		Track.Node node;
 		
 		void UpdatePosition() {
-			transform.position = segment.GetPosition(distance);
+			transform.position = node.next.GetPosition(distance);
 		}
 
-		public void MoveToNode(Track.Node node) {
-			segment = node.next;
-			distance = 0;
-			UpdatePosition();
-		}
-
-		public void MoveBy(float distance) {
-			distance += this.distance;
-			while(distance < 0) {
-				if(segment.from == null) {
-					distance = 0;
+		public void MoveBy(float increment) {
+			increment += distance;
+			while(increment < 0) {
+				if(node.From == null) {
+					increment = 0;
 					break;
 				}
-				distance += (segment = segment.Prev).Length;
+				increment += node.prev.Length;
+				node = node.From;
 			}
-			while(distance > 0 && distance > segment.Length) {
-				if(segment.to == null) {
-					distance = 0;
+			while(increment >= node.next.Length) {
+				if(node.Next == null) {
+					increment = 0;
 					break;
 				}
-				distance -= segment.Length;
-				segment = segment.Next;
+				increment -= node.next.Length;
+				node = node.Next;
 			}
-			if(segment.to == null)
-				distance = 0;
-			this.distance = distance;
+			distance = increment;
 			UpdatePosition();
 		}
 
 		public void OnValidate() {
-			segment = Node.next;
-			MoveToNode(Node);
+			node = nodeObject.GetComponentInParent<Track>().nodes.Find(
+				(Track.Node node) => node.gameObject == nodeObject
+			);
+			UpdatePosition();
 		}
 	}
 }
