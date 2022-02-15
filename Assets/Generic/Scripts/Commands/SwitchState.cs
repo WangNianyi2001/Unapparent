@@ -3,15 +3,15 @@ using UnityEngine;
 using UnityEditor;
 
 namespace Unapparent {
-	public class SwitchState : Statement {
+	public class SwitchState : ICommand {
 		GameObject destination = null;
 
-		public override Void Execute() {
+		public object Execute() {
 			// TODO
 			return null;
 		}
 
-		public override void Inspect(Action header, Action footer) {
+		public void Inspect(Action header, Action footer) {
 			IGUI.Inline(delegate {
 				header();
 				IGUI.Label("Switch to state");

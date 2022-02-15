@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Unapparent {
 	public interface IInspectable {
@@ -34,7 +35,17 @@ namespace Unapparent {
 	}
 
 	public static class IGUI {
+		// Aux
+
 		public static void Nil() { }
+
+		public class Labelizer<T> {
+			public static string Labelize(T obj) {
+				return obj.ToString();
+			}
+		}
+
+		// Flags
 
 		public static readonly GUILayoutOption
 			noExWidth = GUILayout.ExpandWidth(false),
@@ -49,6 +60,7 @@ namespace Unapparent {
 		}
 
 		// Layout
+
 		public static void Inline(Action content) {
 			GUILayout.BeginHorizontal();
 			content();
@@ -87,6 +99,7 @@ namespace Unapparent {
 		);
 
 		// Controls
+
 		public static void Label(string text, params GUILayoutOption[] options) =>
 			GUILayout.Label(text, EditorStyles.label, mergeOptions(options, noExWidth));
 
@@ -117,9 +130,24 @@ namespace Unapparent {
 					}, element);
 			}
 		}
-		public class SelectMenu<T> : List<MenuEntry<T>> {
+
+		public interface ISelectMenu<T> {
+			public void AddTo(GenericMenu menu, Action<T> callback);
+		}
+
+		public class SelectMenu<T, Labelizer> : List<MenuEntry<T>>, ISelectMenu<T>
+			where Labelizer : Labelizer<T> {
+			public SelectMenu() { }
+			public SelectMenu(IEnumerable<T> entries) : base(
+				entries.Select(
+					entry => new MenuEntry<T>(entry)
+				)) {
+			}
+			public SelectMenu(IEnumerable<MenuEntry<T>> entries) : base(entries) { }
+
 			public void AddTo(GenericMenu menu, Action<T> callback) {
 				string path = "";
+				var Labelize = typeof(Labelizer).GetMethod("Labelize");
 				foreach(MenuEntry<T> entry in this) {
 					if(entry.text != null) {
 						if(entry.text == "") {
@@ -129,14 +157,21 @@ namespace Unapparent {
 							menu.AddSeparator(path);
 						}
 					} else
-						menu.AddItem(new GUIContent(path + entry.element.ToString()), false, delegate (object element) {
-							callback((T)element);
-						}, entry.element);
+						menu.AddItem(
+							new GUIContent(path + Labelize.Invoke(null, new object[] { entry.element })),
+							false,
+							(object element) => callback((T)element),
+							entry.element
+						);
 				}
 			}
 		}
 
-		public static void SelectButton<T>(string text, SelectMenu<T> list, Action<T> callback, params GUILayoutOption[] options) {
+		public class SelectMenu<T> : SelectMenu<T, Labelizer<T>> { }
+
+		public static void SelectButton<T>(
+			string text, ISelectMenu<T> list, Action<T> callback,
+			params GUILayoutOption[] options) {
 			if(!Button(text, options))
 				return;
 			GenericMenu menu = new GenericMenu();
@@ -147,7 +182,6 @@ namespace Unapparent {
 			value = GUILayout.Toggle(value, label, options);
 		}
 
-		// Misc
 		public static bool Confirm(string text) {
 			return EditorUtility.DisplayDialog("Confirm", text, "Proceed", "Cancel");
 		}
