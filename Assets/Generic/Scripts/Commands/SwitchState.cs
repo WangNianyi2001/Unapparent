@@ -1,28 +1,25 @@
-using System;
+﻿using System;
 using UnityEngine;
-using UnityEditor;
 
 namespace Unapparent {
-	public class SwitchState : ICommand {
+	public class SwitchState : Command {
 		GameObject destination = null;
 
-		public object Execute() {
+		public override object Execute() {
 			// TODO
 			return null;
 		}
 
-		public void Inspect(Action header, Action footer) {
-			IGUI.Inline(delegate {
-				header();
+		public override void Inspect(Action header, Action footer) {
+			IGUI.Inline(() => {
+				header?.Invoke();
 				IGUI.Label("Switch to state");
-				destination = EditorGUILayout.ObjectField(
-					destination,
-					typeof(GameObject),
-					true,
+				destination = IGUI.ObjectField(
+					destination, typeof(GameObject), true,
 					GUILayout.ExpandWidth(true)
 				) as GameObject;
 				IGUI.FillLine();
-				footer();
+				footer?.Invoke();
 			});
 		}
 	}

@@ -1,58 +1,72 @@
-using System;
+﻿using System;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Unapparent {
-	public interface ICommand : IInspectable {
+	public interface ICommand : IInspectable, IDisposable {
 		public object Execute();
 	}
 
-	[Serializable]
-	public class Command : ICommand, ISerializationCallbackReceiver {
-		string typeName;
-		public Type Type {
-			get => Type.GetType(typeName);
-			set => typeName = value.FullName;
+	public abstract class Command : ScriptableObject, ICommand {
+		public static string sceneDir {
+			get {
+				string fullPath = EditorSceneManager.GetActiveScene().path;
+				return fullPath.Substring(0, fullPath.LastIndexOf('/'));
+			}
 		}
-		public ICommand command = null;
+		public const string commandsFolderName = "Commands";
+		public static string commandsPath => $"{sceneDir}/{commandsFolderName}";
 
-		public Command(ICommand command) {
-			this.command = command;
-			Type = command.GetType();
-		}
-
-		public Command(Type type) {
-			Type = type;
-			OnAfterDeserialize();
-		}
-
-		public static implicit operator Command(Type type) => new Command(type);
-
-		public void OnAfterDeserialize() {
-			command = (ICommand)Activator.CreateInstance(Type);
-		}
-
-		public void OnBeforeSerialize() { }
-
-		public object Execute() => command.Execute();
-		public void Inspect(Action header, Action footer) => command.Inspect(header, footer);
-
-		public class TypeMenu : IGUI.SelectMenu<Type, TypeMenu.Labelizer> { 
+		public class TypeMenu : IGUI.SelectMenu<Type, TypeMenu.Labelizer> {
 			public class Labelizer : IGUI.Labelizer<Type> {
-				public new static string Labelize(Type type) => type.Name;
+				public new static string Labelize(Type obj) => obj.Name;
 			}
 
 			public static TypeMenu
-			statement = new TypeMenu {
-				"Control flow",
-				typeof(Sequential),
-				typeof(Conditional),
-				"Action",
-				typeof(SwitchState),
-			},
-			condition = new TypeMenu {
-				"Constant",
-				typeof(BoolConstant),
-			};
+				statement = new TypeMenu {
+					typeof(Conditional),
+					typeof(Sequential),
+					typeof(SwitchState),
+				},
+				condition = new TypeMenu {
+					typeof(BoolConstant),
+				};
 		}
+
+		string path;
+
+		public virtual void Dispose() {
+			AssetDatabase.DeleteAsset(path);
+		}
+
+		public static Command Create(Type type) {
+			if(!AssetDatabase.IsValidFolder(commandsPath)) {
+				bool success = AssetDatabase.CreateFolder(sceneDir, commandsFolderName).Length != 0;
+				if(!success) {
+					Debug.LogWarning($"Folder {commandsPath} creation failed");
+					return null;
+				}
+			}
+			Command command = CreateInstance(type) as Command;
+			command.path = $"{commandsPath}/{command.GetHashCode()}.asset";
+			AssetDatabase.CreateAsset(command, command.path);
+			return command;
+		}
+
+		public static void Dispose(ref Command command) {
+			if(command == null)
+				return;
+			command.Dispose();
+			command = null;
+		}
+		public static void Dispose(Command command) {
+			if(command == null)
+				return;
+			command.Dispose();
+		}
+
+		public abstract object Execute();
+		public abstract void Inspect(Action header, Action footer);
 	}
 }

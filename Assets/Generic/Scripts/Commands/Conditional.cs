@@ -1,62 +1,66 @@
-using System;
+﻿using System;
 
 namespace Unapparent {
-	public class Conditional : ICommand {
+	public class Conditional : Command {
 		Command condition = null;
 
-		public class Branch : IInspectable {
+		public class Branch : ICommand {
 			public Command statement = null;
+
+			public void Dispose() => Command.Dispose(statement);
+			public object Execute() => statement.Execute();
+
 			public void Inspect(Action header, Action footer) {
 				if(statement == null) {
-					IGUI.Inline(delegate {
-						header();
-						IGUI.SelectButton("Set branch", Command.TypeMenu.statement, delegate (Type type) {
-							statement = new Command(type);
-						}, IGUI.exWidth);
-						footer();
+					IGUI.Inline(() => {
+						header?.Invoke();
+						IGUI.SelectButton("Set branch", TypeMenu.statement,
+							(Type type) => statement = Create(type),
+							IGUI.exWidth);
+						footer?.Invoke();
 					});
 				} else
 					statement.Inspect(header, footer);
 			}
 			public void Inspect(string title) {
-				Inspect(delegate {
-					IGUI.Label(title);
-				}, delegate {
+				Inspect(() => IGUI.Label(title), () => {
 					if(IGUI.Button("Clear branch"))
-						statement = null;
+						Dispose();
 				});
 			}
 		}
 		Branch trueBranch = new Branch(), falseBranch = new Branch();
 
-		public object Execute() {
+		public override object Execute() {
 			// TODO
 			return null;
 		}
 
-		public void Inspect(Action header, Action footer) {
-			IGUI.Indent(header, delegate {
-				IGUI.Inline(delegate {
+		public override void Inspect(Action header, Action footer) {
+			IGUI.Indent(header, () => {
+				IGUI.Inline(() => {
 					IGUI.Label("If");
 					if(condition == null) {
-						IGUI.SelectButton(
-							"Set condition",
-							Command.TypeMenu.condition,
-							delegate (Type type) {
-								condition = new Command(type);
-							}
-						);
-					} else {
-						condition.Inspect(IGUI.Nil, delegate {
-							IGUI.Button("Clear condition");
+						IGUI.SelectButton("Set condition", TypeMenu.condition,
+							(Type type) => condition = Create(type));
+					} else
+						condition.Inspect(null, () => {
+							if(IGUI.Button("Clear condition"))
+								Dispose(ref condition);
 						});
-					}
 					IGUI.FillLine();
 				});
 				trueBranch.Inspect("Then");
 				falseBranch.Inspect("Else");
-				footer();
+				footer?.Invoke();
 			});
+		}
+
+		public override void Dispose() {
+			Dispose(ref condition);
+			trueBranch.Dispose();
+			falseBranch.Dispose();
+			base.Dispose();
 		}
 	}
 }

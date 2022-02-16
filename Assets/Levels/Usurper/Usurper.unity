@@ -405,6 +405,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialState: {fileID: 1691375164}
+  currentState: {fileID: 0}
 --- !u!1 &1031127766
 GameObject:
   m_ObjectHideFlags: 0
@@ -527,6 +528,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d88cdcc3b8a499248843538b2af36a3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  command: {fileID: 0}
 --- !u!4 &1691375166
 Transform:
   m_ObjectHideFlags: 0

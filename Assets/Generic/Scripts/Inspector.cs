@@ -35,16 +35,6 @@ namespace Unapparent {
 	}
 
 	public static class IGUI {
-		// Aux
-
-		public static void Nil() { }
-
-		public class Labelizer<T> {
-			public static string Labelize(T obj) {
-				return obj.ToString();
-			}
-		}
-
 		// Flags
 
 		public static readonly GUILayoutOption
@@ -63,13 +53,13 @@ namespace Unapparent {
 
 		public static void Inline(Action content) {
 			GUILayout.BeginHorizontal();
-			content();
+			content?.Invoke();
 			GUILayout.EndHorizontal();
 		}
 
 		public static void Block(Action content) {
 			GUILayout.BeginVertical();
-			content();
+			content?.Invoke();
 			GUILayout.EndVertical();
 		}
 
@@ -77,17 +67,17 @@ namespace Unapparent {
 
 		public static void Indent(Action header, Action content) => Inline(delegate {
 			Block(delegate {
-				header();
+				header?.Invoke();
 				VerticalLine();
 			});
 			Block(content);
 		});
 
-		public static void Indent(Action content) => Indent(Nil, content);
+		public static void Indent(Action content) => Indent(null, content);
 
 		public static void Center(Action content) => Inline(delegate {
 			GUILayout.FlexibleSpace();
-			content();
+			content?.Invoke();
 			GUILayout.FlexibleSpace();
 		});
 
@@ -126,13 +116,17 @@ namespace Unapparent {
 					menu.AddSeparator(text + "/");
 				else
 					menu.AddItem(new GUIContent(element.ToString()), false, delegate (object element) {
-						callback((T)element);
+						callback?.Invoke((T)element);
 					}, element);
 			}
 		}
 
 		public interface ISelectMenu<T> {
 			public void AddTo(GenericMenu menu, Action<T> callback);
+		}
+
+		public class Labelizer<T> {
+			public static string Labelize(T obj) => obj.ToString();
 		}
 
 		public class SelectMenu<T, Labelizer> : List<MenuEntry<T>>, ISelectMenu<T>
@@ -160,7 +154,7 @@ namespace Unapparent {
 						menu.AddItem(
 							new GUIContent(path + Labelize.Invoke(null, new object[] { entry.element })),
 							false,
-							(object element) => callback((T)element),
+							(object element) => callback?.Invoke((T)element),
 							entry.element
 						);
 				}
@@ -178,6 +172,10 @@ namespace Unapparent {
 			list.AddTo(menu, callback);
 			menu.ShowAsContext();
 		}
+
+		public static UnityEngine.Object ObjectField(UnityEngine.Object obj, Type objType, bool allowSceneObjects, params GUILayoutOption[] options) =>
+			EditorGUILayout.ObjectField(obj, objType, allowSceneObjects, options);
+
 		public static void Toggle(ref bool value, GUIContent label, params GUILayoutOption[] options) {
 			value = GUILayout.Toggle(value, label, options);
 		}
