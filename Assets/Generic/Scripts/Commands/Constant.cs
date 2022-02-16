@@ -1,19 +1,21 @@
 using System;
+using UnityEngine;
 
 namespace Unapparent {
-	public abstract class Constant<T> : ICommand {
+	public abstract class Constant<T> : Command {
 		public T value = default(T);
 		
-		public object Execute() => value;
+		public override object Execute() => value;
 
-		public abstract void Inspect(Action header, Action footer);
+		public override abstract void Inspect(Action header, Action footer);
 	}
 
+	[CreateAssetMenu]
 	public class BoolConstant : Constant<bool> {
 		public override void Inspect(Action header, Action footer) {
-			header();
-			IGUI.Toggle(ref value, UnityEngine.GUIContent.none);
-			footer();
+			header?.Invoke();
+			IGUI.Toggle(ref value, GUIContent.none);
+			footer?.Invoke();
 		}
 	}
 }

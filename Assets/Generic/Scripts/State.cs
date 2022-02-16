@@ -3,14 +3,15 @@ using UnityEditor;
 
 namespace Unapparent {
 	public class State : MonoBehaviour {
-		public Command sequence = typeof(Sequential);
+		public Command command = null;
 	}
 
 	[DisallowMultipleComponent]
 	[CustomEditor(typeof(State))]
 	public class StateInspector : Inspector<State> {
 		public override void OnInspectorGUI() {
-			target.sequence.Inspect(IGUI.Nil, IGUI.Nil);
+			DrawDefaultInspector();
+			target.command?.Inspect(null, null);
 		}
 	}
 }

@@ -1,7 +1,9 @@
 using System;
+using UnityEngine;
 
 namespace Unapparent {
-	public class Conditional : ICommand {
+	[CreateAssetMenu]
+	public class Conditional : Command {
 		Command condition = null;
 
 		public class Branch : IInspectable {
@@ -9,11 +11,15 @@ namespace Unapparent {
 			public void Inspect(Action header, Action footer) {
 				if(statement == null) {
 					IGUI.Inline(delegate {
-						header();
-						IGUI.SelectButton("Set branch", Command.TypeMenu.statement, delegate (Type type) {
-							statement = new Command(type);
-						}, IGUI.exWidth);
-						footer();
+						header?.Invoke();
+						IGUI.Label("Set branch");
+						ScriptableObject so = IGUI.ObjectField(
+							null, typeof(ScriptableObject), false,
+							GUILayout.ExpandWidth(true)
+						) as ScriptableObject;
+						if(so != null)
+							statement = Instantiate(so) as Command;
+						footer?.Invoke();
 					});
 				} else
 					statement.Inspect(header, footer);
@@ -29,33 +35,29 @@ namespace Unapparent {
 		}
 		Branch trueBranch = new Branch(), falseBranch = new Branch();
 
-		public object Execute() {
+		public override object Execute() {
 			// TODO
 			return null;
 		}
 
-		public void Inspect(Action header, Action footer) {
-			IGUI.Indent(header, delegate {
-				IGUI.Inline(delegate {
+		public override void Inspect(Action header, Action footer) {
+			IGUI.Indent(header, () => {
+				IGUI.Inline(() => {
 					IGUI.Label("If");
 					if(condition == null) {
-						IGUI.SelectButton(
-							"Set condition",
-							Command.TypeMenu.condition,
-							delegate (Type type) {
-								condition = new Command(type);
-							}
-						);
-					} else {
-						condition.Inspect(IGUI.Nil, delegate {
-							IGUI.Button("Clear condition");
-						});
-					}
+						ScriptableObject so = IGUI.ObjectField(
+							null, typeof(ScriptableObject), false,
+							GUILayout.ExpandWidth(true)
+						) as ScriptableObject;
+						if(so != null)
+							condition = Instantiate(so) as Command;
+					} else
+						condition.Inspect(null, () => IGUI.Button("Clear condition"));
 					IGUI.FillLine();
 				});
 				trueBranch.Inspect("Then");
 				falseBranch.Inspect("Else");
-				footer();
+				footer?.Invoke();
 			});
 		}
 	}
