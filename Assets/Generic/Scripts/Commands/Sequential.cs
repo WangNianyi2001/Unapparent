@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Unapparent {
-	[CreateAssetMenu]
 	public class Sequential : Command {
 		public List<Command> sequence = new List<Command>();
 
@@ -25,6 +24,7 @@ namespace Unapparent {
 								if(IGUI.Button("Remove")) {
 									if(!IGUI.Confirm("Removing command, proceed?"))
 										return;
+									Dispose(sequence[j]);
 									sequence.RemoveAt(j);
 								}
 							}
@@ -32,16 +32,18 @@ namespace Unapparent {
 					}
 				}
 				IGUI.Inline(() => {
-					IGUI.Label("Add command");
-					ScriptableObject so = IGUI.ObjectField(
-						null, typeof(ScriptableObject), false,
-						GUILayout.ExpandWidth(true)
-					) as ScriptableObject;
-					if(so != null)
-						sequence.Add(Instantiate(so) as Command);
+					IGUI.SelectButton("Add command", TypeMenu.statement,
+						(Type type) => sequence.Add(Create(type)),
+						IGUI.exWidth);
 					footer?.Invoke();
 				});
 			});
+		}
+
+		public override void Dispose() {
+			foreach(Command command in sequence)
+				Dispose(command);
+			base.Dispose();
 		}
 	}
 }

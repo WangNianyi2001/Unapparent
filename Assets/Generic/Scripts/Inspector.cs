@@ -126,9 +126,7 @@ namespace Unapparent {
 		}
 
 		public class Labelizer<T> {
-			public static string Labelize(T obj) {
-				return obj.ToString();
-			}
+			public static string Labelize(T obj) => obj.ToString();
 		}
 
 		public class SelectMenu<T, Labelizer> : List<MenuEntry<T>>, ISelectMenu<T>

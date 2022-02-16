@@ -2,7 +2,6 @@
 using UnityEngine;
 
 namespace Unapparent {
-	[CreateAssetMenu]
 	public class SwitchState : Command {
 		GameObject destination = null;
 

@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace Unapparent {
 	public class State : MonoBehaviour {
-		public Command command = null;
+		[HideInInspector] public Command command = null;
 	}
 
 	[DisallowMultipleComponent]
@@ -11,6 +11,8 @@ namespace Unapparent {
 	public class StateInspector : Inspector<State> {
 		public override void OnInspectorGUI() {
 			DrawDefaultInspector();
+			if(target.command == null)
+				target.command = Command.Create(typeof(Sequential));
 			target.command?.Inspect(null, null);
 		}
 	}

@@ -10,7 +10,6 @@ namespace Unapparent {
 		public override abstract void Inspect(Action header, Action footer);
 	}
 
-	[CreateAssetMenu]
 	public class BoolConstant : Constant<bool> {
 		public override void Inspect(Action header, Action footer) {
 			header?.Invoke();
