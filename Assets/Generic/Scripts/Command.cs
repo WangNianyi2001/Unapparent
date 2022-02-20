@@ -49,8 +49,12 @@ namespace Unapparent {
 				}
 			}
 			Command command = CreateInstance(type) as Command;
-			command.path = $"{commandsPath}/{command.GetHashCode()}.asset";
-			AssetDatabase.CreateAsset(command, command.path);
+			string temp_path = command.path = $"{commandsPath}/{command.GetHashCode()}.asset";
+			AssetDatabase.CreateAsset(command, temp_path);
+			string guid = AssetDatabase.AssetPathToGUID(temp_path);
+			string final_path = $"{commandsPath}/{guid}.asset";
+			AssetDatabase.MoveAsset(temp_path, final_path);
+			command.path = final_path;
 			return command;
 		}
 
