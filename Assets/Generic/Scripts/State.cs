@@ -1,9 +1,23 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System;
 
 namespace Unapparent {
-	public class State : MonoBehaviour {
+	public class State : MonoBehaviour, IDisposable {
 		[HideInInspector] public Command command = null;
+
+		public void Reset() {
+			Dispose();
+			command = Command.Create(typeof(Sequential));
+		}
+
+		public void OnDestroy() {
+			Dispose();
+		}
+
+		public void Dispose() {
+			command?.Dispose();
+		}
 	}
 
 	[DisallowMultipleComponent]
@@ -11,8 +25,6 @@ namespace Unapparent {
 	public class StateInspector : Inspector<State> {
 		public override void OnInspectorGUI() {
 			DrawDefaultInspector();
-			if(target.command == null)
-				target.command = Command.Create(typeof(Sequential));
 			target.command?.Inspect(null, null);
 		}
 	}
