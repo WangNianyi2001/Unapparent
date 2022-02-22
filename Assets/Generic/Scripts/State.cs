@@ -1,31 +1,32 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System;
 
 namespace Unapparent {
-	public class State : MonoBehaviour, IDisposable {
-		[HideInInspector] public Command command = null;
+	[ExecuteInEditMode]
+	public class State : MonoBehaviour {
+		[SerializeField]
+		public Command command = null;
 
-		public void Reset() {
-			Dispose();
+#if UNITY_EDITOR
+		public void Start() {
 			command = Command.Create(typeof(Sequential));
 		}
+#endif
 
+#if UNITY_EDITOR
 		public void OnDestroy() {
-			Dispose();
-		}
-
-		public void Dispose() {
 			command?.Dispose();
 		}
+#endif
 	}
 
-	[DisallowMultipleComponent]
-	[CustomEditor(typeof(State))]
-	public class StateInspector : Inspector<State> {
-		public override void OnInspectorGUI() {
-			DrawDefaultInspector();
-			target.command?.Inspect(null, null);
+	public class D : Editor { }
+
+	[CustomPropertyDrawer(typeof(Command))]
+	public class CommandDrawer : PropertyDrawer {
+		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+			Command target = property.objectReferenceValue as Command;
+			target?.Inspect(null, null);
 		}
 	}
 }
