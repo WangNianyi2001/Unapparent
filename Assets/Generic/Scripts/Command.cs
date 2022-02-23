@@ -1,17 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Unapparent {
-	public interface ICommand : IInspectable, IDisposable {
-		public object Execute();
+	public class ArgList<T> : List<T> {
+		public ArgList(IEnumerable<T> collection) {
+			InsertRange(0, collection);
+		}
+		public new T this[int i] {
+			get => i >= 0 && i < Count ? base[i] : default(T);
+		}
 	}
 
-	public abstract class Command : ScriptableObject, ICommand {
+	public abstract class Command : ScriptableObject {
 		public static string sceneDir {
 			get {
-				string fullPath = EditorSceneManager.GetActiveScene().path;
+				string fullPath = UnityEngine.SceneManagement.SceneManager.GetActiveScene().path;
 				return fullPath.Substring(0, fullPath.LastIndexOf('/'));
 			}
 		}
@@ -34,9 +39,10 @@ namespace Unapparent {
 				};
 		}
 
-		string path;
+		string guid;
 
 		public virtual void Dispose() {
+			string path = AssetDatabase.GUIDToAssetPath(guid);
 			AssetDatabase.DeleteAsset(path);
 		}
 
@@ -49,12 +55,10 @@ namespace Unapparent {
 				}
 			}
 			Command command = CreateInstance(type) as Command;
-			string temp_path = command.path = $"{commandsPath}/{command.GetHashCode()}.asset";
-			AssetDatabase.CreateAsset(command, temp_path);
-			string guid = AssetDatabase.AssetPathToGUID(temp_path);
-			string final_path = $"{commandsPath}/{guid}.asset";
-			AssetDatabase.MoveAsset(temp_path, final_path);
-			command.path = final_path;
+			string path = command.guid = $"{commandsPath}/{command.GetHashCode()}.asset";
+			AssetDatabase.CreateAsset(command, path);
+			command.guid = AssetDatabase.AssetPathToGUID(path);
+			AssetDatabase.RenameAsset(path, command.guid);
 			return command;
 		}
 
@@ -71,6 +75,9 @@ namespace Unapparent {
 		}
 
 		public abstract object Execute();
-		public abstract void Inspect(Action header, Action footer);
+
+		public abstract void Inspect(ArgList<Action> elements);
+		public void Inspect(params Action[] elements) =>
+			Inspect(new ArgList<Action>(elements));
 	}
 }

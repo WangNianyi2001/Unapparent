@@ -10,16 +10,16 @@ namespace Unapparent {
 			return null;
 		}
 
-		public override void Inspect(Action header, Action footer) {
+		public override void Inspect(ArgList<Action> elements) {
 			IGUI.Inline(() => {
-				header?.Invoke();
+				elements[0]?.Invoke();
 				IGUI.Label("Switch to state");
 				destination = IGUI.ObjectField(
 					destination, typeof(GameObject), true,
 					GUILayout.ExpandWidth(true)
 				) as GameObject;
 				IGUI.FillLine();
-				footer?.Invoke();
+				elements[1]?.Invoke();
 			});
 		}
 	}

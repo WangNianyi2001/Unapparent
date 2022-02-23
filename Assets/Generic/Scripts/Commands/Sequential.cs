@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace Unapparent {
@@ -11,8 +12,8 @@ namespace Unapparent {
 			return null;
 		}
 
-		public override void Inspect(Action header, Action footer) {
-			IGUI.Indent(header, () => {
+		public override void Inspect(ArgList<Action> elements) {
+			IGUI.Indent(() => {
 				if(sequence.Count == 0)
 					IGUI.Center(() => IGUI.Italic("Empty"));
 				else {
@@ -35,9 +36,9 @@ namespace Unapparent {
 					IGUI.SelectButton("Add command", TypeMenu.statement,
 						(Type type) => sequence.Add(Create(type)),
 						IGUI.exWidth);
-					footer?.Invoke();
+					elements[1]?.Invoke();
 				});
-			});
+			}, elements[0]);
 		}
 
 		public override void Dispose() {

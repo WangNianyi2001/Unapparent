@@ -5,35 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Unapparent {
-	public interface IInspectable {
-		public void Inspect(Action header, Action footer);
-	}
-
-	public class Inspector<T> : Editor where T : UnityEngine.Object {
-		public new T target {
-			get => base.target as T;
-		}
-	}
-
-	public class ReadOnlyAttribute : PropertyAttribute { }
-
-	[CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
-	public class ReadOnlyDrawer : PropertyDrawer {
-		public override float GetPropertyHeight(
-			SerializedProperty property,
-			GUIContent label) {
-			return EditorGUI.GetPropertyHeight(property, label, true);
-		}
-		public override void OnGUI(
-			Rect position,
-			SerializedProperty property,
-			GUIContent label) {
-			GUI.enabled = false;
-			EditorGUI.PropertyField(position, property, label, true);
-			GUI.enabled = true;
-		}
-	}
-
 	public static class IGUI {
 		// Flags
 
@@ -65,7 +36,7 @@ namespace Unapparent {
 
 		public static Action FillLine = GUILayout.FlexibleSpace;
 
-		public static void Indent(Action header, Action content) => Inline(delegate {
+		public static void Indent(Action content, Action header) => Inline(delegate {
 			Block(delegate {
 				header?.Invoke();
 				VerticalLine();
@@ -73,7 +44,7 @@ namespace Unapparent {
 			Block(content);
 		});
 
-		public static void Indent(Action content) => Indent(null, content);
+		public static void Indent(Action content) => Indent(content, null);
 
 		public static void Center(Action content) => Inline(delegate {
 			GUILayout.FlexibleSpace();

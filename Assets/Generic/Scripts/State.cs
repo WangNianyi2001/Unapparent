@@ -20,13 +20,15 @@ namespace Unapparent {
 #endif
 	}
 
-	public class D : Editor { }
+	[CustomEditor(typeof(State))]
+	public class StateEditor : Editor { }
 
 	[CustomPropertyDrawer(typeof(Command))]
 	public class CommandDrawer : PropertyDrawer {
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+			EditorGUI.PrefixLabel(position, label);
 			Command target = property.objectReferenceValue as Command;
-			target?.Inspect(null, null);
+			target?.Inspect();
 		}
 	}
 }
