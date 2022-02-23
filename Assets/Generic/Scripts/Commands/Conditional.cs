@@ -1,32 +1,40 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Unapparent {
 	public class Conditional : Command {
 		Command condition = null;
 
-		public class Branch : ICommand {
+		public class Branch {
 			public Command statement = null;
 
 			public void Dispose() => Command.Dispose(statement);
 			public object Execute() => statement.Execute();
 
-			public void Inspect(Action header, Action footer) {
+			public void Inspect(params Action[] elements) {
 				if(statement == null) {
 					IGUI.Inline(() => {
-						header?.Invoke();
+						elements[0]?.Invoke();
 						IGUI.SelectButton("Set branch", TypeMenu.statement,
 							(Type type) => statement = Create(type),
 							IGUI.exWidth);
-						footer?.Invoke();
+						elements[1]?.Invoke();
 					});
 				} else
-					statement.Inspect(header, footer);
+					statement.Inspect();
 			}
 			public void Inspect(string title) {
-				Inspect(() => IGUI.Label(title), () => {
-					if(IGUI.Button("Clear branch"))
-						Dispose();
-				});
+				if(statement == null) {
+					IGUI.Inline(() => {
+						IGUI.Label(title);
+						IGUI.SelectButton("Set branch", TypeMenu.statement,
+							(Type type) => statement = Create(type),
+							IGUI.exWidth);
+						if(IGUI.Button("Clear branch"))
+							Dispose();
+					});
+				} else
+					statement.Inspect();
 			}
 		}
 		Branch trueBranch = new Branch(), falseBranch = new Branch();
@@ -36,15 +44,15 @@ namespace Unapparent {
 			return null;
 		}
 
-		public override void Inspect(Action header, Action footer) {
-			IGUI.Indent(header, () => {
+		public override void Inspect(ArgList<Action> elements) {
+			IGUI.Indent(() => {
 				IGUI.Inline(() => {
 					IGUI.Label("If");
 					if(condition == null) {
 						IGUI.SelectButton("Set condition", TypeMenu.condition,
 							(Type type) => condition = Create(type));
 					} else
-						condition.Inspect(null, () => {
+						condition.Inspect(() => {
 							if(IGUI.Button("Clear condition"))
 								Dispose(ref condition);
 						});
@@ -52,8 +60,8 @@ namespace Unapparent {
 				});
 				trueBranch.Inspect("Then");
 				falseBranch.Inspect("Else");
-				footer?.Invoke();
-			});
+				elements[1]?.Invoke();
+			}, elements[0]);
 		}
 
 		public override void Dispose() {
