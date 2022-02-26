@@ -87,4 +87,15 @@ namespace Unapparent {
 		public abstract void Inspect(ArgList<Action> elements);
 		public void Inspect(params Action[] elements) => Inspect(new ArgList<Action>(elements));
 	}
+
+#if UNITY_EDITOR
+	[CustomPropertyDrawer(typeof(Command))]
+	public class CommandDrawer : PropertyDrawer {
+		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+			EditorGUI.PrefixLabel(position, label);
+			Command target = property.objectReferenceValue as Command;
+			target?.Inspect();
+		}
+	}
+#endif
 }
