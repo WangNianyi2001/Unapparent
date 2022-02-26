@@ -1,34 +1,29 @@
 ﻿using System;
-using UnityEngine;
 
 namespace Unapparent {
 	public class Conditional : Command {
 		Command condition = null;
 
+		[Serializable]
 		public class Branch {
-			public Command statement = null;
+			public Command statement = null, parent;
 
-			public void Dispose() => Command.Dispose(statement);
-			public object Execute() => statement.Execute();
-
-			public void Inspect(params Action[] elements) {
-				if(statement == null) {
-					IGUI.Inline(() => {
-						elements[0]?.Invoke();
-						IGUI.SelectButton("Set branch", TypeMenu.statement,
-							(Type type) => statement = Create(type),
-							IGUI.exWidth);
-						elements[1]?.Invoke();
-					});
-				} else
-					statement.Inspect();
+			public Branch(Command parent) {
+				this.parent = parent;
 			}
+
+			public void Dispose() => statement?.Dispose();
+			public object Execute() => statement?.Execute();
+
 			public void Inspect(string title) {
 				if(statement == null) {
 					IGUI.Inline(() => {
 						IGUI.Label(title);
 						IGUI.SelectButton("Set branch", TypeMenu.statement,
-							(Type type) => statement = Create(type),
+							(Type type) => {
+								statement = Create(type, parent);
+								statement.SetDirty();
+							},
 							IGUI.exWidth);
 						if(IGUI.Button("Clear branch"))
 							Dispose();
@@ -37,7 +32,13 @@ namespace Unapparent {
 					statement.Inspect();
 			}
 		}
-		Branch trueBranch = new Branch(), falseBranch = new Branch();
+
+		public Branch trueBranch, falseBranch;
+
+		public Conditional() {
+			trueBranch = new Branch(this);
+			falseBranch = new Branch(this);
+		}
 
 		public override object Execute() {
 			// TODO
@@ -50,12 +51,18 @@ namespace Unapparent {
 					IGUI.Label("If");
 					if(condition == null) {
 						IGUI.SelectButton("Set condition", TypeMenu.condition,
-							(Type type) => condition = Create(type));
-					} else
+							(Type type) => {
+								condition = Create(type, this);
+								SetDirty();
+							});
+					} else {
 						condition.Inspect(() => {
-							if(IGUI.Button("Clear condition"))
-								Dispose(ref condition);
+							if(IGUI.Button("Clear condition")) {
+								condition?.Dispose();
+								SetDirty();
+							}
 						});
+					}
 					IGUI.FillLine();
 				});
 				trueBranch.Inspect("Then");
@@ -65,7 +72,7 @@ namespace Unapparent {
 		}
 
 		public override void Dispose() {
-			Dispose(ref condition);
+			condition?.Dispose();
 			trueBranch.Dispose();
 			falseBranch.Dispose();
 			base.Dispose();

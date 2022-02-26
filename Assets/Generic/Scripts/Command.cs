@@ -13,6 +13,7 @@ namespace Unapparent {
 		}
 	}
 
+	[Serializable]
 	public abstract class Command : ScriptableObject {
 		public static string sceneDir {
 			get {
@@ -38,15 +39,28 @@ namespace Unapparent {
 					typeof(BoolConstant),
 				};
 		}
+		
+		public Command parent = null;
+		public string guid;
 
-		string guid;
-
-		public virtual void Dispose() {
-			string path = AssetDatabase.GUIDToAssetPath(guid);
-			AssetDatabase.DeleteAsset(path);
+		public new void SetDirty() {
+#if UNITY_EDITOR
+			// Debug.Log($"Setting {guid} dirty");
+			EditorUtility.SetDirty(this);
+			parent?.SetDirty();
+#endif
 		}
 
-		public static Command Create(Type type) {
+		public virtual void Dispose() {
+#if UNITY_EDITOR
+			// Debug.Log($"Deleting {guid}");
+			string path = AssetDatabase.GUIDToAssetPath(guid);
+			AssetDatabase.DeleteAsset(path);
+#endif
+		}
+
+		public static Command Create(Type type, Command parent = null) {
+#if UNITY_EDITOR
 			if(!AssetDatabase.IsValidFolder(commandsPath)) {
 				bool success = AssetDatabase.CreateFolder(sceneDir, commandsFolderName).Length != 0;
 				if(!success) {
@@ -54,30 +68,23 @@ namespace Unapparent {
 					return null;
 				}
 			}
+#endif
 			Command command = CreateInstance(type) as Command;
-			string path = command.guid = $"{commandsPath}/{command.GetHashCode()}.asset";
+			command.parent = parent;
+#if UNITY_EDITOR
+			string path = AssetDatabase.GenerateUniqueAssetPath($"{commandsPath}/Command.asset");
 			AssetDatabase.CreateAsset(command, path);
 			command.guid = AssetDatabase.AssetPathToGUID(path);
+			// Debug.Log($"Creating {command.guid}");
+			command.SetDirty();
 			AssetDatabase.RenameAsset(path, command.guid);
+#endif
 			return command;
-		}
-
-		public static void Dispose(ref Command command) {
-			if(command == null)
-				return;
-			command.Dispose();
-			command = null;
-		}
-		public static void Dispose(Command command) {
-			if(command == null)
-				return;
-			command.Dispose();
 		}
 
 		public abstract object Execute();
 
 		public abstract void Inspect(ArgList<Action> elements);
-		public void Inspect(params Action[] elements) =>
-			Inspect(new ArgList<Action>(elements));
+		public void Inspect(params Action[] elements) => Inspect(new ArgList<Action>(elements));
 	}
 }

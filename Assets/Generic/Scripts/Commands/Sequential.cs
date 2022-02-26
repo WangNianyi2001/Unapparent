@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace Unapparent {
@@ -25,8 +24,9 @@ namespace Unapparent {
 								if(IGUI.Button("Remove")) {
 									if(!IGUI.Confirm("Removing command, proceed?"))
 										return;
-									Dispose(sequence[j]);
+									sequence[j]?.Dispose();
 									sequence.RemoveAt(j);
+									SetDirty();
 								}
 							}
 						);
@@ -34,7 +34,10 @@ namespace Unapparent {
 				}
 				IGUI.Inline(() => {
 					IGUI.SelectButton("Add command", TypeMenu.statement,
-						(Type type) => sequence.Add(Create(type)),
+						(Type type) => {
+							sequence.Add(Create(type, this));
+							SetDirty();
+						},
 						IGUI.exWidth);
 					elements[1]?.Invoke();
 				});
@@ -43,7 +46,7 @@ namespace Unapparent {
 
 		public override void Dispose() {
 			foreach(Command command in sequence)
-				Dispose(command);
+				command?.Dispose();
 			base.Dispose();
 		}
 	}

@@ -147,8 +147,10 @@ namespace Unapparent {
 		public static UnityEngine.Object ObjectField(UnityEngine.Object obj, Type objType, bool allowSceneObjects, params GUILayoutOption[] options) =>
 			EditorGUILayout.ObjectField(obj, objType, allowSceneObjects, options);
 
-		public static void Toggle(ref bool value, GUIContent label, params GUILayoutOption[] options) {
+		public static bool Toggle(ref bool value, GUIContent label, params GUILayoutOption[] options) {
+			bool old = value;
 			value = GUILayout.Toggle(value, label, options);
+			return old ^ value;
 		}
 
 		public static bool Confirm(string text) {
