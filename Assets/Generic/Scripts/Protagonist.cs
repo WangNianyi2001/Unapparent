@@ -2,17 +2,9 @@ using UnityEngine;
 using UnityEngine.AI;
 
 namespace Unapparent {
-	public class Protagonist : Carrier {
-		static LayerMask walkableLayerMask;
-
+	public class Protagonist : Character {
 		public GameObject cameraObject;
 		new Camera camera;
-
-		NavMeshAgent agent;
-
-		void NavigateTo(Vector3 location) {
-			agent.SetDestination(location);
-		}
 
 		void MouseDown() {
 			Ray ray = camera.ScreenPointToRay(Input.mousePosition);
@@ -22,14 +14,9 @@ namespace Unapparent {
 				NavigateTo(walkableHit.point);
 		}
 
-		public void Awake() {
-			walkableLayerMask = LayerMask.GetMask("Walkable");
-		}
-
 		public new void Start() {
 			base.Start();
 			camera = cameraObject.GetComponent<Camera>();
-			agent = GetComponent<NavMeshAgent>();
 		}
 
 		public void Update() {
