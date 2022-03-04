@@ -16,8 +16,8 @@ namespace Unapparent {
 		}
 
 		public new void Start() {
-			base.Start();
 			agent = GetComponent<NavMeshAgent>();
+			base.Start();
 		}
 	}
 }

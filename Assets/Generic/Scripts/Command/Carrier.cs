@@ -16,13 +16,14 @@ namespace Unapparent {
 
 		public void TryFire(Type type) {
 			foreach(Listener listener in currentState.listeners) {
-				if(listener.GetType().IsSubclassOf(type))
+				if(type.IsAssignableFrom(listener.GetType()))
 					listener.TryExecute(this);
 			}
 		}
 
 		public void Start() {
-			currentState = initialState.GetComponent<State>();
+			state = initialState.GetComponent<State>();
+			TryFire(typeof(OnStart));
 		}
 	}
 }

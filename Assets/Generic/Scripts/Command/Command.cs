@@ -25,15 +25,19 @@ namespace Unapparent {
 			public static TypeMenu
 				statement = new TypeMenu {
 					typeof(Reference),
+					"Control",
 					typeof(Conditional),
 					typeof(Sequential),
+					"Character",
 					typeof(SwitchState),
+					typeof(NavigateTo),
 				},
 				condition = new TypeMenu {
 					typeof(Reference),
 					typeof(BoolConstant),
 				},
 				listener = new TypeMenu {
+					typeof(OnStart),
 				};
 		}
 

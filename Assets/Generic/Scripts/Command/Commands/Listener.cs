@@ -2,9 +2,9 @@ using System;
 
 namespace Unapparent {
 	public abstract class Listener : Command {
-		public static Listener Create() {
-			Listener listener = Create(typeof(Listener)) as Listener;
-			listener.command = Create(typeof(Sequential));
+		public static Listener Create(Type type) {
+			Listener listener = Command.Create(type) as Listener;
+			listener.command = Command.Create(typeof(Sequential));
 			return listener;
 		}
 
@@ -12,7 +12,7 @@ namespace Unapparent {
 
 		public abstract bool Validate(Carrier target);
 
-		public void TryExecute(Carrier target) {
+		public virtual void TryExecute(Carrier target) {
 			if(Validate(target))
 				Execute(target);
 		}
@@ -21,7 +21,7 @@ namespace Unapparent {
 
 		public override void Inspect(ArgList<Action> elements) {
 			IGUI.Inline(() => {
-				IGUI.Label("When");
+				IGUI.Label("On Start");
 			});
 			command?.Inspect(() => IGUI.Label("Do"));
 		}
@@ -30,5 +30,10 @@ namespace Unapparent {
 			command?.Dispose();
 			base.Dispose();
 		}
+	}
+
+	public abstract class CertainListener : Listener {
+		public override bool Validate(Carrier target) => true;
+		public override void TryExecute(Carrier target) => Execute(target);
 	}
 }

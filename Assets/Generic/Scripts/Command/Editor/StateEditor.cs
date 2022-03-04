@@ -41,7 +41,7 @@ public class StateEditor : Editor, IDisposable {
 		});
 
 		IGUI.SelectButton("Add listener", Command.TypeMenu.listener,
-			(Type type) => state.listeners.Add(Command.Create(type) as Listener),
+			(Type type) => state.listeners.Add(Listener.Create(type)),
 			IGUI.exWidth);
 		if(IGUI.Button("Remove component", IGUI.exWidth)) {
 			if(EditorUtility.DisplayDialog("Warning",
