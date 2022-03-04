@@ -24,11 +24,13 @@ namespace Unapparent {
 
 			public static TypeMenu
 				statement = new TypeMenu {
+					typeof(Reference),
 					typeof(Conditional),
 					typeof(Sequential),
 					typeof(SwitchState),
 				},
 				condition = new TypeMenu {
+					typeof(Reference),
 					typeof(BoolConstant),
 				};
 		}
@@ -66,5 +68,10 @@ namespace Unapparent {
 
 		public abstract void Inspect(ArgList<Action> elements);
 		public void Inspect(params Action[] elements) => Inspect(new ArgList<Action>(elements));
+
+		public void ShowRefBtn() {
+			if(IGUI.Button("Ref"))
+				EditorGUIUtility.PingObject(this);
+		}
 	}
 }

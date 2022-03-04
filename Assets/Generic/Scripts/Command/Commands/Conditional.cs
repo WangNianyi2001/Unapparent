@@ -2,7 +2,7 @@ using System;
 
 namespace Unapparent {
 	public class Conditional : Command {
-		Command condition = null;
+		public Command condition = null;
 
 		[Serializable]
 		public class Branch {
@@ -67,6 +67,7 @@ namespace Unapparent {
 				});
 				trueBranch.Inspect("Then");
 				falseBranch.Inspect("Else");
+				ShowRefBtn();
 				elements[1]?.Invoke();
 			}, elements[0]);
 		}

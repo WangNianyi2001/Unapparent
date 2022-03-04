@@ -2,27 +2,24 @@ using System;
 using UnityEngine;
 
 namespace Unapparent {
-	public class SwitchState : Command {
-		public GameObject destination = null;
-
+	public class Reference : Command {
+		public Command command = null;
 		public override object Execute() {
-			// TODO
-			return null;
+			return command?.Execute();
 		}
 
 		public override void Inspect(ArgList<Action> elements) {
 			IGUI.Inline(() => {
 				elements[0]?.Invoke();
-				IGUI.Label("Switch to state");
-				GameObject old = destination;
-				destination = IGUI.ObjectField(
-					destination, typeof(GameObject), true,
+				IGUI.Label("Invoke command");
+				Command old = command;
+				command = IGUI.ObjectField(
+					command, typeof(Command), true,
 					GUILayout.ExpandWidth(true)
-				) as GameObject;
-				if(old != destination)
+				) as Command;
+				if(old != command)
 					SetDirty();
 				IGUI.FillLine();
-				ShowRefBtn();
 				elements[1]?.Invoke();
 			});
 		}

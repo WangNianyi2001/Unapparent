@@ -39,6 +39,7 @@ namespace Unapparent {
 							SetDirty();
 						},
 						IGUI.exWidth);
+					ShowRefBtn();
 					elements[1]?.Invoke();
 				});
 			}, elements[0]);
