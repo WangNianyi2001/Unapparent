@@ -32,6 +32,8 @@ namespace Unapparent {
 				condition = new TypeMenu {
 					typeof(Reference),
 					typeof(BoolConstant),
+				},
+				listener = new TypeMenu {
 				};
 		}
 
@@ -64,7 +66,7 @@ namespace Unapparent {
 			return command;
 		}
 
-		public abstract object Execute();
+		public abstract object Execute(Carrier target);
 
 		public abstract void Inspect(ArgList<Action> elements);
 		public void Inspect(params Action[] elements) => Inspect(new ArgList<Action>(elements));

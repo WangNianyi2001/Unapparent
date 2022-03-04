@@ -4,8 +4,8 @@ using UnityEngine;
 namespace Unapparent {
 	public class Reference : Command {
 		public Command command = null;
-		public override object Execute() {
-			return command?.Execute();
+		public override object Execute(Carrier target) {
+			return command?.Execute(target);
 		}
 
 		public override void Inspect(ArgList<Action> elements) {

@@ -6,8 +6,9 @@ namespace Unapparent {
 	public class Sequential : Command {
 		public List<Command> sequence = new List<Command>();
 
-		public override object Execute() {
-			// TODO
+		public override object Execute(Carrier target) {
+			foreach(Command command in sequence)
+				command?.Execute(target);
 			return null;
 		}
 

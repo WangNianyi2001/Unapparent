@@ -5,7 +5,7 @@ namespace Unapparent {
 	public class SwitchState : Command {
 		public GameObject destination = null;
 
-		public override object Execute() {
+		public override object Execute(Carrier target) {
 			// TODO
 			return null;
 		}

@@ -13,7 +13,7 @@ namespace Unapparent {
 			}
 
 			public void Dispose() => statement?.Dispose();
-			public object Execute() => statement?.Execute();
+			public object Execute(Carrier target) => statement?.Execute(target);
 
 			public void Inspect(string title) {
 				if(statement == null) {
@@ -40,10 +40,8 @@ namespace Unapparent {
 			falseBranch = new Branch(this);
 		}
 
-		public override object Execute() {
-			// TODO
-			return null;
-		}
+		public override object Execute(Carrier target) =>
+			((bool)condition?.Execute(target) ? trueBranch : falseBranch)?.Execute(target);
 
 		public override void Inspect(ArgList<Action> elements) {
 			IGUI.Indent(() => {
