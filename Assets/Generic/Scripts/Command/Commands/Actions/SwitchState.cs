@@ -5,10 +5,8 @@ namespace Unapparent {
 	public class SwitchState : Command {
 		public GameObject destination = null;
 
-		public override object Execute(Carrier target) {
-			// TODO
-			return null;
-		}
+		public override object Execute(Carrier target) =>
+			target.state = destination.GetComponent<State>();
 
 		public override void Inspect(ArgList<Action> elements) {
 			IGUI.Inline(() => {

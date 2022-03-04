@@ -12,8 +12,12 @@ namespace Unapparent {
 
 		public abstract bool Validate(Carrier target);
 
-		public override object Execute(Carrier target) =>
-			Validate(target) ? command?.Execute(target) : null;
+		public void TryExecute(Carrier target) {
+			if(Validate(target))
+				Execute(target);
+		}
+
+		public override object Execute(Carrier target) => command?.Execute(target);
 
 		public override void Inspect(ArgList<Action> elements) {
 			IGUI.Inline(() => {

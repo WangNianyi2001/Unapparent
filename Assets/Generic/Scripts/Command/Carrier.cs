@@ -7,6 +7,20 @@ namespace Unapparent {
 		public GameObject initialState = null;
 		State currentState = null;
 
+		public State state {
+			get => currentState;
+			set {
+				currentState = value;
+			}
+		}
+
+		public void TryFire(Type type) {
+			foreach(Listener listener in currentState.listeners) {
+				if(listener.GetType().IsSubclassOf(type))
+					listener.TryExecute(this);
+			}
+		}
+
 		public void Start() {
 			currentState = initialState.GetComponent<State>();
 		}
