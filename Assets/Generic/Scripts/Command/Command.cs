@@ -31,6 +31,8 @@ namespace Unapparent {
 					"Character",
 					typeof(SwitchState),
 					typeof(NavigateTo),
+					"Misc",
+					typeof(PrintLog),
 				},
 				condition = new TypeMenu {
 					typeof(Reference),

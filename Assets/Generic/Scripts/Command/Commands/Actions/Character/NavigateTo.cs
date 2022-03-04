@@ -3,10 +3,27 @@ using UnityEngine;
 
 namespace Unapparent {
 	public class NavigateTo : Command {
-		GameObject destination;
+		public GameObject destination;
+		public Command arrival = null;
+		bool hasArrival {
+			get => arrival != null;
+			set {
+				if(hasArrival ^ !value)
+					return;
+				if(value == true)
+					arrival = Create(typeof(Sequential));
+				else {
+					arrival.Dispose();
+					arrival = null;
+				}
+				SetDirty();
+			}
+		}
 
 		public override object Execute(Carrier target) {
-			(target as Character).NavigateTo(destination.transform.position);
+			Character character = target as Character;
+			character.Arrival = arrival;
+			character.NavigateTo(destination.transform.position);
 			return null;
 		}
 
@@ -18,8 +35,20 @@ namespace Unapparent {
 				destination = IGUI.ObjectField(destination, typeof(GameObject), true) as GameObject;
 				if(old != destination)
 					SetDirty();
-				elements[1]?.Invoke();
+				if(!hasArrival) {
+					hasArrival = IGUI.Toggle(hasArrival, new GUIContent("Arrival action"));
+					elements[1]?.Invoke();
+				}
 			});
+			if(hasArrival) {
+				IGUI.Inline(() =>
+					arrival.Inspect(() => IGUI.Label("Arrive"), () => {
+						if(IGUI.Button("Remove")) {
+							if(IGUI.Confirm("Removing arrival action, proceed?"))
+								hasArrival = false;
+						}
+					}));
+			}
 		}
 	}
 }
