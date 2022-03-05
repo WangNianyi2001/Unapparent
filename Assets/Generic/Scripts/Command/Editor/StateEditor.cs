@@ -21,6 +21,11 @@ public class StateEditor : Editor, IDisposable {
 	public override void OnInspectorGUI() {
 		IGUI.Center(() => IGUI.Italic("Do not remove/reset via the default dropdown menu."));
 
+		if(Application.isPlaying) {
+			IGUI.Center(() => IGUI.Italic("Editing state during play mode is not supported."));
+			return;
+		}
+
 		// Draw listeners list
 		EditorGUILayout.LabelField("Listeners");
 		SerializedProperty listeners = serializedObject.FindProperty("listeners");
@@ -41,13 +46,17 @@ public class StateEditor : Editor, IDisposable {
 		});
 
 		IGUI.SelectButton("Add listener", Command.TypeMenu.listener,
-			(Type type) => state.listeners.Add(Listener.Create(type)),
-			IGUI.exWidth);
+			(Type type) => {
+				state.listeners.Add(Listener.Create(type));
+				EditorUtility.SetDirty(state);
+			}, IGUI.exWidth);
 		if(IGUI.Button("Remove component", IGUI.exWidth)) {
 			if(EditorUtility.DisplayDialog("Warning",
 				"You're about to remove this state component.",
-				"Continue", "Cancel"))
+				"Continue", "Cancel")) {
 				Dispose();
+				EditorUtility.SetDirty(state);
+			}
 		}
 		serializedObject.ApplyModifiedProperties();
 	}
