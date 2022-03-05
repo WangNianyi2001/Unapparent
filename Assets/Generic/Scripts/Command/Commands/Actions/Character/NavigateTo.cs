@@ -33,8 +33,10 @@ namespace Unapparent {
 				IGUI.Label("Navigate to");
 				GameObject old = destination;
 				destination = IGUI.ObjectField(destination, typeof(GameObject), true) as GameObject;
-				if(old != destination)
+				if(old != destination) {
+					Debug.Log("hello");
 					SetDirty();
+				}
 				if(!hasArrival) {
 					hasArrival = IGUI.Toggle(hasArrival, new GUIContent("Arrival action"));
 					elements[1]?.Invoke();
@@ -49,6 +51,11 @@ namespace Unapparent {
 						}
 					}));
 			}
+		}
+
+		public override void Dispose() {
+			arrival?.Dispose();
+			base.Dispose();
 		}
 	}
 }

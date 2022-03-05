@@ -2,9 +2,9 @@ using System;
 
 namespace Unapparent {
 	public abstract class Listener : Command {
-		public static Listener Create(Type type) {
-			Listener listener = Command.Create(type) as Listener;
-			listener.command = Command.Create(typeof(Sequential));
+		public static new Listener Create(Type type, Command parent = null) {
+			Listener listener = Command.Create(type, parent) as Listener;
+			listener.command = Command.Create(typeof(Sequential), listener);
 			return listener;
 		}
 
