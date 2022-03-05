@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 648509c46350b5b4b8d7befcd3f910cc, type: 3}
-  m_Name: d057dadf8f5ff2a4fbe6f6df3e418f41
+  m_Script: {fileID: 11500000, guid: 5480f82ba23261f4c87fcd0e06ce2cd9, type: 3}
+  m_Name: 9fed82dd76efbfd4198f925c48c4a367
   m_EditorClassIdentifier: 
-  parent: {fileID: 0}
-  guid: d057dadf8f5ff2a4fbe6f6df3e418f41
-  command: {fileID: 11400000, guid: 022a1aea4206c5d40a4f5e0947ce0d4d, type: 2}
+  parent: {fileID: 11400000, guid: 89cabb40203f7d74c8cc72994f74ac0c, type: 2}
+  guid: 9fed82dd76efbfd4198f925c48c4a367
+  text: hello, world

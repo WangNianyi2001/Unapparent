@@ -31,6 +31,7 @@ namespace Unapparent {
 					"Character",
 					typeof(SwitchState),
 					typeof(NavigateTo),
+					typeof(SpeakLine),
 					"Misc",
 					typeof(PrintLog),
 				},

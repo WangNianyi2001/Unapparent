@@ -18,7 +18,7 @@ namespace Unapparent {
 					IGUI.Center(() => IGUI.Italic("Empty"));
 				else {
 					for(int i = 0; i < sequence.Count; ++i) {
-						sequence[i].Inspect(
+						sequence[i]?.Inspect(
 							() => IGUI.Bold(i.ToString(), GUILayout.MinWidth(18)),
 							() => {
 								int j = i;

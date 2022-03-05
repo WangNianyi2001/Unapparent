@@ -12,7 +12,7 @@ namespace Unapparent {
 
 		public Character character;
 		public string text;
-		public List<Option> options;
+		public List<Option> options = new List<Option>();
 
 		public static GameObject MakeOptionButton(Option option) {
 			GameObject prefab = Resources.Load<GameObject>("Option button");

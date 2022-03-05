@@ -1122,7 +1122,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1025284385}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58289612be723024a95f562b870b1882, type: 3}
+  m_Script: {fileID: 11500000, guid: b925b9ce6e9bd51419926588bbb37199, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   initialState: {fileID: 1691375164}
@@ -1257,7 +1257,7 @@ GameObject:
   - component: {fileID: 1041870621}
   - component: {fileID: 1041870624}
   m_Layer: 5
-  m_Name: Static
+  m_Name: Info
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1853,7 +1853,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   listeners:
-  - {fileID: 11400000, guid: d057dadf8f5ff2a4fbe6f6df3e418f41, type: 2}
+  - {fileID: 11400000, guid: c34e79a5839cb294eba1d85811f4cef7, type: 2}
 --- !u!4 &1691375166
 Transform:
   m_ObjectHideFlags: 0

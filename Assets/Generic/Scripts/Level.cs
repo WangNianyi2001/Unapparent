@@ -10,9 +10,10 @@ namespace Unapparent {
 		public GameObject ui;
 
 		public void ShowMonologue(Monologue monologue) {
-			ui.transform.Find("Name").GetComponent<Text>().text = monologue.character.displayName;
-			ui.transform.Find("Text").GetComponent<Text>().text = monologue.text;
-			GameObject optionsObj = ui.transform.Find("Options").gameObject;
+			Transform info = ui.transform.Find("Monologue/Content/Info");
+			info.Find("Name").GetComponent<Text>().text = monologue.character.displayName;
+			info.Find("Text").GetComponent<Text>().text = monologue.text;
+			GameObject optionsObj = ui.transform.Find("Monologue/Content/Options").gameObject;
 			foreach(Monologue.Option option in monologue.options) {
 				GameObject optionObj = Monologue.MakeOptionButton(option);
 				optionObj.transform.parent = optionsObj.transform;
