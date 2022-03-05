@@ -12,6 +12,8 @@ namespace Unapparent {
 			set => arrival = value;
 		}
 
+		public string displayName;
+
 		public float checkFrequency = .5f;
 
 		void CheckArrival() {
