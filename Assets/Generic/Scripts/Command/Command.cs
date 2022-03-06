@@ -14,15 +14,8 @@ namespace Unapparent {
 	}
 
 	[Serializable]
-	public abstract class Command : ScriptableObject {
-		public static string sceneDir {
-			get {
-				string fullPath = UnityEngine.SceneManagement.SceneManager.GetActiveScene().path;
-				return fullPath.Substring(0, fullPath.LastIndexOf('/'));
-			}
-		}
+	public abstract class Command : ScriptableObject, IDisposable {
 		public const string commandsFolderName = "Commands";
-		public static string commandsPath => $"{sceneDir}/{commandsFolderName}";
 
 		public class TypeMenu : IGUI.SelectMenu<Type, TypeMenu.Labelizer> {
 			public class Labelizer : IGUI.Labelizer<Type> {
@@ -31,15 +24,25 @@ namespace Unapparent {
 
 			public static TypeMenu
 				statement = new TypeMenu {
+					typeof(Reference),
+					"Control",
 					typeof(Conditional),
 					typeof(Sequential),
+					"Character",
 					typeof(SwitchState),
+					typeof(NavigateTo),
+					"Misc",
+					typeof(PrintLog),
 				},
 				condition = new TypeMenu {
+					typeof(Reference),
 					typeof(BoolConstant),
+				},
+				listener = new TypeMenu {
+					typeof(OnStart),
 				};
 		}
-		
+
 		public Command parent = null;
 		public string guid;
 
@@ -60,42 +63,23 @@ namespace Unapparent {
 		}
 
 		public static Command Create(Type type, Command parent = null) {
-#if UNITY_EDITOR
-			if(!AssetDatabase.IsValidFolder(commandsPath)) {
-				bool success = AssetDatabase.CreateFolder(sceneDir, commandsFolderName).Length != 0;
-				if(!success) {
-					Debug.LogWarning($"Folder {commandsPath} creation failed");
-					return null;
-				}
-			}
-#endif
 			Command command = CreateInstance(type) as Command;
-			command.parent = parent;
 #if UNITY_EDITOR
-			string path = AssetDatabase.GenerateUniqueAssetPath($"{commandsPath}/Command.asset");
-			AssetDatabase.CreateAsset(command, path);
-			command.guid = AssetDatabase.AssetPathToGUID(path);
-			// Debug.Log($"Creating {command.guid}");
-			command.SetDirty();
-			AssetDatabase.RenameAsset(path, command.guid);
+			command.guid = ManagedAsset.CreateAsset(command, commandsFolderName);
 #endif
+			command.parent = parent;
+			command.SetDirty();
 			return command;
 		}
 
-		public abstract object Execute();
+		public abstract object Execute(Carrier target);
 
 		public abstract void Inspect(ArgList<Action> elements);
 		public void Inspect(params Action[] elements) => Inspect(new ArgList<Action>(elements));
-	}
 
-#if UNITY_EDITOR
-	[CustomPropertyDrawer(typeof(Command))]
-	public class CommandDrawer : PropertyDrawer {
-		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
-			EditorGUI.PrefixLabel(position, label);
-			Command target = property.objectReferenceValue as Command;
-			target?.Inspect();
+		public void ShowRefBtn() {
+			if(IGUI.Button("Ref"))
+				EditorGUIUtility.PingObject(this);
 		}
 	}
-#endif
 }

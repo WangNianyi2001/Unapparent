@@ -3,12 +3,10 @@ using UnityEngine;
 
 namespace Unapparent {
 	public class SwitchState : Command {
-		GameObject destination = null;
+		public GameObject destination = null;
 
-		public override object Execute() {
-			// TODO
-			return null;
-		}
+		public override object Execute(Carrier target) =>
+			target.state = destination.GetComponent<State>();
 
 		public override void Inspect(ArgList<Action> elements) {
 			IGUI.Inline(() => {
@@ -22,6 +20,7 @@ namespace Unapparent {
 				if(old != destination)
 					SetDirty();
 				IGUI.FillLine();
+				ShowRefBtn();
 				elements[1]?.Invoke();
 			});
 		}

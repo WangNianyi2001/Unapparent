@@ -2,7 +2,7 @@ using System;
 
 namespace Unapparent {
 	public class Conditional : Command {
-		Command condition = null;
+		public Command condition = null;
 
 		[Serializable]
 		public class Branch {
@@ -13,7 +13,7 @@ namespace Unapparent {
 			}
 
 			public void Dispose() => statement?.Dispose();
-			public object Execute() => statement?.Execute();
+			public object Execute(Carrier target) => statement?.Execute(target);
 
 			public void Inspect(string title) {
 				if(statement == null) {
@@ -40,10 +40,8 @@ namespace Unapparent {
 			falseBranch = new Branch(this);
 		}
 
-		public override object Execute() {
-			// TODO
-			return null;
-		}
+		public override object Execute(Carrier target) =>
+			((bool)condition?.Execute(target) ? trueBranch : falseBranch)?.Execute(target);
 
 		public override void Inspect(ArgList<Action> elements) {
 			IGUI.Indent(() => {
@@ -67,6 +65,7 @@ namespace Unapparent {
 				});
 				trueBranch.Inspect("Then");
 				falseBranch.Inspect("Else");
+				ShowRefBtn();
 				elements[1]?.Invoke();
 			}, elements[0]);
 		}
