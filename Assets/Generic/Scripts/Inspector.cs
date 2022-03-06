@@ -174,5 +174,11 @@ namespace Unapparent {
 			text = EditorGUILayout.TextField(text);
 			return old != text;
 		}
+
+		public static bool FloatField(ref float number) {
+			float old = number;
+			number = EditorGUILayout.FloatField(number);
+			return old != number;
+		}
 	}
 }

@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parent: {fileID: 11400000, guid: aaa8fe964b2550f408301190d58b6da2, type: 2}
   destination: {fileID: 0}
-  remainingDistance: 1
+  tolerance: 2
   arrival: {fileID: 0}
   useArrival: 0

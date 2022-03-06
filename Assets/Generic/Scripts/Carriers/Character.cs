@@ -27,7 +27,8 @@ namespace Unapparent {
 			Invoke("CheckArrival", checkFrequency);
 		}
 
-		public void NavigateTo(Vector3 location) {
+		public void NavigateTo(Vector3 location, float tolerance = 1f) {
+			agent.stoppingDistance = tolerance;
 			agent.SetDestination(location);
 			Invoke("CheckArrival", checkFrequency);
 		}

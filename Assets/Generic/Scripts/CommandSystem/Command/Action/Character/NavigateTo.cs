@@ -4,14 +4,14 @@ using UnityEngine;
 namespace Unapparent {
 	public class NavigateTo : Command {
 		public GameObject destination;
-		public float remainingDistance = 1f;
+		public float tolerance = 1f;
 		public Command arrival = null;
 		public bool useArrival = false;
 
 		public override object Execute(Carrier target) {
 			Character character = target as Character;
 			character.Arrival = arrival;
-			character.NavigateTo(destination.transform.position);
+			character.NavigateTo(destination.transform.position, tolerance);
 			return null;
 		}
 
@@ -21,6 +21,14 @@ namespace Unapparent {
 				IGUI.Label("Navigate to");
 				if(IGUI.ObjectField(ref destination, true))
 					SetDirty();
+			});
+
+			IGUI.Inline(() => {
+				IGUI.Label("Tolerance");
+				if(IGUI.FloatField(ref tolerance)) {
+					tolerance = Mathf.Clamp(tolerance, .1f, 10f);
+					SetDirty();
+				}
 				if(IGUI.Toggle(ref useArrival))
 					SetDirty();
 				if(!useArrival)
