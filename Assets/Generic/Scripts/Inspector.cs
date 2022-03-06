@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Unapparent {
+	public interface IInspectable {
+		public void Inspect(ArgList<Action> elements);
+	}
+
 	public static class IGUI {
 		// Flags
 
@@ -144,17 +148,37 @@ namespace Unapparent {
 			menu.ShowAsContext();
 		}
 
-		public static UnityEngine.Object ObjectField(UnityEngine.Object obj, Type objType, bool allowSceneObjects, params GUILayoutOption[] options) =>
-			EditorGUILayout.ObjectField(obj, objType, allowSceneObjects, options);
+		public static bool ObjectField<T>(ref T obj, Type type, bool allowSceneObjects, params GUILayoutOption[] options)
+			where T : UnityEngine.Object {
+			T old = obj;
+			obj = EditorGUILayout.ObjectField(obj, type, allowSceneObjects, options) as T;
+			return old != obj;
+		}
 
-		public static bool Toggle(bool value, GUIContent label, params GUILayoutOption[] options) =>
-			GUILayout.Toggle(value, label, options);
+		public static bool ObjectField<T>(ref T obj, bool allowSceneObjects, params GUILayoutOption[] options)
+			where T : UnityEngine.Object => ObjectField(ref obj, typeof(T), allowSceneObjects, options);
+
+		public static bool Toggle(ref bool value, params GUILayoutOption[] options) {
+			bool old = value;
+			value = GUILayout.Toggle(value, GUIContent.none, options);
+			return old != value;
+		}
 
 
 		public static bool Confirm(string text) {
 			return EditorUtility.DisplayDialog("Confirm", text, "Proceed", "Cancel");
 		}
 
-		public static string TextField(string text) => EditorGUILayout.TextField(text);
+		public static bool TextField(ref string text) {
+			string old = text;
+			text = EditorGUILayout.TextField(text);
+			return old != text;
+		}
+
+		public static bool FloatField(ref float number) {
+			float old = number;
+			number = EditorGUILayout.FloatField(number);
+			return old != number;
+		}
 	}
 }
