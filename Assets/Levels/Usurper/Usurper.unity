@@ -250,6 +250,51 @@ Transform:
   m_Father: {fileID: 734699437}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &458441823
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 458441824}
+  - component: {fileID: 458441825}
+  m_Layer: 0
+  m_Name: New State
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &458441824
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458441823}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1025284389}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &458441825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458441823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d88cdcc3b8a499248843538b2af36a3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  listeners:
+  - {fileID: 11400000, guid: 0ea63ae1c3837eb498a827f60409ce3a, type: 2}
 --- !u!1 &688751367
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,7 +605,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1691375166}
+  - {fileID: 458441824}
   m_Father: {fileID: 2137512770}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -576,7 +621,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b925b9ce6e9bd51419926588bbb37199, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialState: {fileID: 1691375164}
+  initialState: {fileID: 0}
   displayName: Protagonist
   checkFrequency: 0.5
 --- !u!195 &1025284391
@@ -975,51 +1020,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1691375164
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1691375166}
-  - component: {fileID: 1691375165}
-  m_Layer: 0
-  m_Name: Test State
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1691375165
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1691375164}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d88cdcc3b8a499248843538b2af36a3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  listeners:
-  - {fileID: 11400000, guid: 66d0e283c27f0744fba7d38249b53461, type: 2}
---- !u!4 &1691375166
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1691375164}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1025284389}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1888609662
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1147,6 +1147,11 @@ MonoBehaviour:
   m_VoxelSize: 0.16666667
   m_BuildHeightMesh: 0
   m_NavMeshData: {fileID: 23800000, guid: af4f68dfbf992e741974a0aaadb25f19, type: 2}
+--- !u!1 &1958417873 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4214099901942593145, guid: 827a33254da50ad4a825672067d97b70, type: 3}
+  m_PrefabInstance: {fileID: 1888609662}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2044079950
 GameObject:
   m_ObjectHideFlags: 0
@@ -1228,3 +1233,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 1888609663}
+  monologueObj: {fileID: 1958417873}
