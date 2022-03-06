@@ -28,6 +28,7 @@ namespace Unapparent {
 					"Control",
 					typeof(Conditional),
 					typeof(Sequential),
+					typeof(Agent),
 					"Character",
 					typeof(SwitchState),
 					typeof(NavigateTo),

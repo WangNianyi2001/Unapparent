@@ -26,13 +26,11 @@ namespace Unapparent {
 			IGUI.Inline(() => {
 				elements[0]?.Invoke();
 				IGUI.Label("Invoke command");
-				UnityEngine.Object old = selected;
-				selected = IGUI.ObjectField(
-					selected, typeof(UnityEngine.Object), true,
-					GUILayout.ExpandWidth(true)
-				);
 				command = ParseCommand(selected);
-				if(old != selected) {
+				if(IGUI.ObjectField(
+					ref selected, typeof(UnityEngine.Object), true,
+					GUILayout.ExpandWidth(true)
+				)) {
 					command = ParseCommand(selected);
 					SetDirty();
 				}

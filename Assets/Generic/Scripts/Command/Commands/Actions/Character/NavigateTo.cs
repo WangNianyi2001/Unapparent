@@ -31,9 +31,7 @@ namespace Unapparent {
 			IGUI.Inline(() => {
 				elements[0]?.Invoke();
 				IGUI.Label("Navigate to");
-				GameObject old = destination;
-				destination = IGUI.ObjectField(destination, typeof(GameObject), true) as GameObject;
-				if(old != destination) {
+				if(IGUI.ObjectField(ref destination, typeof(GameObject), true)) {
 					Debug.Log("hello");
 					SetDirty();
 				}

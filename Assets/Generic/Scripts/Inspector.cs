@@ -144,8 +144,14 @@ namespace Unapparent {
 			menu.ShowAsContext();
 		}
 
-		public static UnityEngine.Object ObjectField(UnityEngine.Object obj, Type objType, bool allowSceneObjects, params GUILayoutOption[] options) =>
-			EditorGUILayout.ObjectField(obj, objType, allowSceneObjects, options);
+		public static bool ObjectField<T>(ref T obj, Type objType, bool allowSceneObjects, params GUILayoutOption[] options)
+			where T : UnityEngine.Object{
+			T old = obj;
+			obj = EditorGUILayout.ObjectField(obj, objType, allowSceneObjects, options) as T;
+			if(old != obj)
+				return true;
+			return false;
+		}
 
 		public static bool Toggle(bool value, GUIContent label, params GUILayoutOption[] options) =>
 			GUILayout.Toggle(value, label, options);
