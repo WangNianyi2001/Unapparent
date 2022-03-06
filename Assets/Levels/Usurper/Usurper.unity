@@ -814,7 +814,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialState: {fileID: 458441823}
-  profile: {fileID: 11400000, guid: ed55b50e5244e3947a03f5718c1c7cb1, type: 2}
+  profile: {fileID: 11400000, guid: df534965fa9be0c4ba5b41a3e7516964, type: 2}
   checkFrequency: 0.5
 --- !u!195 &1025284391
 NavMeshAgent:

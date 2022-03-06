@@ -12,7 +12,7 @@ namespace Unapparent {
 			set => arrival = value;
 		}
 
-		public CharacterProfile profile;
+		public LogueProfile profile;
 
 		public float checkFrequency = .5f;
 

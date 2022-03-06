@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45bb0a8ab69b0b845aa0bfb449af9935, type: 3}
   m_Name: Protagonist
   m_EditorClassIdentifier: 
-  name: Grothendieck
+  name: Protagonist
