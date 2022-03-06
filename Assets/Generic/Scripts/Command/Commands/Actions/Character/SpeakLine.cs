@@ -3,11 +3,16 @@ using System;
 namespace Unapparent {
 	public class SpeakLine : Command {
 		public string text;
+		public Command next = null;
 
 		public override object Execute(Carrier target) {
 			Monologue monologue = new Monologue();
 			monologue.character = target as Character;
 			monologue.text = text;
+			Monologue.Option option;
+			option.text = "Next";
+			option.command = next;
+			monologue.options.Add(option);
 			Level.current.ShowMonologue(monologue);
 			return null;
 		}

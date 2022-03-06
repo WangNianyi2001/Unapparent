@@ -63,6 +63,8 @@ namespace Unapparent {
 #endif
 		}
 
+		~Command() => Dispose();
+
 		public static Command Create(Type type, Command parent = null) {
 			Command command = CreateInstance(type) as Command;
 #if UNITY_EDITOR

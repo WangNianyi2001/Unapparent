@@ -15,11 +15,14 @@ namespace Unapparent {
 		public List<Option> options = new List<Option>();
 
 		public static GameObject MakeOptionButton(Option option) {
-			GameObject prefab = Resources.Load<GameObject>("Option button");
+			GameObject prefab = Object.Instantiate(Resources.Load<GameObject>("Option Button"));
 			prefab.GetComponentInChildren<Text>().text = option.text;
-			UnityEvent ev = new UnityEvent();
-			ev.AddListener(() => option.command?.Execute(null));
-			prefab.GetComponentInChildren<Button>().onClick = ev as Button.ButtonClickedEvent;
+			Button.ButtonClickedEvent ev = new Button.ButtonClickedEvent();
+			ev.AddListener(() => {
+				option.command?.Execute(null);
+				Level.current.CloseMonologue();
+			});
+			prefab.GetComponentInChildren<Button>().onClick = ev;
 			return prefab;
 		}
 	}

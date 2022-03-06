@@ -16,20 +16,21 @@ namespace Unapparent {
 			GameObject optionsObj = canvas.transform.Find("Monologue/Content/Options").gameObject;
 			foreach(Monologue.Option option in monologue.options) {
 				GameObject optionObj = Monologue.MakeOptionButton(option);
-				optionObj.transform.parent = optionsObj.transform;
+				optionObj.transform.SetParent(optionsObj.transform, false);
 			}
-			canvas.gameObject.SetActive(true);
+			canvas.SetActive(true);
 		}
 
 		public void CloseMonologue() {
-			GameObject options = canvas.transform.Find("Options").gameObject;
-			while(options.transform.childCount > 0)
-				Destroy(options.transform.GetChild(0).gameObject);
+			canvas.SetActive(false);
+			GameObject optionsObj = canvas.transform.Find("Monologue/Content/Options").gameObject;
+			foreach(Transform child in optionsObj.transform)
+				Destroy(child.gameObject);
 		}
 
 #if UNITY_EDITOR
 		public void Update() {
-			canvas = current.gameObject.GetComponentInChildren<Canvas>().gameObject;
+			canvas = current.gameObject.GetComponentInChildren<Canvas>(true).gameObject;
 		}
 #endif
 	}

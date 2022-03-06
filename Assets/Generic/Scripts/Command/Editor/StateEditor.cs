@@ -7,6 +7,10 @@ using Unapparent;
 public class StateEditor : Editor, IDisposable {
 	State state;
 
+	public void OnEnable() {
+		state = serializedObject.targetObject as State;
+	}
+
 	public void Dispose() {
 		foreach(Listener listener in state.listeners)
 			listener.command?.Dispose();
@@ -14,13 +18,8 @@ public class StateEditor : Editor, IDisposable {
 		else Destroy(state);
 	}
 
-	public void OnEnable() {
-		state = serializedObject.targetObject as State;
-	}
-
 	public override void OnInspectorGUI() {
 		IGUI.Center(() => IGUI.Italic("Do not remove/reset via the default dropdown menu."));
-
 		if(Application.isPlaying) {
 			IGUI.Center(() => IGUI.Italic("Editing state during play mode is not supported."));
 			return;
