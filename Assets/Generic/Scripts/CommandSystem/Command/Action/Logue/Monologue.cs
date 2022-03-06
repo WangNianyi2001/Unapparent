@@ -5,13 +5,29 @@ using UnityEngine.UI;
 
 namespace Unapparent {
 	public class Monologue : Command {
-		public struct Option {
+		public class Option : Command {
 			public string text;
 			public Command command;
+
+			public override void Inspect(ArgList<Action> elements) {
+				if(command == null)
+					command = Create<Sequential>(this);
+				IGUI.Inline(() => {
+					IGUI.Label("Option");
+					if(IGUI.TextField(ref text))
+						SetDirty();
+				});
+				command?.Inspect(null, elements[1]);
+			}
+
+			public override void Dispose() => command?.Dispose();
+
+			public override object Execute(Carrier target) => command?.Execute(target);
 		}
 
 		public Character character;
 		public string text;
+		public bool useOptions = false;
 		public List<Option> options = new List<Option>();
 		[NonSerialized] public Monologue next = null;
 
@@ -25,7 +41,7 @@ namespace Unapparent {
 		}
 
 		public Option NextOption() {
-			Option option = new Option();
+			Option option = Create<Option>(this);
 			Delegate command = Create<Delegate>(this);
 			if(next == null) {
 				option.text = "Done";
@@ -53,8 +69,29 @@ namespace Unapparent {
 				IGUI.Label("say");
 				if(IGUI.TextField(ref text))
 					SetDirty();
+				if(IGUI.Toggle(ref useOptions))
+					SetDirty();
 				ShowRefBtn();
 				elements[1]?.Invoke();
+			});
+			if(useOptions) IGUI.Block(() => {
+				IGUI.Indent(() => {
+					for(int i = 0; i < options.Count; ++i) {
+						int j = i;
+						Option option = options[j];
+						option?.Inspect(null, () => {
+							if(IGUI.Button("Remove")) {
+								options[j].Dispose();
+								options.RemoveAt(j);
+								SetDirty();
+							}
+						});
+					}
+				});
+				if(IGUI.Button("Add option", IGUI.exWidth)) {
+					options.Add(Create<Option>(this));
+					SetDirty();
+				}
 			});
 		}
 	}

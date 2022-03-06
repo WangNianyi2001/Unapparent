@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Unapparent {
+	public interface IInspectable {
+		public void Inspect(ArgList<Action> elements);
+	}
+
 	public static class IGUI {
 		// Flags
 
@@ -151,8 +155,11 @@ namespace Unapparent {
 			return old != obj;
 		}
 
-		public static bool Toggle(bool value, GUIContent label, params GUILayoutOption[] options) =>
-			GUILayout.Toggle(value, label, options);
+		public static bool Toggle(ref bool value, params GUILayoutOption[] options) {
+			bool old = value;
+			value = GUILayout.Toggle(value, GUIContent.none, options);
+			return old != value;
+		}
 
 
 		public static bool Confirm(string text) {

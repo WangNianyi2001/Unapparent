@@ -294,7 +294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   listeners:
-  - {fileID: 11400000, guid: 0ea63ae1c3837eb498a827f60409ce3a, type: 2}
+  - {fileID: 11400000, guid: 75756438ef77e8f4aa18e531561963bc, type: 2}
 --- !u!1 &688751367
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,7 +621,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b925b9ce6e9bd51419926588bbb37199, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialState: {fileID: 0}
+  initialState: {fileID: 458441823}
   displayName: Protagonist
   checkFrequency: 0.5
 --- !u!195 &1025284391

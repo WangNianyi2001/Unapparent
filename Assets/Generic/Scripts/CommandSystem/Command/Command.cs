@@ -14,7 +14,7 @@ namespace Unapparent {
 	}
 
 	[Serializable]
-	public abstract class Command : ScriptableObject, IDisposable {
+	public abstract class Command : ScriptableObject, IInspectable, IDisposable {
 		public const string commandsFolderName = "Commands";
 
 		public class TypeMenu : IGUI.SelectMenu<Type, TypeMenu.Labelizer> {

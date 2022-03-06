@@ -36,7 +36,10 @@ namespace Unapparent {
 					SetDirty();
 				}
 				if(!hasArrival) {
-					hasArrival = IGUI.Toggle(hasArrival, new GUIContent("Arrival action"));
+					bool _ = hasArrival;
+					IGUI.Label("Arrival action");
+					IGUI.Toggle(ref _);
+					hasArrival = _;
 					elements[1]?.Invoke();
 				}
 			});
