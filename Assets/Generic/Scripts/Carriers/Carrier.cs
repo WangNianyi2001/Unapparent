@@ -21,7 +21,7 @@ namespace Unapparent {
 			}
 		}
 
-		public void Start() {
+		public virtual void Start() {
 			state = initialState.GetComponent<State>();
 			TryFire(typeof(OnStart));
 		}

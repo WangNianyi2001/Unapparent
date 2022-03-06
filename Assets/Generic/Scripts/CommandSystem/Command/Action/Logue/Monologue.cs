@@ -25,7 +25,8 @@ namespace Unapparent {
 			public override object Execute(Carrier target) => command?.Execute(target);
 		}
 
-		public Character character;
+		public GameObject characterObj;
+		public Character character => characterObj.GetComponent<Character>();
 		public string text;
 		public bool useOptions = false;
 		public List<Option> options = new List<Option>();
@@ -40,7 +41,7 @@ namespace Unapparent {
 			return prefab;
 		}
 
-		public Option NextOption() {
+		public Option NextOption(Carrier target) {
 			Option option = Create<Option>(this);
 			Delegate command = Create<Delegate>(this);
 			if(next == null) {
@@ -48,7 +49,7 @@ namespace Unapparent {
 				command.action = () => Level.current.CloseMonologue();
 			} else {
 				option.text = "Next";
-				command.action = () => next.Execute(null);
+				command.action = () => next.Execute(target);
 			}
 			option.command = command;
 			return option;
@@ -56,7 +57,7 @@ namespace Unapparent {
 
 		public override object Execute(Carrier target) {
 			if(options.Count == 0)
-				options.Add(NextOption());
+				options.Add(NextOption(target));
 			Level.current.ShowMonologue(this);
 			return null;
 		}
@@ -64,7 +65,7 @@ namespace Unapparent {
 		public override void Inspect(ArgList<Action> elements) {
 			IGUI.Inline(() => {
 				elements[0]?.Invoke();
-				if(IGUI.ObjectField(ref character, true))
+				if(IGUI.ObjectField(ref characterObj, true))
 					SetDirty();
 				IGUI.Label("say");
 				if(IGUI.TextField(ref text))
@@ -93,6 +94,12 @@ namespace Unapparent {
 					SetDirty();
 				}
 			});
+		}
+
+		public override void Dispose() {
+			foreach(Option option in options)
+				option?.Dispose();
+			base.Dispose();
 		}
 	}
 }

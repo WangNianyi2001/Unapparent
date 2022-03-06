@@ -4,21 +4,9 @@ using UnityEngine;
 namespace Unapparent {
 	public class NavigateTo : Command {
 		public GameObject destination;
+		public float remainingDistance = 1f;
 		public Command arrival = null;
-		bool hasArrival {
-			get => arrival != null;
-			set {
-				if(hasArrival ^ !value)
-					return;
-				if(value == true)
-					arrival = Create<Sequential>(this);
-				else {
-					arrival.Dispose();
-					arrival = null;
-				}
-				SetDirty();
-			}
-		}
+		public bool useArrival = false;
 
 		public override object Execute(Carrier target) {
 			Character character = target as Character;
@@ -31,26 +19,27 @@ namespace Unapparent {
 			IGUI.Inline(() => {
 				elements[0]?.Invoke();
 				IGUI.Label("Navigate to");
-				if(IGUI.ObjectField(ref destination, true)) {
-					Debug.Log("hello");
+				if(IGUI.ObjectField(ref destination, true))
 					SetDirty();
-				}
-				if(!hasArrival) {
-					bool _ = hasArrival;
-					IGUI.Label("Arrival action");
-					IGUI.Toggle(ref _);
-					hasArrival = _;
+				if(IGUI.Toggle(ref useArrival))
+					SetDirty();
+				if(!useArrival)
 					elements[1]?.Invoke();
-				}
 			});
-			if(hasArrival) {
-				IGUI.Inline(() =>
-					arrival.Inspect(() => IGUI.Label("Arrive"), () => {
+			if(useArrival) {
+				if(arrival == null)
+					arrival = Create<Sequential>(this);
+				IGUI.Inline(
+					() => arrival.Inspect(() => IGUI.Label("Arrive"),
+					() => {
 						if(IGUI.Button("Remove")) {
-							if(IGUI.Confirm("Removing arrival action, proceed?"))
-								hasArrival = false;
+							if(IGUI.Confirm("Removing arrival action, proceed?")) {
+								arrival?.Dispose();
+								arrival = null;
+							}
 						}
-					}));
+					})
+				);
 			}
 		}
 

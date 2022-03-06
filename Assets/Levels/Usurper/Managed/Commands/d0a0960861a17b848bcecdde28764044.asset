@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: e02261e51598a1145aba4581aa7db029
+  m_Name: d0a0960861a17b848bcecdde28764044
   m_EditorClassIdentifier: Assembly-CSharp:Unapparent:Monologue/Option
-  parent: {fileID: 11400000, guid: d25c38868bf9af84baae99ac4b04953a, type: 2}
-  guid: e02261e51598a1145aba4581aa7db029
-  text: 
-  command: {fileID: 11400000, guid: 56806cf8ae964544799cbe3090b5ee5e, type: 2}
+  parent: {fileID: 11400000, guid: 5081cb509f22d7d4e9420173877cdbe9, type: 2}
+  guid: d0a0960861a17b848bcecdde28764044
+  text: Lower
+  command: {fileID: 11400000, guid: c7920fc1e0591784693fd987f1a818ab, type: 2}

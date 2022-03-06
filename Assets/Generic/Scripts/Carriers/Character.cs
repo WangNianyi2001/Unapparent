@@ -28,6 +28,7 @@ namespace Unapparent {
 		}
 
 		public void NavigateTo(Vector3 location) {
+			Debug.Log($"{this} {displayName} {agent}");
 			agent.SetDestination(location);
 			Invoke("CheckArrival", checkFrequency);
 		}
@@ -36,8 +37,9 @@ namespace Unapparent {
 			walkableLayerMask = LayerMask.GetMask("Walkable");
 		}
 
-		public new void Start() {
+		public override void Start() {
 			agent = GetComponent<NavMeshAgent>();
+			Debug.Log($"{this} {displayName} {agent}");
 			base.Start();
 		}
 	}
