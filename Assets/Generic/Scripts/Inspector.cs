@@ -144,13 +144,11 @@ namespace Unapparent {
 			menu.ShowAsContext();
 		}
 
-		public static bool ObjectField<T>(ref T obj, Type objType, bool allowSceneObjects, params GUILayoutOption[] options)
+		public static bool ObjectField<T>(ref T obj, bool allowSceneObjects, params GUILayoutOption[] options)
 			where T : UnityEngine.Object{
 			T old = obj;
-			obj = EditorGUILayout.ObjectField(obj, objType, allowSceneObjects, options) as T;
-			if(old != obj)
-				return true;
-			return false;
+			obj = EditorGUILayout.ObjectField(obj, typeof(T), allowSceneObjects, options) as T;
+			return old != obj;
 		}
 
 		public static bool Toggle(bool value, GUIContent label, params GUILayoutOption[] options) =>
@@ -161,6 +159,10 @@ namespace Unapparent {
 			return EditorUtility.DisplayDialog("Confirm", text, "Proceed", "Cancel");
 		}
 
-		public static string TextField(string text) => EditorGUILayout.TextField(text);
+		public static bool TextField(ref string text) {
+			string old = text;
+			text = EditorGUILayout.TextField(text);
+			return old != text;
+		}
 	}
 }

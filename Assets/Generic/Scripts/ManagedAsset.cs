@@ -29,6 +29,8 @@ namespace Unapparent {
 
 		// Create asset and return GUID
 		public static string CreateAsset(Object obj, string folderName, string suffix = ".asset", string name = null) {
+			if(Application.isPlaying)
+				return null;
 			string folder = EstablishSceneFolder(folderName);
 			string path = Path.Combine(folder, "Generated Asset");
 			path += suffix;

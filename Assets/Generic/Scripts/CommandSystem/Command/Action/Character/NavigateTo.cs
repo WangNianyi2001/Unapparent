@@ -11,7 +11,7 @@ namespace Unapparent {
 				if(hasArrival ^ !value)
 					return;
 				if(value == true)
-					arrival = Create(typeof(Sequential));
+					arrival = Create<Sequential>(this);
 				else {
 					arrival.Dispose();
 					arrival = null;
@@ -31,7 +31,7 @@ namespace Unapparent {
 			IGUI.Inline(() => {
 				elements[0]?.Invoke();
 				IGUI.Label("Navigate to");
-				if(IGUI.ObjectField(ref destination, typeof(GameObject), true)) {
+				if(IGUI.ObjectField(ref destination, true)) {
 					Debug.Log("hello");
 					SetDirty();
 				}

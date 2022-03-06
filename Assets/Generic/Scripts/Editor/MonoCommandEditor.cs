@@ -9,7 +9,7 @@ namespace Unapparent {
 		public void OnEnable() {
 			mc = serializedObject.targetObject as MonoCommand;
 			if(mc.command == null)
-				mc.command = Command.Create(typeof(Sequential));
+				mc.command = Command.Create<Sequential>(null);
 		}
 
 		public void Dispose() {

@@ -7,30 +7,36 @@ namespace Unapparent {
 	public class Level : MonoBehaviour {
 		public static Level current => SceneManager.GetActiveScene().GetRootGameObjects()[0]?.GetComponent<Level>();
 
-		public GameObject canvas;
+		public GameObject canvas, monologueObj;
+
+		public void ClearOptions() {
+			GameObject optionsObj = monologueObj.transform.Find("Content/Options").gameObject;
+			foreach(Transform child in optionsObj.transform)
+				Destroy(child.gameObject);
+		}
 
 		public void ShowMonologue(Monologue monologue) {
-			Transform info = canvas.transform.Find("Monologue/Content/Info");
+			ClearOptions();
+			Transform info = monologueObj.transform.Find("Content/Info");
 			info.Find("Name").GetComponent<Text>().text = monologue.character.displayName;
 			info.Find("Text").GetComponent<Text>().text = monologue.text;
-			GameObject optionsObj = canvas.transform.Find("Monologue/Content/Options").gameObject;
+			GameObject optionsObj = monologueObj.transform.Find("Content/Options").gameObject;
 			foreach(Monologue.Option option in monologue.options) {
-				GameObject optionObj = Monologue.MakeOptionButton(option);
+				GameObject optionObj = monologue.MakeOptionButton(option);
 				optionObj.transform.SetParent(optionsObj.transform, false);
 			}
-			canvas.SetActive(true);
+			monologueObj.SetActive(true);
 		}
 
 		public void CloseMonologue() {
-			canvas.SetActive(false);
-			GameObject optionsObj = canvas.transform.Find("Monologue/Content/Options").gameObject;
-			foreach(Transform child in optionsObj.transform)
-				Destroy(child.gameObject);
+			monologueObj.SetActive(false);
+			ClearOptions();
 		}
 
 #if UNITY_EDITOR
 		public void Update() {
 			canvas = current.gameObject.GetComponentInChildren<Canvas>(true).gameObject;
+			monologueObj = canvas.transform.Find("Monologue").gameObject;
 		}
 #endif
 	}

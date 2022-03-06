@@ -9,13 +9,13 @@ namespace Unapparent {
 
 		public override void Inspect(ArgList<Action> elements) {
 			if(command == null) {
-				command = Create(typeof(Sequential));
+				command = Create<Sequential>(this);
 				SetDirty();
 			}
 			IGUI.Inline(() => {
 				elements[0]?.Invoke();
 				IGUI.Label("Agent");
-				if(IGUI.ObjectField(ref carrier, typeof(Carrier), true))
+				if(IGUI.ObjectField(ref carrier, true))
 					SetDirty();
 			});
 			command?.Inspect(null, elements[1]);

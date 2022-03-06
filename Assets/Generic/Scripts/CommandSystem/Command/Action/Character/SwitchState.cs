@@ -12,10 +12,7 @@ namespace Unapparent {
 			IGUI.Inline(() => {
 				elements[0]?.Invoke();
 				IGUI.Label("Switch to state");
-				if(IGUI.ObjectField(
-					ref destination, typeof(GameObject), true,
-					GUILayout.ExpandWidth(true)
-				))
+				if(IGUI.ObjectField(ref destination, true, IGUI.exWidth))
 					SetDirty();
 				IGUI.FillLine();
 				ShowRefBtn();

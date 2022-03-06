@@ -25,6 +25,9 @@ namespace Unapparent {
 			public static TypeMenu
 				statement = new TypeMenu {
 					typeof(Reference),
+					"Logue",
+					typeof(Monologue),
+					typeof(Logue),
 					"Control",
 					typeof(Conditional),
 					typeof(Sequential),
@@ -32,9 +35,6 @@ namespace Unapparent {
 					"Character",
 					typeof(SwitchState),
 					typeof(NavigateTo),
-					typeof(SpeakLine),
-					"Misc",
-					typeof(PrintLog),
 				},
 				condition = new TypeMenu {
 					typeof(Reference),
@@ -66,7 +66,7 @@ namespace Unapparent {
 
 		~Command() => Dispose();
 
-		public static Command Create(Type type, Command parent = null) {
+		public static Command Create(Type type, Command parent) {
 			Command command = CreateInstance(type) as Command;
 #if UNITY_EDITOR
 			command.guid = ManagedAsset.CreateAsset(command, commandsFolderName);
@@ -75,6 +75,8 @@ namespace Unapparent {
 			command.SetDirty();
 			return command;
 		}
+
+		public static T Create<T>(Command parent) where T : Command => Create(typeof(T), parent) as T;
 
 		public abstract object Execute(Carrier target);
 
