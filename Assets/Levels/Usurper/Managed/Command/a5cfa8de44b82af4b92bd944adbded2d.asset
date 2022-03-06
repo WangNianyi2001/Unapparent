@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd03c70757b91f74f96c0d0b3e811039, type: 3}
-  m_Name: 5081cb509f22d7d4e9420173877cdbe9
+  m_Name: a5cfa8de44b82af4b92bd944adbded2d
   m_EditorClassIdentifier: 
-  parent: {fileID: 11400000, guid: 59ba541a5a594c443994b7dbb7652fb8, type: 2}
-  guid: 5081cb509f22d7d4e9420173877cdbe9
+  parent: {fileID: 11400000, guid: 1e0cf41e21140524f879a77468f62d97, type: 2}
   characterObj: {fileID: 0}
   text: Where to go?
   useOptions: 1
   options:
-  - {fileID: 11400000, guid: 8b138ada1e5c74b4c97ee8f20afae55d, type: 2}
-  - {fileID: 11400000, guid: d0a0960861a17b848bcecdde28764044, type: 2}
+  - {fileID: 11400000, guid: 8d84ad3067e035d45ac85a1024e1c353, type: 2}
+  - {fileID: 11400000, guid: 49807a44eed0861459ecb015edd9672f, type: 2}

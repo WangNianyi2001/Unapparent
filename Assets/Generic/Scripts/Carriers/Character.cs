@@ -12,7 +12,7 @@ namespace Unapparent {
 			set => arrival = value;
 		}
 
-		public string displayName;
+		public CharacterProfile profile;
 
 		public float checkFrequency = .5f;
 
@@ -28,7 +28,6 @@ namespace Unapparent {
 		}
 
 		public void NavigateTo(Vector3 location) {
-			Debug.Log($"{this} {displayName} {agent}");
 			agent.SetDestination(location);
 			Invoke("CheckArrival", checkFrequency);
 		}
@@ -37,9 +36,8 @@ namespace Unapparent {
 			walkableLayerMask = LayerMask.GetMask("Walkable");
 		}
 
-		public override void Start() {
+		public new void Start() {
 			agent = GetComponent<NavMeshAgent>();
-			Debug.Log($"{this} {displayName} {agent}");
 			base.Start();
 		}
 	}

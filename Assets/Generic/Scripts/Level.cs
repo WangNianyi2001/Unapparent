@@ -18,7 +18,7 @@ namespace Unapparent {
 		public void ShowMonologue(Monologue monologue) {
 			ClearOptions();
 			Transform info = monologueObj.transform.Find("Content/Info");
-			info.Find("Name").GetComponent<Text>().text = monologue.character.displayName;
+			info.Find("Name").GetComponent<Text>().text = monologue.character.profile.name;
 			info.Find("Text").GetComponent<Text>().text = monologue.text;
 			GameObject optionsObj = monologueObj.transform.Find("Content/Options").gameObject;
 			foreach(Monologue.Option option in monologue.options) {

@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Unapparent {
-	public static class ManagedAsset {
+	public class ManagedAsset : ScriptableObject {
+		protected string guid;
+
 		public const string sceneFolderName = "Managed";
 		public static string scenePath => Path.GetDirectoryName(SceneManager.GetActiveScene().path);
 
@@ -28,6 +30,7 @@ namespace Unapparent {
 		}
 
 		// Create asset and return GUID
+
 		public static string CreateAsset(Object obj, string folderName, string suffix = ".asset", string name = null) {
 			if(Application.isPlaying)
 				return null;
@@ -40,6 +43,12 @@ namespace Unapparent {
 			string res = AssetDatabase.RenameAsset(path, (name != null ? name : guid) + suffix);
 			if(!string.IsNullOrEmpty(res))
 				Debug.LogWarning(res);
+			return guid;
+		}
+
+		public static string CreateAsset(ManagedAsset obj, string folderName, string suffix = ".asset", string name = null) {
+			string guid = CreateAsset(obj as Object, folderName, suffix, name);
+			obj.guid = guid;
 			return guid;
 		}
 	}

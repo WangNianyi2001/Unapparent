@@ -14,9 +14,7 @@ namespace Unapparent {
 	}
 
 	[Serializable]
-	public abstract class Command : ScriptableObject, IInspectable, IDisposable {
-		public const string commandsFolderName = "Commands";
-
+	public abstract class Command : ManagedAsset, IInspectable, IDisposable {
 		public class TypeMenu : IGUI.SelectMenu<Type, TypeMenu.Labelizer> {
 			public class Labelizer : IGUI.Labelizer<Type> {
 				public new static string Labelize(Type obj) => obj.Name;
@@ -46,7 +44,6 @@ namespace Unapparent {
 		}
 
 		public Command parent = null;
-		public string guid;
 
 		public new void SetDirty() {
 #if UNITY_EDITOR
@@ -69,7 +66,7 @@ namespace Unapparent {
 		public static Command Create(Type type, Command parent) {
 			Command command = CreateInstance(type) as Command;
 #if UNITY_EDITOR
-			command.guid = ManagedAsset.CreateAsset(command, commandsFolderName);
+			command.guid = ManagedAsset.CreateAsset(command, "Command");
 #endif
 			command.parent = parent;
 			command.SetDirty();
