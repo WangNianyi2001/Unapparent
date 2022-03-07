@@ -1,22 +1,11 @@
 using System;
-using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine;
 
 namespace Unapparent {
-	public class ArgList<T> : List<T> {
-		public ArgList(IEnumerable<T> collection) {
-			InsertRange(0, collection);
-		}
-		public new T this[int i] {
-			get => i >= 0 && i < Count ? base[i] : default(T);
-		}
-	}
-
 	[Serializable]
 	public abstract class Command : ManagedAsset, IInspectable, IDisposable {
-		public class TypeMenu : IGUI.SelectMenu<Type, TypeMenu.Labelizer> {
-			public class Labelizer : IGUI.Labelizer<Type> {
+		public class TypeMenu : SelectMenu<Type, TypeMenu.Labelizer> {
+			public class Labelizer : Labelizer<Type> {
 				public new static string Labelize(Type obj) => obj.Name;
 			}
 
@@ -66,7 +55,7 @@ namespace Unapparent {
 		public static Command Create(Type type, Command parent) {
 			Command command = CreateInstance(type) as Command;
 #if UNITY_EDITOR
-			command.guid = ManagedAsset.CreateAsset(command, "Command");
+			command.guid = CreateAsset(command, "Command");
 #endif
 			command.parent = parent;
 			command.SetDirty();

@@ -44,7 +44,8 @@ namespace Unapparent {
 			((bool)condition?.Execute(target) ? trueBranch : falseBranch)?.Execute(target);
 
 		public override void Inspect(ArgList<Action> elements) {
-			IGUI.Indent(() => {
+			IGUI.Block(() => {
+				elements[0]?.Invoke();
 				IGUI.Inline(() => {
 					IGUI.Label("If");
 					if(condition == null) {
@@ -67,7 +68,7 @@ namespace Unapparent {
 				falseBranch.Inspect("Else");
 				ShowRefBtn();
 				elements[1]?.Invoke();
-			}, elements[0]);
+			});
 		}
 
 		public override void Dispose() {

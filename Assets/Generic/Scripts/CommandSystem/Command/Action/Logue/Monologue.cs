@@ -76,7 +76,7 @@ namespace Unapparent {
 				elements[1]?.Invoke();
 			});
 			if(useOptions) IGUI.Block(() => {
-				IGUI.Indent(() => {
+				IGUI.Block(() => {
 					for(int i = 0; i < options.Count; ++i) {
 						int j = i;
 						Option option = options[j];

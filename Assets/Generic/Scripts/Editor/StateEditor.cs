@@ -1,62 +1,43 @@
 ﻿using System;
 using UnityEngine;
 using UnityEditor;
-using Unapparent;
 
-[CustomEditor(typeof(State))]
-public class StateEditor : Editor, IDisposable {
-	State state;
+namespace Unapparent {
+	[CustomEditor(typeof(State))]
+	public class StateEditor : Editor {
+		State state;
+		InspectorList<Listener> iList;
 
-	public void OnEnable() {
-		state = serializedObject.targetObject as State;
-	}
-
-	public void Dispose() {
-		foreach(Listener listener in state.listeners)
-			listener.command?.Dispose();
-		if(Application.isEditor) DestroyImmediate(state);
-		else Destroy(state);
-	}
-
-	public override void OnInspectorGUI() {
-		IGUI.Center(() => IGUI.Italic("Do not remove/reset via the default dropdown menu."));
-		if(Application.isPlaying) {
-			IGUI.Center(() => IGUI.Italic("Editing state during play mode is not supported."));
-			return;
+		public void OnEnable() {
+			state = serializedObject.targetObject as State;
 		}
 
-		// Draw listeners list
-		EditorGUILayout.LabelField("Listeners");
-		SerializedProperty listeners = serializedObject.FindProperty("listeners");
-		listeners.Next(true);
-		listeners.Next(true);
-		listeners.Next(true);
-		IGUI.Indent(() => {
-			for(int i = 0; i < state.listeners.Count; ++i, listeners.Next(false)) {
-				int j = i;
-				Listener listener = state.listeners[j];
-				listener?.Inspect();
-				if(IGUI.Button("Remove listener", IGUI.exWidth)) {
-					listener?.Dispose();
-					state.listeners.RemoveAt(j);
-				}
-				IGUI.HorizontalLine();
+		public override void OnInspectorGUI() {
+			if(Application.isPlaying) {
+				IGUI.Center(() => IGUI.Italic("Editing state during play mode is not supported."));
+				return;
 			}
-		});
 
-		IGUI.SelectButton("Add listener", Command.TypeMenu.listener,
-			(Type type) => {
-				state.listeners.Add(Listener.Create(type));
-				EditorUtility.SetDirty(state);
-			}, IGUI.exWidth);
-		if(IGUI.Button("Remove component", IGUI.exWidth)) {
-			if(EditorUtility.DisplayDialog("Warning",
-				"You're about to remove this state component.",
-				"Continue", "Cancel")) {
-				Dispose();
-				EditorUtility.SetDirty(state);
+			if(iList == null) {
+				iList = new InspectorList<Listener>(state.listeners, "Listeners");
+				iList.actionButtons.Add(new InspectorList<Listener>.ActionButton {
+					label = "Append",
+					action = () => {
+						Command.TypeMenu.listener.Show((Type type) => {
+							state.listeners.Add(Listener.Create(type));
+							EditorUtility.SetDirty(state);
+						});
+					}
+				});
+				iList.moreOptions.Add(new InspectorList<Listener>.MoreOption {
+					label = "Remove",
+					action = (Listener listener, int i) => {
+						listener?.Dispose();
+						state.listeners.RemoveAt(i);
+					}
+				});
 			}
+			iList.Inspect();
 		}
-		serializedObject.ApplyModifiedProperties();
 	}
 }

@@ -5,10 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Unapparent {
-	public interface IInspectable {
-		public void Inspect(ArgList<Action> elements);
-	}
-
 	public static class IGUI {
 		// Flags
 
@@ -40,16 +36,6 @@ namespace Unapparent {
 
 		public static Action FillLine = GUILayout.FlexibleSpace;
 
-		public static void Indent(Action content, Action header) => Inline(delegate {
-			Block(delegate {
-				header?.Invoke();
-				VerticalLine();
-			});
-			Block(content);
-		});
-
-		public static void Indent(Action content) => Indent(content, null);
-
 		public static void Center(Action content) => Inline(delegate {
 			GUILayout.FlexibleSpace();
 			content?.Invoke();
@@ -78,65 +64,6 @@ namespace Unapparent {
 
 		public static bool Button(string text, params GUILayoutOption[] options) =>
 			GUILayout.Button(text, GUI.skin.button, mergeOptions(options, noExWidth));
-
-		public class MenuEntry<T> {
-			public string text = null;
-			public T element;
-			public MenuEntry(T element) => this.element = element;
-			public MenuEntry(string text) => this.text = text;
-			public static implicit operator MenuEntry<T>(T element) => new MenuEntry<T>(element);
-			public static implicit operator MenuEntry<T>(string text) => new MenuEntry<T>(text);
-			public void AddTo(GenericMenu menu, Action<T> callback) {
-				if(text != null)
-					menu.AddSeparator(text + "/");
-				else
-					menu.AddItem(new GUIContent(element.ToString()), false, delegate (object element) {
-						callback?.Invoke((T)element);
-					}, element);
-			}
-		}
-
-		public interface ISelectMenu<T> {
-			public void AddTo(GenericMenu menu, Action<T> callback);
-		}
-
-		public class Labelizer<T> {
-			public static string Labelize(T obj) => obj.ToString();
-		}
-
-		public class SelectMenu<T, Labelizer> : List<MenuEntry<T>>, ISelectMenu<T>
-			where Labelizer : Labelizer<T> {
-			public SelectMenu() { }
-			public SelectMenu(IEnumerable<T> entries) : base(
-				entries.Select(
-					entry => new MenuEntry<T>(entry)
-				)) {
-			}
-			public SelectMenu(IEnumerable<MenuEntry<T>> entries) : base(entries) { }
-
-			public void AddTo(GenericMenu menu, Action<T> callback) {
-				string path = "";
-				var Labelize = typeof(Labelizer).GetMethod("Labelize");
-				foreach(MenuEntry<T> entry in this) {
-					if(entry.text != null) {
-						if(entry.text == "") {
-							path = "";
-						} else {
-							path = entry.text + "/";
-							menu.AddSeparator(path);
-						}
-					} else
-						menu.AddItem(
-							new GUIContent(path + Labelize.Invoke(null, new object[] { entry.element })),
-							false,
-							(object element) => callback?.Invoke((T)element),
-							entry.element
-						);
-				}
-			}
-		}
-
-		public class SelectMenu<T> : SelectMenu<T, Labelizer<T>> { }
 
 		public static void SelectButton<T>(
 			string text, ISelectMenu<T> list, Action<T> callback,

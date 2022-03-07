@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 
 namespace Unapparent {
 	public abstract class Listener : Command {
@@ -9,6 +10,7 @@ namespace Unapparent {
 		}
 
 		public Command command;
+		public bool expand;
 
 		public abstract bool Validate(Carrier target);
 
@@ -20,10 +22,7 @@ namespace Unapparent {
 		public override object Execute(Carrier target) => command?.Execute(target);
 
 		public override void Inspect(ArgList<Action> elements) {
-			IGUI.Inline(() => {
-				IGUI.Label("On Start");
-			});
-			command?.Inspect(() => IGUI.Label("Do"));
+			command?.Inspect(elements);
 		}
 
 		public override void Dispose() {
