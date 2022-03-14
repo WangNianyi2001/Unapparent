@@ -47,12 +47,14 @@ namespace Unapparent {
 			switch(property.propertyType) {
 				case SerializedPropertyType.Generic:
 				case SerializedPropertyType.ObjectReference:
-					Type propType = property.TargetType();
 					Type drawerType = EditorAux.ClosestDrawerType(property);
 					if(drawerType == null)
 						goto default;
 					if(drawerType.Equals(GetType())) {
-						DrawGUI(property, label);
+						if(property.TargetObject() == null)
+							NullGUI(property, label);
+						else
+							DrawGUI(property, label);
 						break;
 					}
 					var drawer = Activator.CreateInstance(drawerType) as PropertyDrawer;
@@ -83,7 +85,7 @@ namespace Unapparent {
 			--EditorGUI.indentLevel;
 		}
 
-		public virtual void NullGUI(GUIContent label) {
+		public virtual void NullGUI(SerializedProperty property, GUIContent label) {
 			EditorGUI.LabelField(MakeArea(), label, new GUIContent("Object is null"));
 		}
 

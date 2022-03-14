@@ -1,14 +1,19 @@
 using System;
-using UnityEditor;
 using UnityEngine;
 
 namespace Unapparent {
 	[Serializable]
 	public abstract class Command : ScriptableObject {
-		public class TypeMenu : SelectMenu<Type, TypeMenu.Labelizer> {
-			public class Labelizer : Labelizer<Type> {
-				public new static string Labelize(Type obj) => obj.Name;
-			}
+		public static Command Create(Type type) => CreateInstance(type) as Command;
+
+		public static T Create<T>() where T : Command => Create(typeof(T)) as T;
+
+		public abstract object Execute(Carrier target);
+
+		public static TypeMenu menu = TypeMenu.statement;
+
+		public class TypeMenu : Menu<Type> {
+			public TypeMenu() => OnLabelize = (Type target) => target.Name;
 
 			public static TypeMenu
 				statement = new TypeMenu {
@@ -32,15 +37,5 @@ namespace Unapparent {
 					typeof(OnStart),
 				};
 		}
-
-		public new void SetDirty() {
-			EditorUtility.SetDirty(this);
-		}
-
-		public static Command Create(Type type) => CreateInstance(type) as Command;
-
-		public static T Create<T>() where T : Command => Create(typeof(T)) as T;
-
-		public abstract object Execute(Carrier target);
 	}
 }
