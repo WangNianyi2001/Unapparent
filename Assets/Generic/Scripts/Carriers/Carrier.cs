@@ -15,7 +15,7 @@ namespace Unapparent {
 		}
 
 		public void TryFire(Type type) {
-			foreach(Listener listener in currentState.listeners) {
+			foreach(Listener listener in currentState.listeners.elements) {
 				if(type.IsAssignableFrom(listener.GetType()))
 					listener.TryExecute(this);
 			}
