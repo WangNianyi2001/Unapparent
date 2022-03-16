@@ -47,7 +47,7 @@ namespace Unapparent {
 			switch(property.propertyType) {
 				case SerializedPropertyType.Generic:
 				case SerializedPropertyType.ObjectReference:
-					Type drawerType = EditorAux.ClosestDrawerType(property);
+					Type drawerType = property.ClosestDrawerType();
 					if(drawerType == null)
 						goto default;
 					if(drawerType.Equals(GetType())) {
@@ -81,7 +81,7 @@ namespace Unapparent {
 		public virtual void DrawGUI(SerializedProperty property, GUIContent label) {
 			EditorGUI.LabelField(MakeArea(), label);
 			++EditorGUI.indentLevel;
-			DrawProperties(EditorAux.PropertyToObject(property) as Object);
+			DrawProperties(property.TargetObject() as Object);
 			--EditorGUI.indentLevel;
 		}
 

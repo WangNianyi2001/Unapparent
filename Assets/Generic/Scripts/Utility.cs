@@ -1,25 +1,15 @@
-﻿using UnityEditor;
-using System;
+﻿using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Collections;
 using System.Linq;
 
 namespace Unapparent {
-	public static class EditorAux {
-		public static object PropertyToObject(SerializedProperty property) {
-			var parent = property?.serializedObject.targetObject;
-			var fi = parent?.GetType().GetField(property.propertyPath);
-			return fi?.GetValue(parent);
-		}
-
-		public static object GetStaticMember(this Type type, string name) {
+	public static partial class Utility {
+		public static object GetStaticField(this Type type, string name) {
 			const BindingFlags bindingFlags = BindingFlags.Static |
 				BindingFlags.Public | BindingFlags.NonPublic;
-			var fi = type.GetMember(name, bindingFlags);
-			if(fi.Length == 0)
-				return null;
-			return fi[0];
+			return type.GetField(name, bindingFlags).GetValue(type);
 		}
 
 		public static FieldInfo GetDirectMemberField(this Type target, string name) {
@@ -83,7 +73,7 @@ namespace Unapparent {
 				if(type == null)
 					return null;
 				type = step.array ?
-					type.GetArrayElementType(step.name):
+					type.GetArrayElementType(step.name) :
 					type.GetDirectMemberType(step.name);
 			}
 			return type;
@@ -100,37 +90,5 @@ namespace Unapparent {
 			}
 			return result;
 		}
-
-		public static string SystemPath(this SerializedProperty property) =>
-			property.propertyPath.Replace(".Array.data[", "[");
-
-		public static Type DrawerType(this Type type) {
-			var assembly = Assembly.GetAssembly(typeof(Editor));
-			var instance = assembly.CreateInstance("UnityEditor.ScriptAttributeUtility");
-			const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Static |
-				BindingFlags.Public | BindingFlags.NonPublic;
-			var method = instance.GetType().GetMethod("GetDrawerTypeForType", bindingFlags);
-			return (Type)method?.Invoke(instance, new object[] { type });
-		}
-
-		public static Type ClosestDrawerType(this Type type) {
-			for(; type != null; type = type.BaseType) {
-				Type result = DrawerType(type);
-				if(result != null)
-					return result;
-			}
-			return null;
-		}
-
-		public static object TargetObject(this SerializedProperty property)
-			=> property?.serializedObject.targetObject.GetMember(property.SystemPath());
-
-		public static Type TargetType(this SerializedProperty property) {
-			Type parentType = property.serializedObject.targetObject.GetType();
-			return parentType.GetMemberType(property.SystemPath());
-		}
-
-		public static Type ClosestDrawerType(this SerializedProperty property) =>
-			ClosestDrawerType(property.TargetType());
 	}
 }

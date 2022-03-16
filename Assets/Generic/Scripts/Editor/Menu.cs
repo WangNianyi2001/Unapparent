@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEngine;
 
 namespace Unapparent {
 	public class Menu<T> : List<Menu<T>.Entry> {
@@ -31,5 +33,28 @@ namespace Unapparent {
 		}
 
 		public Menu(IEnumerable<Entry> entries) : base(entries) { }
+
+		public void AddTo(GenericMenu menu) {
+			string path = "";
+			foreach(Entry entry in this) {
+				if(entry.text != null) {
+					if(string.IsNullOrEmpty(entry.text)) {
+						path = "";
+						continue;
+					}
+					path = entry.text + "/";
+					menu.AddSeparator(path);
+				} else {
+					GUIContent content = new GUIContent(path + OnLabelize(entry.target));
+					menu.AddItem(content, false, SelectCallback, entry.target);
+				}
+			}
+		}
+
+		public void Show() {
+			GenericMenu menu = new GenericMenu();
+			AddTo(menu);
+			menu.ShowAsContext();
+		}
 	}
 }

@@ -1,10 +1,14 @@
 using System;
 
 namespace Unapparent {
+	public class CommandList<T> : InspectableList<T> where T : Command {
+	}
+
 	[Serializable]
-	public class CommandList : InspectableList<Command> {
-		public override void OnAdd() {
-			elements.Add(null);
-		}
+	public class CommandList : CommandList<Command> {
+	}
+
+	[Serializable]
+	public class ListenerList : CommandList<Listener> {
 	}
 }

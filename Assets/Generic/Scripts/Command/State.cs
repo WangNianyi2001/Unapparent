@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace Unapparent {
 	public class State : MonoBehaviour {
-		public CommandList listeners;
+		public ListenerList listeners;
 
 		public void Reset() {
-			listeners = new CommandList();
+			listeners = new ListenerList();
 		}
 	}
 }
