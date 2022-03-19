@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Unapparent {
-	public class Monologue : Command {
+	public class Monologue : Statement {
 		public class Option : Command {
 			public string text;
 			public Command command;

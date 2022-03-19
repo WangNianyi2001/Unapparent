@@ -11,4 +11,12 @@ namespace Unapparent {
 	[Serializable]
 	public class ListenerList : CommandList<Listener> {
 	}
+
+	[Serializable]
+	public class StatementList : CommandList<Statement> {
+	}
+
+	[Serializable]
+	public class ExpressionList : CommandList<Expression> {
+	}
 }

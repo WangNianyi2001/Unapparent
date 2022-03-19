@@ -1,7 +1,7 @@
 using System.Linq;
 
 namespace Unapparent {
-	public class Logue : Command {
+	public class Logue : Statement {
 		public CommandList monologues;
 		public Command next;
 

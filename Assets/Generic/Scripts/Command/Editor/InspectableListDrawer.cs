@@ -34,34 +34,38 @@ namespace Unapparent {
 			if(index >= drawers.Count)
 				RefreshDrawers();
 			var drawer = drawers[index];
-			SerializedProperty property = IndexToElementProperty(index);
-			if(property == null)
-				return 0;
+			var property = IndexToElementProperty(index);
 			drawer.OnGUI(position, property, GUIContent.none);
 			return drawer.GetPropertyHeight(property, GUIContent.none);
 		}
 
 		public virtual void OnDrawElement(Rect rect, int index, bool isActive, bool isFocused) {
-			RefreshDrawers();
-			var element = IndexToElementProperty(index);
-			if(element == null)
+			var property = IndexToElementProperty(index);
+			if(property == null)
 				return;
-			drawers[index].OnGUI(rect, element, new GUIContent("hello"));
+			object element = elements[index];
+			var label = new GUIContent(element.GetType().Name);
+			drawers[index].OnGUI(rect, property, label);
 		}
+
+		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+			=> (list == null ? 0 : list.GetHeight()) +
+			EditorGUI.GetPropertyHeight(SerializedPropertyType.Generic, label);
 
 		public override void DrawGUI(SerializedProperty property, GUIContent label) {
 			this.property = property;
-			if(target == null) {
+			if(target == null)
 				target = property.TargetObject();
-			}
 			if(list == null) {
 				list = new ReorderableList(elements, typeof(T));
 				list.drawHeaderCallback = (Rect rect) => EditorGUI.LabelField(rect, label);
 				list.onAddCallback = _ => OnAdd();
+				list.onChangedCallback = _ => RefreshDrawers();
 				list.drawElementCallback = OnDrawElement;
 				list.elementHeightCallback = OnElementHeight;
 			}
-			list.DoList(MakeArea(list.GetHeight()));
+			Rect position = EditorGUI.IndentedRect(MakeArea(list.GetHeight()));
+			list.DoList(position, position);
 		}
 	}
 }

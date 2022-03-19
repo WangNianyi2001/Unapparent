@@ -9,7 +9,7 @@ namespace Unapparent {
 		public static object GetStaticField(this Type type, string name) {
 			const BindingFlags bindingFlags = BindingFlags.Static |
 				BindingFlags.Public | BindingFlags.NonPublic;
-			return type.GetField(name, bindingFlags).GetValue(type);
+			return type.GetField(name, bindingFlags)?.GetValue(type);
 		}
 
 		public static FieldInfo GetDirectMemberField(this Type target, string name) {

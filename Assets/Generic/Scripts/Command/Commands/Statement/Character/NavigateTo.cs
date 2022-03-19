@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace Unapparent {
-	public class NavigateTo : Command {
+	public class NavigateTo : Statement {
 		public GameObject destination;
 		public float tolerance = 1f;
 		public Command arrival = null;

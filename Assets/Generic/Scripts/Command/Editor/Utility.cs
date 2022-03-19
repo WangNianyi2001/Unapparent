@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEngine;
 using System;
 using System.Reflection;
 
@@ -24,6 +25,16 @@ namespace Unapparent {
 					return result;
 			}
 			return null;
+		}
+
+		public static FieldInfo TargetFieldInfo(this SerializedProperty property) =>
+			property.serializedObject.targetObject.GetType().GetField(property.name);
+
+		public static void SetTarget(this SerializedProperty property, object value) {
+			SerializedObject so = property.serializedObject;
+			FieldInfo fi = property.TargetFieldInfo();
+			fi.SetValue(so.targetObject, value);
+			so.ApplyModifiedProperties();
 		}
 
 		public static object TargetObject(this SerializedProperty property)

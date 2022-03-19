@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Unapparent {
-	public class Agent : Command {
+	public class Agent : Statement {
 		Carrier carrier;
 		Command command;
 

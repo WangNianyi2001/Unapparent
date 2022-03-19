@@ -8,8 +8,11 @@ namespace Unapparent {
 	public class NestedDrawer : PropertyDrawer {
 		protected Rect position;
 
+		public Rect TempArea(float height = 0) =>
+			new Rect(position.xMin, position.yMax, position.width, height);
+
 		public Rect MakeArea(float height) {
-			Rect rect = new Rect(position.xMin, position.yMax, position.width, height);
+			Rect rect = TempArea(height);
 			position.height += height;
 			return rect;
 		}
@@ -41,47 +44,41 @@ namespace Unapparent {
 
 		public PropertyFilter propertyFilter = declaredProperties;
 
-		public void DrawProperty(SerializedProperty property) {
+		public void DrawProperty(SerializedProperty property, GUIContent label) {
+			if(property == null)
+				return;
 			EditorGUI.BeginChangeCheck();
-			var label = new GUIContent(property.displayName);
-			switch(property.propertyType) {
-				case SerializedPropertyType.Generic:
-				case SerializedPropertyType.ObjectReference:
-					Type drawerType = property.ClosestDrawerType();
-					if(drawerType == null)
-						goto default;
-					if(drawerType.Equals(GetType())) {
-						if(property.TargetObject() == null)
-							NullGUI(property, label);
-						else
-							DrawGUI(property, label);
-						break;
-					}
-					var drawer = Activator.CreateInstance(drawerType) as PropertyDrawer;
-					drawer.OnGUI(position, property, label);
-					break;
-				default:
-					EditorGUI.PropertyField(PropertyArea(property), property, label, true);
-					break;
+			Type drawerType = property.ClosestDrawerType();
+			if(drawerType == null) {
+				EditorGUI.PropertyField(PropertyArea(property), property, label, true);
+			} else if(drawerType.Equals(GetType())) {
+				if(property.TargetObject() == null)
+					NullGUI(property, label);
+				else
+					DrawGUI(property, label);
+			} else {
+				var drawer = Activator.CreateInstance(drawerType) as PropertyDrawer;
+				drawer.OnGUI(TempArea(), property, label);
+				position.height += drawer.GetPropertyHeight(property, label);
 			}
 			if(EditorGUI.EndChangeCheck())
 				property.serializedObject.ApplyModifiedProperties();
 		}
 
-		public void DrawProperties(Object target) {
+		public virtual void DrawGUI(SerializedProperty property, GUIContent label) {
+			if(label != null && !label.Equals(GUIContent.none))
+				EditorGUI.LabelField(MakeArea(), label);
+			Object target = property.TargetObject() as Object;
 			if(target == null)
 				return;
+			++EditorGUI.indentLevel;
 			var child = new SerializedObject(target).GetIterator();
 			for(bool end = child.Next(true); end; end = child.NextVisible(false)) {
-				if(propertyFilter(child.Copy()))
-					DrawProperty(child);
+				if(!propertyFilter(child))
+					continue;
+				var childLabel = new GUIContent(child.displayName);
+				DrawProperty(child.Copy(), childLabel);
 			}
-		}
-
-		public virtual void DrawGUI(SerializedProperty property, GUIContent label) {
-			EditorGUI.LabelField(MakeArea(), label);
-			++EditorGUI.indentLevel;
-			DrawProperties(property.TargetObject() as Object);
 			--EditorGUI.indentLevel;
 		}
 
@@ -92,7 +89,7 @@ namespace Unapparent {
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
 			this.position = position;
 			this.position.height = 0;
-			DrawProperty(property);
+			DrawProperty(property, label);
 		}
 	}
 }

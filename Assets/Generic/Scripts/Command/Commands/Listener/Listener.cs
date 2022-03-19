@@ -1,14 +1,8 @@
-using System;
+using UnityEngine;
 
 namespace Unapparent {
 	public abstract class Listener : Command {
-		public static new Listener Create(Type type) {
-			Listener listener = Command.Create(type) as Listener;
-			listener.command = Command.Create(typeof(Sequential));
-			return listener;
-		}
-
-		public Command command;
+		public Statement action;
 
 		public abstract bool Validate(Carrier target);
 
@@ -17,11 +11,6 @@ namespace Unapparent {
 				Execute(target);
 		}
 
-		public override object Execute(Carrier target) => command?.Execute(target);
-	}
-
-	public abstract class CertainListener : Listener {
-		public override bool Validate(Carrier target) => true;
-		public override void TryExecute(Carrier target) => Execute(target);
+		public override object Execute(Carrier target) => action?.Execute(target);
 	}
 }

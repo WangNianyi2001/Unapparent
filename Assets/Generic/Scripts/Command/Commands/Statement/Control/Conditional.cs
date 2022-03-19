@@ -1,7 +1,7 @@
 using System;
 
 namespace Unapparent {
-	public class Conditional : Command {
+	public class Conditional : Statement {
 		public Command condition = null;
 
 		[Serializable]
