@@ -4,26 +4,28 @@ using UnityEngine;
 namespace Unapparent {
 	[Serializable]
 	public class Carrier : MonoBehaviour {
-		public GameObject initialState = null;
-		State currentState = null;
-
-		public State state {
-			get => currentState;
+		public State initialState = null;
+		State state = null;
+		public State State {
+			get => state;
 			set {
-				currentState = value;
+				TryFire(typeof(ExitState));
+				state = value;
+				TryFire(typeof(EnterState));
 			}
 		}
 
 		public void TryFire(Type type) {
-			foreach(Listener listener in currentState.listeners.elements) {
+			if(state == null)
+				return;
+			foreach(Listener listener in state.listeners.elements) {
 				if(type.IsAssignableFrom(listener.GetType()))
 					listener.TryExecute(this);
 			}
 		}
 
 		public void Start() {
-			state = initialState.GetComponent<State>();
-			TryFire(typeof(OnStart));
+			State = initialState;
 		}
 	}
 }

@@ -30,7 +30,8 @@ namespace Unapparent {
 	[CustomPropertyDrawer(typeof(Listener))]
 	public class ListenerDrawer : CommandDrawer {
 		public static new CommandMenu menu = new CommandMenu {
-			typeof(OnStart),
+			typeof(EnterState),
+			typeof(ExitState),
 		};
 	}
 

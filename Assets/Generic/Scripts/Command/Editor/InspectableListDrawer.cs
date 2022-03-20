@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditorInternal;
 using UnityEditor;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using Object = UnityEngine.Object;
 
 namespace Unapparent {
@@ -12,7 +10,18 @@ namespace Unapparent {
 		public ReorderableList list = null;
 		public IList elements => property.TargetObject()?.GetDirectMember("elements") as IList;
 
-		public virtual void OnAdd() { }
+		public virtual void OnAdd() {
+			OnChange();
+		}
+
+		public virtual void OnChange() {
+			list.GetHeight();
+		}
+
+		public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+			DrawGUI(property, label, false);
+			return list.GetHeight();
+		}
 
 		public virtual float OnElementHeight(int index) =>
 			EditorGUI.GetPropertyHeight(property.IndexToElementProperty(index));
@@ -29,6 +38,7 @@ namespace Unapparent {
 				list = new ReorderableList(elements, typeof(T));
 				list.drawHeaderCallback = (Rect rect) => EditorGUI.LabelField(rect, label);
 				list.onAddCallback = _ => OnAdd();
+				list.onChangedCallback = _ => OnChange();
 				list.drawElementCallback = OnDrawElement;
 				list.elementHeightCallback = OnElementHeight;
 			}
