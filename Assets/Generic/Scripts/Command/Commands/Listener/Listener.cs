@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Unapparent {
 	public abstract class Listener : Command {
 		public Statement action;

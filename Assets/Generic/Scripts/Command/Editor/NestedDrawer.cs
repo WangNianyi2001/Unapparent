@@ -11,17 +11,38 @@ namespace Unapparent {
 		public Rect TempArea(float height = 0) =>
 			new Rect(position.xMin, position.yMax, position.width, height);
 
+		public Rect Indented(Rect area) => EditorGUI.IndentedRect(area);
+
 		public Rect MakeArea(float height) {
 			Rect rect = TempArea(height);
-			position.height += height;
+			position.yMax = rect.yMax;
 			return rect;
 		}
 
 		public Rect MakeArea() => MakeArea(EditorGUIUtility.singleLineHeight);
 
-		public override float GetPropertyHeight(SerializedProperty property, GUIContent label) => position.height;
+		public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+			position.height = 0;
+			DrawProperty(property, label, false);
+			return position.height;
+		}
 
-		public Rect PropertyArea(SerializedProperty property) => MakeArea(EditorGUI.GetPropertyHeight(property));
+		public void Property(SerializedProperty property, GUIContent label, bool draw = true) {
+			var area = MakeArea(EditorGUI.GetPropertyHeight(property, label, true));
+			if(draw)
+				EditorGUI.PropertyField(area, property, label, true);
+		}
+
+		public void Label(GUIContent label, bool draw = true) {
+			var area = MakeArea();
+			if(draw)
+				EditorGUI.LabelField(area, label);
+		}
+
+		public bool Button(GUIContent label, bool draw = true) {
+			var area = Indented(MakeArea());
+			return draw && GUI.Button(area, label);
+		}
 
 		public delegate bool PropertyFilter(SerializedProperty property);
 
@@ -42,48 +63,52 @@ namespace Unapparent {
 			return type.IsAssignableFrom(fi?.DeclaringType);
 		};
 
-		public PropertyFilter propertyFilter = declaredProperties;
+		public static PropertyFilter propertyFilter = declaredProperties;
 
-		public void DrawProperty(SerializedProperty property, GUIContent label) {
+		public void DrawProperty(SerializedProperty property, GUIContent label, bool draw = true) {
 			if(property == null)
 				return;
-			EditorGUI.BeginChangeCheck();
 			Type drawerType = property.ClosestDrawerType();
-			if(drawerType == null) {
-				EditorGUI.PropertyField(PropertyArea(property), property, label, true);
-			} else if(drawerType.Equals(GetType())) {
+			EditorGUI.BeginChangeCheck();
+			if(GetType().Equals(drawerType)) {
 				if(property.TargetObject() == null)
-					NullGUI(property, label);
+					NullGUI(property, label, draw);
 				else
-					DrawGUI(property, label);
+					DrawGUI(property, label, draw);
+			} else if(drawerType == null) {
+				Property(property, label, draw);
 			} else {
 				var drawer = Activator.CreateInstance(drawerType) as PropertyDrawer;
-				drawer.OnGUI(TempArea(), property, label);
+				if(draw)
+					drawer.OnGUI(TempArea(), property, label);
 				position.height += drawer.GetPropertyHeight(property, label);
 			}
+			MakeArea(EditorGUIUtility.standardVerticalSpacing);
 			if(EditorGUI.EndChangeCheck())
 				property.serializedObject.ApplyModifiedProperties();
 		}
 
-		public virtual void DrawGUI(SerializedProperty property, GUIContent label) {
+		public virtual void DrawGUI(SerializedProperty property, GUIContent label, bool draw = true) {
 			if(label != null && !label.Equals(GUIContent.none))
-				EditorGUI.LabelField(MakeArea(), label);
+				Label(label);
 			Object target = property.TargetObject() as Object;
 			if(target == null)
 				return;
 			++EditorGUI.indentLevel;
+			var filter = GetType().GetStaticField("propertyFilter") as PropertyFilter;
 			var child = new SerializedObject(target).GetIterator();
 			for(bool end = child.Next(true); end; end = child.NextVisible(false)) {
-				if(!propertyFilter(child))
+				if(filter == null || !filter(child))
 					continue;
 				var childLabel = new GUIContent(child.displayName);
-				DrawProperty(child.Copy(), childLabel);
+				DrawProperty(child.Copy(), childLabel, draw);
 			}
 			--EditorGUI.indentLevel;
 		}
 
-		public virtual void NullGUI(SerializedProperty property, GUIContent label) {
-			EditorGUI.LabelField(MakeArea(), label, new GUIContent("Object is null"));
+		public virtual void NullGUI(SerializedProperty property, GUIContent label, bool draw = true) {
+			Label(label, draw);
+			Label(new GUIContent("Object is null"), draw);
 		}
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {

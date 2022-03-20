@@ -17,8 +17,9 @@ namespace Unapparent {
 		public float checkFrequency = .5f;
 
 		void CheckArrival() {
-			if(arrival == null)
+			if(arrival == null || agent == null)
 				return;
+			Debug.Log(agent);
 			if(agent.remainingDistance <= agent.stoppingDistance) {
 				arrival.Execute(this);
 				arrival = null;

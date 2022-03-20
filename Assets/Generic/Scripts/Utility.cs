@@ -9,7 +9,12 @@ namespace Unapparent {
 		public static object GetStaticField(this Type type, string name) {
 			const BindingFlags bindingFlags = BindingFlags.Static |
 				BindingFlags.Public | BindingFlags.NonPublic;
-			return type.GetField(name, bindingFlags)?.GetValue(type);
+			for(FieldInfo fi; type != null; type = type.BaseType) {
+				fi = type.GetField(name, bindingFlags);
+				if(fi != null)
+					return fi.GetValue(type);
+			}
+			return null;
 		}
 
 		public static FieldInfo GetDirectMemberField(this Type target, string name) {
@@ -81,6 +86,7 @@ namespace Unapparent {
 
 		public static object GetMember(this object target, string path) {
 			object result = target;
+			path = Regex.Replace(path, @"\.Array\.Data\[", "[");
 			foreach(var step in path.Split('.').Select(step => new MemberStep(step))) {
 				if(result == null)
 					return null;

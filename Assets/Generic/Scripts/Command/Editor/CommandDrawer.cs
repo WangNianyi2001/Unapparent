@@ -11,17 +11,16 @@ namespace Unapparent {
 	public class CommandDrawer : NestedDrawer {
 		public static CommandMenu menu = null;
 
-		public CommandDrawer() {
-			propertyFilter = isPropertyOf(typeof(Command));
-		}
+		public new static PropertyFilter propertyFilter = isPropertyOf(typeof(Command));
 
-		public override void NullGUI(SerializedProperty property, GUIContent label) {
+		public override void NullGUI(SerializedProperty property, GUIContent label, bool draw = true) {
 			var menu = property.ClosestDrawerType()?.GetStaticField("menu") as CommandMenu;
+			Label(label, draw);
 			if(menu == null) {
-				EditorGUI.LabelField(MakeArea(), label, new GUIContent("Command is null"));
+				Label(new GUIContent("Command is null"), draw);
 				return;
 			}
-			if(GUI.Button(MakeArea(), "Set command")) {
+			if(Button(new GUIContent("Set command"), draw)) {
 				menu.OnSelect = (Type type) => property.SetTarget(Command.Create(type));
 				menu.Show();
 			}

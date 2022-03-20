@@ -12,11 +12,9 @@ namespace Unapparent {
 			public override object Execute(Carrier target) => command?.Execute(target);
 		}
 
-		[HideInInspector] public GameObject characterObj;
-		[HideInInspector] public Character character => characterObj.GetComponent<Character>();
-		[HideInInspector] public string text;
-		[HideInInspector] public bool useOptions = false;
-		[HideInInspector] public List<Option> options = new List<Option>();
+		public Character character;
+		public string text;
+		public List<Option> options = new List<Option>();
 		[NonSerialized] public Monologue next = null;
 
 		public GameObject MakeOptionButton(Option option) {

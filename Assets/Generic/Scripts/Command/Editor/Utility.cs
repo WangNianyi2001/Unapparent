@@ -1,11 +1,14 @@
 ﻿using UnityEditor;
-using UnityEngine;
 using System;
 using System.Reflection;
+using Unity.VisualScripting;
 
 #if UNITY_EDITOR
 namespace Unapparent {
 	public static partial class Utility {
+		public static SerializedProperty IndexToElementProperty(this SerializedProperty property, int index) =>
+			property.FindPropertyRelative($"elements.Array.data[{index}]");
+
 		public static string SystemPath(this SerializedProperty property) =>
 			property.propertyPath.Replace(".Array.data[", "[");
 
@@ -47,6 +50,11 @@ namespace Unapparent {
 
 		public static Type ClosestDrawerType(this SerializedProperty property) =>
 			ClosestDrawerType(property.TargetType());
+
+		public static PropertyDrawer MakeDrawer(this SerializedProperty property) {
+			var drawerType = property.ClosestDrawerType();
+			return Activator.CreateInstance(drawerType) as PropertyDrawer;
+		}
 	}
 }
 #endif
