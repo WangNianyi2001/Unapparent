@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,11 +18,8 @@ namespace Unapparent {
 		public float checkFrequency = .5f;
 
 		void CheckArrival() {
-			if(arrival == null)
-				return;
 			if(agent.remainingDistance <= agent.stoppingDistance) {
-				arrival.Execute(this);
-				arrival = null;
+				arrival?.Execute(this);
 				return;
 			}
 			Invoke("CheckArrival", checkFrequency);
