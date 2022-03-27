@@ -98,7 +98,7 @@ namespace Unapparent {
 			var filter = GetType().GetStaticField("propertyFilter") as PropertyFilter;
 			var child = new SerializedObject(target).GetIterator();
 			for(bool end = child.Next(true); end; end = child.NextVisible(false)) {
-				if(filter == null || !filter(child))
+				if(!filter(child))
 					continue;
 				var childLabel = new GUIContent(child.displayName);
 				DrawProperty(child.Copy(), childLabel, draw);

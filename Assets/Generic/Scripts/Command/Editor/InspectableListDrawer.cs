@@ -28,8 +28,9 @@ namespace Unapparent {
 
 		public virtual void OnDrawElement(Rect rect, int index, bool isActive, bool isFocused) {
 			var property = this.property.IndexToElementProperty(index);
+			PropertyDrawer drawer = property.MakeDrawer();
 			var name = property.TargetObject().GetType().Name;
-			property.MakeDrawer().OnGUI(rect, property, new GUIContent(name));
+			drawer.OnGUI(rect, property, new GUIContent(name));
 		}
 
 		public override void DrawGUI(SerializedProperty property, GUIContent label, bool draw = true) {
@@ -44,7 +45,7 @@ namespace Unapparent {
 			}
 			Rect position = EditorGUI.IndentedRect(MakeArea(list.GetHeight()));
 			if(draw)
-				list.DoList(position, position);
+				list.DoList(position);
 		}
 	}
 }
