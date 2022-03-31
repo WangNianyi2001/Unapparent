@@ -5,11 +5,10 @@ using UnityEngine.UI;
 
 namespace Unapparent {
 	public class Monologue : Statement {
-		public class Option : Command {
+		[Serializable]
+		public class Option {
 			public string text;
-			public Command command;
-
-			public override object Execute(Carrier target) => command?.Execute(target);
+			public Statement command;
 		}
 
 		public Character character;
@@ -27,7 +26,7 @@ namespace Unapparent {
 		}
 
 		public Option NextOption(Carrier target) {
-			Option option = Create<Option>();
+			Option option = new Option();
 			Delegate command = Create<Delegate>();
 			if(next == null) {
 				option.text = "Done";

@@ -21,7 +21,11 @@ namespace Unapparent {
 				return;
 			}
 			if(Button(new GUIContent("Set command"), draw)) {
-				menu.OnSelect = (Type type) => property.SetTarget(Command.Create(type));
+				menu.OnSelect = (Type type) => {
+					PropertyAccessor accessor = new PropertyAccessor(property);
+					accessor.Value = Command.Create(type);
+					Debug.Log(accessor.Value);
+				};
 				menu.Show();
 			}
 		}
@@ -45,6 +49,7 @@ namespace Unapparent {
 			"Logue",
 			typeof(Monologue),
 			typeof(Logue),
+			typeof(CloseLogue),
 			"Character",
 			typeof(SwitchState),
 			typeof(NavigateTo),
