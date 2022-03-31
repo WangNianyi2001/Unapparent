@@ -1,26 +1,32 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Unapparent {
 	[Serializable]
 	public class Carrier : MonoBehaviour {
 		public State initialState = null;
-		State state = null;
-		public State State {
-			get => state;
-			set {
-				TryFire(typeof(ExitState));
-				state = value;
-				TryFire(typeof(EnterState));
-			}
-		}
 
-		public void TryFire(Type type) {
-			if(state == null)
-				return;
-			foreach(Listener listener in state.listeners.elements) {
-				if(type.IsAssignableFrom(listener.GetType()))
-					listener.TryExecute(this);
+		Stack<State> currentStates = new Stack<State>();
+
+		public State State {
+			get => currentStates.Peek();
+			set {
+				State target = value;
+				var buffer = new Stack<State>();
+				while(currentStates.Count != 0 && !currentStates.Peek().isParentOf(target)) {
+					var removed = currentStates.Pop();
+					removed.TryFire(typeof(ExitState), this);
+				}
+				while(target != (currentStates.Count == 0 ? null : currentStates.Peek())) {
+					buffer.Push(target);
+					target = target.parent;
+				}
+				while(buffer.Count != 0) {
+					var added = buffer.Pop();
+					added.TryFire(typeof(EnterState), this);
+					currentStates.Push(added);
+				}
 			}
 		}
 

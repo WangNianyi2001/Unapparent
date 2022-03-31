@@ -26,10 +26,12 @@ namespace Unapparent {
 		public virtual float OnElementHeight(int index) =>
 			EditorGUI.GetPropertyHeight(property.IndexToElementProperty(index));
 
+		public virtual string OnElementName(int index) => elements[index].GetType().Name;
+
 		public virtual void OnDrawElement(Rect rect, int index, bool isActive, bool isFocused) {
 			var property = this.property.IndexToElementProperty(index);
 			PropertyDrawer drawer = property.MakeDrawer();
-			var name = property.TargetObject().GetType().Name;
+			var name = OnElementName(index);
 			drawer.OnGUI(rect, property, new GUIContent(name));
 		}
 

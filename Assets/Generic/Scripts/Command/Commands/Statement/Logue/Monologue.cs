@@ -8,7 +8,7 @@ namespace Unapparent {
 		[Serializable]
 		public class Option {
 			public string text;
-			public Statement command;
+			public Statement action;
 		}
 
 		public Character character;
@@ -20,28 +20,12 @@ namespace Unapparent {
 			GameObject prefab = Instantiate(Resources.Load<GameObject>("Option Button"));
 			prefab.GetComponentInChildren<Text>().text = option.text;
 			Button.ButtonClickedEvent ev = new Button.ButtonClickedEvent();
-			ev.AddListener(() => option.command?.Execute(character));
+			ev.AddListener(() => option.action?.Execute(character));
 			prefab.GetComponentInChildren<Button>().onClick = ev;
 			return prefab;
 		}
 
-		public Option NextOption(Carrier target) {
-			Option option = new Option();
-			Delegate command = Create<Delegate>();
-			if(next == null) {
-				option.text = "Done";
-				command.action = () => Level.current.CloseMonologue();
-			} else {
-				option.text = "Next";
-				command.action = () => next.Execute(target);
-			}
-			option.command = command;
-			return option;
-		}
-
 		public override object Execute(Carrier target) {
-			if(options.Count == 0)
-				options.Add(NextOption(target));
 			Level.current.ShowMonologue(this);
 			return null;
 		}
