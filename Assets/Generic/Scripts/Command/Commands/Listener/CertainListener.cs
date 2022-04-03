@@ -1,6 +1,5 @@
 namespace Unapparent {
 	public abstract class CertainListener : Listener {
-		public override bool Validate(Carrier target) => true;
-		public override void TryExecute(Carrier target) => Execute(target);
+		public override bool Validate(Carrier target, params object[] args) => true;
 	}
 }

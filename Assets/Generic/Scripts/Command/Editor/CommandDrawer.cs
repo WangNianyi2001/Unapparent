@@ -34,8 +34,12 @@ namespace Unapparent {
 	[CustomPropertyDrawer(typeof(Listener))]
 	public class ListenerDrawer : CommandDrawer {
 		public static new CommandMenu menu = new CommandMenu {
+			"State",
 			typeof(EnterState),
 			typeof(ExitState),
+			"Trigger",
+			typeof(EnterTrigger),
+			typeof(ExitTrigger),
 		};
 	}
 
@@ -49,7 +53,6 @@ namespace Unapparent {
 			"Logue",
 			typeof(Monologue),
 			typeof(Logue),
-			typeof(CloseLogue),
 			"Character",
 			typeof(SwitchState),
 			typeof(NavigateTo),

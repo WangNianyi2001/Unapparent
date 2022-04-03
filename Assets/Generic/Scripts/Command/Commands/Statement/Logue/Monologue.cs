@@ -20,7 +20,10 @@ namespace Unapparent {
 			GameObject prefab = Instantiate(Resources.Load<GameObject>("Option Button"));
 			prefab.GetComponentInChildren<Text>().text = option.text;
 			Button.ButtonClickedEvent ev = new Button.ButtonClickedEvent();
-			ev.AddListener(() => option.action?.Execute(character));
+			ev.AddListener(() => {
+				option.action?.Execute(character);
+				Level.current.CloseMonologue();
+			});
 			prefab.GetComponentInChildren<Button>().onClick = ev;
 			return prefab;
 		}

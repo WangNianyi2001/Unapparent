@@ -13,10 +13,10 @@ namespace Unapparent {
 			return target == this || isParentOf(target.parent);
 		}
 
-		public void TryFire(Type type, Carrier target) {
+		public void TryFire(Type type, Carrier target, params object[] args) {
 			foreach(Listener listener in listeners.elements) {
 				if(type.IsAssignableFrom(listener.GetType()))
-					listener.TryExecute(target);
+					listener.TryExecute(target, args);
 			}
 		}
 

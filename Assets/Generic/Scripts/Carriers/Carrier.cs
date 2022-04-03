@@ -30,6 +30,14 @@ namespace Unapparent {
 			}
 		}
 
+		public void OnTriggerEnter(Collider other) {
+			State.TryFire(typeof(EnterTrigger), this, other);
+		}
+
+		public void OnTriggerExit(Collider other) {
+			State.TryFire(typeof(ExitTrigger), this, other);
+		}
+
 		public void Start() {
 			State = initialState;
 		}

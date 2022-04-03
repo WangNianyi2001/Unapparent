@@ -2,10 +2,10 @@ namespace Unapparent {
 	public abstract class Listener : Command {
 		public Statement action;
 
-		public abstract bool Validate(Carrier target);
+		public abstract bool Validate(Carrier target, params object[] args);
 
-		public virtual void TryExecute(Carrier target) {
-			if(Validate(target))
+		public virtual void TryExecute(Carrier target, params object[] args) {
+			if(Validate(target, args))
 				Execute(target);
 		}
 
