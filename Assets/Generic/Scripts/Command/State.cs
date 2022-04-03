@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Unapparent {
 	public class State : MonoBehaviour {
 		[SerializeReference] public State parent = null;
 
-		public ListenerList listeners;
+		public List<List> listeners;
 
 		public bool isParentOf(State target) {
 			if(target == null)
@@ -14,14 +15,14 @@ namespace Unapparent {
 		}
 
 		public void TryFire(Type type, Carrier target, params object[] args) {
-			foreach(Listener listener in listeners.elements) {
+			foreach(List listener in listeners) {
 				if(type.IsAssignableFrom(listener.GetType()))
 					listener.TryExecute(target, args);
 			}
 		}
 
 		public void Reset() {
-			listeners = new ListenerList();
+			listeners = new List<List>();
 		}
 	}
 }

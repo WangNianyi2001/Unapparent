@@ -1,5 +1,5 @@
 namespace Unapparent {
-	public abstract class Listener : Command {
+	public abstract class List : Command {
 		public Statement action;
 
 		public abstract bool Validate(Carrier target, params object[] args);

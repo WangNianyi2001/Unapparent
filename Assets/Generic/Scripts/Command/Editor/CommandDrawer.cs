@@ -13,14 +13,21 @@ namespace Unapparent {
 
 		public new static PropertyFilter propertyFilter = isPropertyOf(typeof(Command));
 
-		public override void NullGUI(SerializedProperty property, GUIContent label, bool draw = true) {
+		public override void DrawGUI(SerializedProperty property, GUIContent label) {
+			GUIContent modifiedLabel = new GUIContent(label);
+			modifiedLabel.text += $": {property.TargetObject().GetType().Name}";
+			base.DrawGUI(property, modifiedLabel);
+		}
+
+		public override void NullGUI(SerializedProperty property, GUIContent label) {
 			var menu = property.ClosestDrawerType()?.GetStaticField("menu") as CommandMenu;
-			Label(label, draw);
+			Label(label);
 			if(menu == null) {
-				Label(new GUIContent("Command is null"), draw);
+				Label(new GUIContent("Command is null"));
 				return;
 			}
-			if(Button(new GUIContent("Set command"), draw)) {
+			Label(new GUIContent("Command is null, click the button to create one"));
+			if(Button(new GUIContent("Select type"))) {
 				menu.OnSelect = (Type type) => {
 					PropertyAccessor accessor = new PropertyAccessor(property);
 					accessor.Value = Command.Create(type);
@@ -31,7 +38,7 @@ namespace Unapparent {
 		}
 	}
 
-	[CustomPropertyDrawer(typeof(Listener))]
+	[CustomPropertyDrawer(typeof(List))]
 	public class ListenerDrawer : CommandDrawer {
 		public static new CommandMenu menu = new CommandMenu {
 			"State",

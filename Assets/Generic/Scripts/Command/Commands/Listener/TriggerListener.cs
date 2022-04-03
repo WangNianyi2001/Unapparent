@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 namespace Unapparent {
-	public abstract class TriggerListener : Listener {
+	public abstract class TriggerListener : List {
 		public Collider trigger;
 
 		public override bool Validate(Carrier target, params object[] args) {

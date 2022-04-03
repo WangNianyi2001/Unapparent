@@ -7,6 +7,7 @@ using Object = UnityEngine.Object;
 namespace Unapparent {
 	public class NestedDrawer : PropertyDrawer {
 		protected Rect position;
+		protected bool draw = true;
 
 		public Rect TempArea(float height = 0) =>
 			new Rect(position.xMin, position.yMax, position.width, height);
@@ -23,23 +24,25 @@ namespace Unapparent {
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
 			position.height = 0;
-			DrawProperty(property, label, false);
+			draw = false;
+			DrawProperty(property, label);
+			draw = true;
 			return position.height;
 		}
 
-		public void Property(SerializedProperty property, GUIContent label, bool draw = true) {
-			var area = MakeArea(EditorGUI.GetPropertyHeight(property, label, true));
+		public void Property(SerializedProperty property, GUIContent label) {
+			var area = MakeArea(EditorGUI.GetPropertyHeight(property, label));
 			if(draw)
 				EditorGUI.PropertyField(area, property, label, true);
 		}
 
-		public void Label(GUIContent label, bool draw = true) {
+		public void Label(GUIContent label) {
 			var area = MakeArea();
 			if(draw)
 				EditorGUI.LabelField(area, label);
 		}
 
-		public bool Button(GUIContent label, bool draw = true) {
+		public bool Button(GUIContent label) {
 			var area = Indented(MakeArea());
 			return draw && GUI.Button(area, label);
 		}
@@ -65,18 +68,18 @@ namespace Unapparent {
 
 		public static PropertyFilter propertyFilter = declaredProperties;
 
-		public void DrawProperty(SerializedProperty property, GUIContent label, bool draw = true) {
+		public void DrawProperty(SerializedProperty property, GUIContent label) {
 			if(property == null)
 				return;
 			Type drawerType = property.ClosestDrawerType();
 			EditorGUI.BeginChangeCheck();
 			if(GetType().Equals(drawerType)) {
 				if(property.TargetObject() == null)
-					NullGUI(property, label, draw);
+					NullGUI(property, label);
 				else
-					DrawGUI(property, label, draw);
+					DrawGUI(property, label);
 			} else if(drawerType == null) {
-				Property(property, label, draw);
+				Property(property, label);
 			} else {
 				var drawer = Activator.CreateInstance(drawerType) as PropertyDrawer;
 				if(draw)
@@ -88,7 +91,7 @@ namespace Unapparent {
 				property.serializedObject.ApplyModifiedProperties();
 		}
 
-		public virtual void DrawGUI(SerializedProperty property, GUIContent label, bool draw = true) {
+		public virtual void DrawGUI(SerializedProperty property, GUIContent label) {
 			if(label != null && !label.Equals(GUIContent.none))
 				Label(label);
 			Object target = property.TargetObject() as Object;
@@ -101,14 +104,14 @@ namespace Unapparent {
 				if(!filter(child))
 					continue;
 				var childLabel = new GUIContent(child.displayName);
-				DrawProperty(child.Copy(), childLabel, draw);
+				DrawProperty(child.Copy(), childLabel);
 			}
 			--EditorGUI.indentLevel;
 		}
 
-		public virtual void NullGUI(SerializedProperty property, GUIContent label, bool draw = true) {
-			Label(label, draw);
-			Label(new GUIContent("Object is null"), draw);
+		public virtual void NullGUI(SerializedProperty property, GUIContent label) {
+			Label(label);
+			Label(new GUIContent("Object is null"));
 		}
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
