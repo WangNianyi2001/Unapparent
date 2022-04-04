@@ -1,14 +1,16 @@
+using System.Threading.Tasks;
+
 namespace Unapparent {
 	public abstract class List : Command {
 		public Statement action;
 
-		public abstract bool Validate(Carrier target, params object[] args);
+		public abstract bool Validate(params object[] args);
 
-		public virtual void TryExecute(Carrier target, params object[] args) {
-			if(Validate(target, args))
-				Execute(target);
+		public virtual void TryExecute(params object[] args) {
+			if(Validate(args))
+				Execute();
 		}
 
-		public override object Execute(Carrier target) => action?.Execute(target);
+		public override async Task<object> Execute() => await action?.Execute();
 	}
 }

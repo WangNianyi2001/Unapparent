@@ -1,15 +1,16 @@
-﻿using UnityEngine;
+﻿using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Unapparent {
 	public class NavigateTo : Statement {
+		public Character subject;
 		public Transform destination;
 		public float tolerance = 1f;
 		public Statement arrival = null;
 
-		public override object Execute(Carrier target) {
-			Character character = target as Character;
-			character.Arrival = arrival;
-			character.NavigateTo(destination.position, tolerance);
+		public override async Task<object> Execute() {
+			subject.Arrival = arrival;
+			subject.NavigateTo(destination.position, tolerance);
 			return null;
 		}
 	}

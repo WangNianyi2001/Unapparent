@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Unapparent {
@@ -8,6 +9,8 @@ namespace Unapparent {
 
 		public static T Create<T>() where T : Command => Create(typeof(T)) as T;
 
-		public abstract object Execute(Carrier target);
+		public virtual async Task<object> Execute() {
+			throw new NotImplementedException();
+		}
 	}
 }

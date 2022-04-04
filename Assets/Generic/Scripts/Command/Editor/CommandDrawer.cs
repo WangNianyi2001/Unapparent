@@ -65,16 +65,14 @@ namespace Unapparent {
 	[CustomPropertyDrawer(typeof(Statement))]
 	public class StatementDrawer : CommandDrawer {
 		public static new CommandMenu menu = new CommandMenu {
+			"Carrier",
+			typeof(SwitchState),
+			"Character",
+			typeof(NavigateTo),
+			typeof(Monologue),
 			"Control",
 			typeof(Conditional),
 			typeof(Sequential),
-			typeof(Agent),
-			"Logue",
-			typeof(Monologue),
-			typeof(Logue),
-			"Character",
-			typeof(SwitchState),
-			typeof(NavigateTo),
 		};
 	}
 
