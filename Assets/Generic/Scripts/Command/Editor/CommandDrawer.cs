@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -36,7 +37,9 @@ namespace Unapparent {
 		}
 
 		public override void NullGUI(PropertyAccessor accessor, GUIContent label) {
-			var menu = accessor.closestDrawerType?.GetStaticField("menu") as CommandMenu;
+			Type drawerType = DrawerTypeGetter.Closest(accessor.type);
+			var fi = drawerType.GetField("menu", BindingFlags.Static | BindingFlags.Public);
+			var menu = fi?.GetValue(null) as CommandMenu;
 			Label(label);
 			if(menu == null) {
 				Label(new GUIContent("Command is null"));

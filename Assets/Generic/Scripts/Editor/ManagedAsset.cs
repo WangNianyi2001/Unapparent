@@ -17,8 +17,8 @@ namespace Unapparent {
 				Debug.LogError("Path to establish is null or empty.");
 				return null;
 			}
-			if(!Directory.Exists(path))
-				Directory.CreateDirectory(path);
+			if(!System.IO.Directory.Exists(path))
+				System.IO.Directory.CreateDirectory(path);
 			return path;
 		}
 
