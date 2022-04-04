@@ -11,11 +11,13 @@ namespace Unapparent {
 	public class CommandDrawer : NestedDrawer {
 		public static CommandMenu menu = null;
 
-		public new static PropertyFilter propertyFilter = isPropertyOf(typeof(Command));
+		public CommandDrawer() {
+			propertyFilter = isPropertyOf(typeof(Command));
+		}
 
-		public override void InstanceGUI(SerializedProperty property, GUIContent label) {
+		public override void InstanceGUI(PropertyAccessor accessor, GUIContent label) {
 			label = new GUIContent(label);
-			label.text += $": {property.TargetObject().GetType().Name}";
+			label.text += $": {accessor.value.GetType().Name}";
 			const float buttonWidth = 50;
 			Rect rect = MakeArea();
 			Rect buttonRect = rect;
@@ -26,17 +28,15 @@ namespace Unapparent {
 				if(GUI.Button(buttonRect, "Clear")) {
 					if(EditorUtility.DisplayDialog("Confirm",
 						"You are clearing a command, proceed?",
-						"OK", "Cancel")) {
-						PropertyAccessor accessor = new PropertyAccessor(property);
-						accessor.Value = null;
-					}
+						"OK", "Cancel"))
+						accessor.value = null;
 				}
 			}
-			base.InstanceGUI(property, GUIContent.none);
+			base.InstanceGUI(accessor, GUIContent.none);
 		}
 
-		public override void NullGUI(SerializedProperty property, GUIContent label) {
-			var menu = property.ClosestDrawerType()?.GetStaticField("menu") as CommandMenu;
+		public override void NullGUI(PropertyAccessor accessor, GUIContent label) {
+			var menu = accessor.closestDrawerType?.GetStaticField("menu") as CommandMenu;
 			Label(label);
 			if(menu == null) {
 				Label(new GUIContent("Command is null"));
@@ -44,10 +44,7 @@ namespace Unapparent {
 			}
 			Label(new GUIContent("Command is null, select a type to create one"));
 			if(Button(new GUIContent("Create"))) {
-				menu.OnSelect = (Type type) => {
-					PropertyAccessor accessor = new PropertyAccessor(property);
-					accessor.Value = Command.Create(type);
-				};
+				menu.OnSelect = (Type type) => accessor.value = Command.Create(type);
 				menu.Show();
 			}
 		}

@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace Unapparent {
-	public class NestedDrawerBase : PropertyDrawer {
+	public class DrawerBase : PropertyDrawer {
 		protected Rect position;
 		protected bool draw = true;
 
