@@ -5,51 +5,8 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Unapparent {
-	public class NestedDrawer : PropertyDrawer {
-		protected Rect position;
-		protected bool draw = true;
-
-		public Rect TempArea(float height = 0) =>
-			new Rect(position.xMin, position.yMax, position.width, height);
-
-		public Rect Indented(Rect area) => EditorGUI.IndentedRect(area);
-
-		public Rect MakeArea(float height) {
-			Rect rect = TempArea(height);
-			position.yMax = rect.yMax;
-			return rect;
-		}
-
-		public Rect MakeArea() => MakeArea(EditorGUIUtility.singleLineHeight);
-
-		public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-			position.height = 0;
-			draw = false;
-			DrawProperty(property, label);
-			draw = true;
-			return position.height;
-		}
-
-		public void Property(SerializedProperty property, GUIContent label) {
-			var area = MakeArea(EditorGUI.GetPropertyHeight(property, label));
-			if(draw)
-				EditorGUI.PropertyField(area, property, label, true);
-		}
-
-		public void Label(GUIContent label) {
-			var area = MakeArea();
-			if(draw)
-				EditorGUI.LabelField(area, label);
-		}
-
-		public bool Button(GUIContent label) {
-			var area = Indented(MakeArea());
-			return draw && GUI.Button(area, label);
-		}
-
+	public class NestedDrawer : NestedDrawerBase {
 		public delegate bool PropertyFilter(SerializedProperty property);
-
-		public static PropertyFilter allProperties = (SerializedProperty _) => true;
 
 		public static PropertyFilter declaredProperties = (SerializedProperty property) => {
 			Type type = property.serializedObject.targetObject.GetType();
@@ -68,6 +25,14 @@ namespace Unapparent {
 
 		public static PropertyFilter propertyFilter = declaredProperties;
 
+		public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+			position.height = 0;
+			draw = false;
+			DrawProperty(property, label);
+			draw = true;
+			return position.height;
+		}
+
 		public void DrawProperty(SerializedProperty property, GUIContent label) {
 			if(property == null)
 				return;
@@ -77,7 +42,7 @@ namespace Unapparent {
 				if(property.TargetObject() == null)
 					NullGUI(property, label);
 				else
-					DrawGUI(property, label);
+					InstanceGUI(property, label);
 			} else if(drawerType == null) {
 				Property(property, label);
 			} else {
@@ -91,7 +56,7 @@ namespace Unapparent {
 				property.serializedObject.ApplyModifiedProperties();
 		}
 
-		public virtual void DrawGUI(SerializedProperty property, GUIContent label) {
+		public virtual void InstanceGUI(SerializedProperty property, GUIContent label) {
 			if(label != null && !label.Equals(GUIContent.none))
 				Label(label);
 			Object target = property.TargetObject() as Object;

@@ -120,10 +120,5 @@ namespace Unapparent {
 
 		public static Type ClosestDrawerType(this SerializedProperty property) =>
 			ClosestDrawerType(property.TargetType());
-
-		public static PropertyDrawer MakeDrawer(this SerializedProperty property) {
-			var drawerType = property.ClosestDrawerType();
-			return Activator.CreateInstance(drawerType) as PropertyDrawer;
-		}
 	}
 }

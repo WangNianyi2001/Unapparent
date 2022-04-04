@@ -13,10 +13,26 @@ namespace Unapparent {
 
 		public new static PropertyFilter propertyFilter = isPropertyOf(typeof(Command));
 
-		public override void DrawGUI(SerializedProperty property, GUIContent label) {
-			GUIContent modifiedLabel = new GUIContent(label);
-			modifiedLabel.text += $": {property.TargetObject().GetType().Name}";
-			base.DrawGUI(property, modifiedLabel);
+		public override void InstanceGUI(SerializedProperty property, GUIContent label) {
+			label = new GUIContent(label);
+			label.text += $": {property.TargetObject().GetType().Name}";
+			const float buttonWidth = 50;
+			Rect rect = MakeArea();
+			Rect buttonRect = rect;
+			buttonRect.xMin = buttonRect.xMax - buttonWidth;
+			rect.xMax -= buttonWidth;
+			if(draw) {
+				EditorGUI.LabelField(rect, label);
+				if(GUI.Button(buttonRect, "Clear")) {
+					if(EditorUtility.DisplayDialog("Confirm",
+						"You are clearing a command, proceed?",
+						"OK", "Cancel")) {
+						PropertyAccessor accessor = new PropertyAccessor(property);
+						accessor.Value = null;
+					}
+				}
+			}
+			base.InstanceGUI(property, GUIContent.none);
 		}
 
 		public override void NullGUI(SerializedProperty property, GUIContent label) {
@@ -26,12 +42,11 @@ namespace Unapparent {
 				Label(new GUIContent("Command is null"));
 				return;
 			}
-			Label(new GUIContent("Command is null, click the button to create one"));
-			if(Button(new GUIContent("Select type"))) {
+			Label(new GUIContent("Command is null, select a type to create one"));
+			if(Button(new GUIContent("Create"))) {
 				menu.OnSelect = (Type type) => {
 					PropertyAccessor accessor = new PropertyAccessor(property);
 					accessor.Value = Command.Create(type);
-					Debug.Log(accessor.Value);
 				};
 				menu.Show();
 			}
