@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -31,6 +32,8 @@ namespace Unapparent {
 			return position.height;
 		}
 
+		protected Dictionary<string, PropertyDrawer> drawerCache = new Dictionary<string, PropertyDrawer>();
+
 		public void DrawProperty(PropertyAccessor accessor, GUIContent label) {
 			SerializedProperty property = accessor;
 			if(property == null)
@@ -45,7 +48,12 @@ namespace Unapparent {
 			} else if(drawerType == null) {
 				Property(property, label);
 			} else {
-				var drawer = Activator.CreateInstance(drawerType) as PropertyDrawer;
+				var key = accessor.ToString();
+				PropertyDrawer drawer;
+				if(drawerCache.ContainsKey(key))
+					drawer = drawerCache[key];
+				else
+					drawerCache[key] = drawer = Activator.CreateInstance(drawerType) as PropertyDrawer;
 				if(draw)
 					drawer.OnGUI(TempArea(), property, label);
 				position.height += drawer.GetPropertyHeight(property, label);
