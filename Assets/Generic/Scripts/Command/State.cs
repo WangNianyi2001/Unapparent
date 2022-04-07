@@ -6,7 +6,7 @@ namespace Unapparent {
 	public class State : MonoBehaviour {
 		[SerializeReference] public State parent = null;
 
-		public List<List> listeners;
+		public List<Listener> listeners;
 
 		public bool isParentOf(State target) {
 			if(target == null)
@@ -15,14 +15,14 @@ namespace Unapparent {
 		}
 
 		public void TryFire(Type type, Carrier target, params object[] args) {
-			foreach(List listener in listeners) {
+			foreach(Listener listener in listeners) {
 				if(type.IsAssignableFrom(listener.GetType()))
 					listener.TryExecute(target, args);
 			}
 		}
 
 		public void Reset() {
-			listeners = new List<List>();
+			listeners = new List<Listener>();
 		}
 	}
 }

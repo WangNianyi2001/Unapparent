@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 
 namespace Unapparent {
-	public abstract class List : Command {
+	public abstract class Listener : Command {
 		public Statement action;
 
 		public abstract bool Validate(params object[] args);

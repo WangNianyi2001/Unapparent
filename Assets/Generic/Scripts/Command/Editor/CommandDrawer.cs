@@ -39,7 +39,7 @@ namespace Unapparent {
 		public override void NullGUI(PropertyAccessor accessor, GUIContent label) {
 			Type drawerType = DrawerTypeGetter.Closest(accessor.type);
 			var fi = drawerType.GetField("menu", BindingFlags.Static | BindingFlags.Public);
-			var menu = fi?.GetValue(null) as CommandMenu;
+			var menu = fi.GetValue(null) as CommandMenu;
 			Label(label);
 			if(menu == null) {
 				Label(new GUIContent("Command is null"));
@@ -53,7 +53,7 @@ namespace Unapparent {
 		}
 	}
 
-	[CustomPropertyDrawer(typeof(List))]
+	[CustomPropertyDrawer(typeof(Listener))]
 	public class ListenerDrawer : CommandDrawer {
 		public static new CommandMenu menu = new CommandMenu {
 			"State",

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
 using Object = UnityEngine.Object;
+using System.Collections.Generic;
 
 namespace Unapparent {
 	public abstract class SerializedWrapper {
@@ -63,7 +62,7 @@ namespace Unapparent {
 
 		public class Root : PropertyAccessor {
 			public readonly object obj;
-			public override Type type => throw new NotImplementedException();
+			public override Type type => obj.GetType();
 			public Root(object obj) => this.obj = obj;
 			public override object value {
 				get => obj;
@@ -72,7 +71,8 @@ namespace Unapparent {
 			public override PropertyAccessor root => this;
 			public override string path => "";
 			public override string ToString() => obj.GetType().Name;
-			public override SerializedWrapper Serialize() => throw new NotImplementedException();
+			public override SerializedWrapper Serialize() =>
+				new SerializedWrapper.Root(new SerializedObject(obj as Object));
 		}
 
 		public abstract class Sub : PropertyAccessor {
@@ -90,8 +90,8 @@ namespace Unapparent {
 			public Field(PropertyAccessor parent, string name) : base(parent) =>
 				fi = parent.type.GetField(name);
 			public override object value {
-				get => fi.GetValue(parent);
-				set => fi.SetValue(parent, value);
+				get => fi.GetValue(parent.value);
+				set => fi.SetValue(parent.value, value);
 			}
 			public override string ToString() => $".{name}";
 			public override SerializedWrapper Serialize() => parent.Serialize().GetField(name);
@@ -103,16 +103,16 @@ namespace Unapparent {
 				this.index = index;
 			public override Type type => parent.type.IsGenericType ? parent.type.GenericTypeArguments[0] : typeof(object);
 			public override object value {
-				get => (parent as IList)[index];
-				set => (parent as IList)[index] = value;
+				get => (parent.value as IList)[index];
+				set => (parent.value as IList)[index] = value;
 			}
 			public override string ToString() => $"[{index}]";
 			public override SerializedWrapper Serialize() => parent.Serialize().GetElement(index);
 		}
 
 		public static PropertyAccessor FromProperty(SerializedProperty property) {
-			PropertyAccessor accessor = new Root(property.objectReferenceValue);
-			string path = '.' + property.propertyPath.Replace(".Array.data[", ".[");
+			PropertyAccessor accessor = new Root(property.serializedObject.targetObject);
+			string path = '.' + property.propertyPath.Replace(".Array.data[", "[");
 			while(path.Length != 0) {
 				if(path[0] == '.') {
 					Match match = new Regex(@"^\.([_a-zA-Z][_a-zA-Z\d]*)").Match(path);
@@ -120,7 +120,7 @@ namespace Unapparent {
 						throw new FormatException();
 					string name = match.Groups[1].Value;
 					accessor = new Field(accessor, name);
-					path = path.Substring(match.Groups[0].Value.Length + 1);
+					path = path.Substring(match.Groups[0].Value.Length);
 					continue;
 				}
 				if(path[0] == '[') {
@@ -129,7 +129,7 @@ namespace Unapparent {
 						throw new FormatException();
 					int index = Convert.ToInt32(match.Groups[1].Value);
 					accessor = new Element(accessor, index);
-					path = path.Substring(match.Groups[0].Value.Length + 1);
+					path = path.Substring(match.Groups[0].Value.Length);
 					continue;
 				}
 				return null;

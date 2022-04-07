@@ -1,9 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Unapparent {
 	public class NestedDrawer : DrawerBase {
@@ -11,22 +11,18 @@ namespace Unapparent {
 		public PropertyFilter propertyFilter = declaredProperties;
 
 		public static PropertyFilter declaredProperties = (PropertyAccessor accessor) =>
-			accessor.type.GetField(
-				(accessor as PropertyAccessor.Field).name,
-				BindingFlags.Instance |
-				BindingFlags.DeclaredOnly |
-				BindingFlags.Public |
-				BindingFlags.NonPublic
-			) != null;
-
-		public static PropertyFilter isPropertyOf(Type type) =>
-			(PropertyAccessor accessor) =>type.IsAssignableFrom((
-				accessor.root.type.GetField(
-					(accessor as PropertyAccessor.Field).name,
+			accessor.type.GetField((accessor as PropertyAccessor.Field).name,
 					BindingFlags.Instance |
+					BindingFlags.DeclaredOnly |
 					BindingFlags.Public |
-					BindingFlags.NonPublic
-			))?.DeclaringType);
+					BindingFlags.NonPublic) != null;
+		public static PropertyFilter isPropertyOf(Type type) => (PropertyAccessor accessor) =>
+			type.IsAssignableFrom((
+				accessor.root.GetType().GetField((accessor as PropertyAccessor.Field).name,
+						BindingFlags.Instance |
+						BindingFlags.Public |
+						BindingFlags.NonPublic)
+				)?.DeclaringType);
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
 			position.height = 0;
@@ -39,13 +35,14 @@ namespace Unapparent {
 		protected Dictionary<string, PropertyDrawer> drawerCache = new Dictionary<string, PropertyDrawer>();
 
 		public void DrawProperty(PropertyAccessor accessor, GUIContent label) {
-			var property = accessor?.MakeProperty();
+			SerializedProperty property = accessor.MakeProperty();
 			if(property == null)
 				return;
 			Type drawerType = DrawerTypeGetter.Closest(accessor.type);
-			if(draw)
-				EditorGUI.BeginChangeCheck();
-			if(drawerType != null) {
+			EditorGUI.BeginChangeCheck();
+			if(drawerType == null) {
+				Property(property, label);
+			} else {
 				if(GetType().Equals(drawerType)) {
 					if(accessor.value == null)
 						NullGUI(accessor, label);
@@ -53,40 +50,36 @@ namespace Unapparent {
 						InstanceGUI(accessor, label);
 				} else {
 					var key = accessor.ToString();
-					PropertyDrawer drawer =
-						drawerCache.ContainsKey(key) ? drawerCache[key] :
-						(drawerCache[key] = Activator.CreateInstance(drawerType) as PropertyDrawer);
+					PropertyDrawer drawer;
+					if(drawerCache.ContainsKey(key))
+						drawer = drawerCache[key];
+					else
+						drawerCache[key] = drawer = Activator.CreateInstance(drawerType) as PropertyDrawer;
 					if(draw)
 						drawer.OnGUI(TempArea(), property, label);
 					position.height += drawer.GetPropertyHeight(property, label);
 				}
 			}
-			//else if(accessor.isArray) {
-			//	int length = (accessor.value as IList).Count;
-			//	for(int i = 0; i < length; ++i)
-			//		DrawProperty(accessor.GetElement(i), new GUIContent("Element"));
-			//}
-			else {
-				Property(property, label);
-			}
 			MakeArea(EditorGUIUtility.standardVerticalSpacing);
-			if(draw && EditorGUI.EndChangeCheck())
+			if(EditorGUI.EndChangeCheck())
 				property.serializedObject.ApplyModifiedProperties();
 		}
 
 		public virtual void InstanceGUI(PropertyAccessor accessor, GUIContent label) {
-			return;
 			if(label != null && !label.Equals(GUIContent.none))
 				Label(label);
+			var target = accessor.value as Object;
+			if(target == null)
+				return;
 			++EditorGUI.indentLevel;
-			var childProperty = accessor?.MakeProperty();
-			for(bool end = childProperty.Next(true); end; end = childProperty.NextVisible(false)) {
-				var childAccessor = PropertyAccessor.FromProperty(childProperty);
+			var child = new SerializedObject(target).GetIterator();
+			for(bool end = child.Next(true); end; end = child.NextVisible(false)) {
+				PropertyAccessor childAccessor = PropertyAccessor.FromProperty(child);
 				if(childAccessor == null)
 					continue;
 				if(!propertyFilter(childAccessor))
 					continue;
-				var childLabel = new GUIContent(childProperty.displayName);
+				var childLabel = new GUIContent(child.displayName);
 				DrawProperty(childAccessor, childLabel);
 			}
 			--EditorGUI.indentLevel;
