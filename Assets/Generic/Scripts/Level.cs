@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,14 +17,16 @@ namespace Unapparent {
 				Destroy(child.gameObject);
 		}
 
-		public async Task<object> ShowMonologue(Monologue monologue) {
+		public async Task<object> ShowMonologue(Character character, Monologue.Content content) {
+			if(character == null)
+				return new NullReferenceException();
 			ClearOptions();
 			Transform info = monologueObj.transform.Find("Content/Info");
-			info.Find("Name").GetComponent<Text>().text = monologue.character.identity.name;
-			info.Find("Text").GetComponent<Text>().text = monologue.text;
+			info.Find("Name").GetComponent<Text>().text = character.identity.name;
+			info.Find("Text").GetComponent<Text>().text = content.text;
 			GameObject optionsObj = monologueObj.transform.Find("Content/Options").gameObject;
 			TaskCompletionSource<object> promise = new TaskCompletionSource<object>();
-			foreach(Monologue.Option option in monologue.options) {
+			foreach(Monologue.Content.Option option in content.options) {
 				GameObject optionOBtn = Instantiate(Resources.Load<GameObject>("Option Button"));
 				optionOBtn.GetComponentInChildren<Text>().text = option.text;
 				Button.ButtonClickedEvent ev = new Button.ButtonClickedEvent();

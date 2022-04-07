@@ -78,6 +78,7 @@ namespace Unapparent {
 			"Character",
 			typeof(NavigateTo),
 			typeof(Monologue),
+			typeof(Logue),
 			"Control",
 			typeof(Conditional),
 			typeof(Sequential),
@@ -87,7 +88,6 @@ namespace Unapparent {
 	[CustomPropertyDrawer(typeof(Expression))]
 	public class ExpressionDrawer : CommandDrawer {
 		public static new CommandMenu menu = new CommandMenu {
-			typeof(BoolConstant),
 		};
 	}
 }
