@@ -1,12 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Unapparent {
 	public class Delegate : Statement {
-		public System.Action action;
+		public Action action;
 
-		public override async Task<object> Execute() {
+		public override async Task<object> Execute() => await Task.Run<object>(() => {
 			action?.Invoke();
 			return null;
-		}
+		});
 	}
 }

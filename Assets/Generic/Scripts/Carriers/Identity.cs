@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace Unapparent {
-	public class LogueProfile : ScriptableObject {
+	public class Identity : ScriptableObject {
 		public new string name;
 	}
 }

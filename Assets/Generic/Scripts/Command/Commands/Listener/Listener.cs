@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace Unapparent {
@@ -6,9 +7,9 @@ namespace Unapparent {
 
 		public abstract bool Validate(params object[] args);
 
-		public virtual void TryExecute(params object[] args) {
+		public virtual async void TryExecute(params object[] args) {
 			if(Validate(args))
-				Execute();
+				await Execute();
 		}
 
 		public override async Task<object> Execute() => await action?.Execute();

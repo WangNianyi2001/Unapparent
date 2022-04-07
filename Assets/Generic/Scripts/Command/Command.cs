@@ -9,8 +9,6 @@ namespace Unapparent {
 
 		public static T Create<T>() where T : Command => Create(typeof(T)) as T;
 
-		public virtual async Task<object> Execute() {
-			throw new NotImplementedException();
-		}
+		public abstract Task<object> Execute();
 	}
 }

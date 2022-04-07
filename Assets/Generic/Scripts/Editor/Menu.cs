@@ -44,7 +44,8 @@ namespace Unapparent {
 					}
 					path = entry.text + "/";
 					menu.AddSeparator(path);
-				} else {
+				}
+				else {
 					GUIContent content = new GUIContent(path + OnLabelize(entry.target));
 					menu.AddItem(content, false, SelectCallback, entry.target);
 				}

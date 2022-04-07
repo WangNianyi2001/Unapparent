@@ -2,11 +2,11 @@ using System.Threading.Tasks;
 
 namespace Unapparent {
 	public class Conditional : Statement {
-		public Expression condition = null;
+		public Expression @if = null;
 
-		public Statement trueBranch = null, falseBranch = null;
+		public Statement then = null, @else = null;
 
 		public override async Task<object> Execute() =>
-			((bool)await condition?.Execute() ? trueBranch : falseBranch)?.Execute();
+			((bool)await @if?.Execute() ? then : @else)?.Execute();
 	}
 }
