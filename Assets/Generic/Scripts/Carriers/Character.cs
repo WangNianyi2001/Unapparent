@@ -7,8 +7,8 @@ namespace Unapparent {
 
 		NavMeshAgent agent;
 
-		Command arrival = null;
-		public Command Arrival {
+		Statement arrival = null;
+		public Statement Arrival {
 			set => arrival = value;
 		}
 
@@ -17,11 +17,8 @@ namespace Unapparent {
 		public float checkFrequency = .5f;
 
 		void CheckArrival() {
-			if(arrival == null)
-				return;
 			if(agent.remainingDistance <= agent.stoppingDistance) {
-				arrival.Execute(this);
-				arrival = null;
+				arrival?.Execute();
 				return;
 			}
 			Invoke("CheckArrival", checkFrequency);

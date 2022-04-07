@@ -1,29 +1,45 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Unapparent {
 	[Serializable]
 	public class Carrier : MonoBehaviour {
-		public GameObject initialState = null;
-		State currentState = null;
+		public State initialState = null;
 
-		public State state {
-			get => currentState;
+		Stack<State> currentStates = new Stack<State>();
+
+		public State State {
+			get => currentStates.Peek();
 			set {
-				currentState = value;
+				State target = value;
+				var buffer = new Stack<State>();
+				while(currentStates.Count != 0 && !currentStates.Peek().isParentOf(target)) {
+					var removed = currentStates.Pop();
+					removed.TryFire(typeof(ExitState), this);
+				}
+				while(target != (currentStates.Count == 0 ? null : currentStates.Peek())) {
+					buffer.Push(target);
+					target = target.parent;
+				}
+				while(buffer.Count != 0) {
+					var added = buffer.Pop();
+					added.TryFire(typeof(EnterState), this);
+					currentStates.Push(added);
+				}
 			}
 		}
 
-		public void TryFire(Type type) {
-			foreach(Listener listener in currentState.listeners) {
-				if(type.IsAssignableFrom(listener.GetType()))
-					listener.TryExecute(this);
-			}
+		public void OnTriggerEnter(Collider other) {
+			State.TryFire(typeof(EnterTrigger), this, other);
+		}
+
+		public void OnTriggerExit(Collider other) {
+			State.TryFire(typeof(ExitTrigger), this, other);
 		}
 
 		public void Start() {
-			state = initialState.GetComponent<State>();
-			TryFire(typeof(OnStart));
+			State = initialState;
 		}
 	}
 }
