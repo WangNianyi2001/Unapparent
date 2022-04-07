@@ -57,37 +57,4 @@ namespace Unapparent {
 			}
 		}
 	}
-
-	[CustomPropertyDrawer(typeof(Listener))]
-	public class ListenerDrawer : CommandDrawer {
-		public static new CommandMenu menu = new CommandMenu {
-			"State",
-			typeof(EnterState),
-			typeof(ExitState),
-			"Trigger",
-			typeof(EnterTrigger),
-			typeof(ExitTrigger),
-		};
-	}
-
-	[CustomPropertyDrawer(typeof(Statement))]
-	public class StatementDrawer : CommandDrawer {
-		public static new CommandMenu menu = new CommandMenu {
-			"Carrier",
-			typeof(SwitchState),
-			"Character",
-			typeof(NavigateTo),
-			typeof(Monologue),
-			typeof(Logue),
-			"Control",
-			typeof(Conditional),
-			typeof(Sequential),
-		};
-	}
-
-	[CustomPropertyDrawer(typeof(Expression))]
-	public class ExpressionDrawer : CommandDrawer {
-		public static new CommandMenu menu = new CommandMenu {
-		};
-	}
 }

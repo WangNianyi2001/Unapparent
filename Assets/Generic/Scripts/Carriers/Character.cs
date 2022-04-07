@@ -1,29 +1,33 @@
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Unapparent {
 	public class Character : Carrier {
-		protected static LayerMask walkableLayerMask;
-
-		NavMeshAgent agent;
+		[NonSerialized] public NavMeshAgent agent;
 
 		public Identity identity;
 		public virtual Identity appearance => identity;
 
-		public async Task<object> NavigateTo(Vector3 location, float tolerance = 1f) {
-			agent.stoppingDistance = tolerance;
-			agent.SetDestination(location);
-			while(Application.isPlaying) {
-				await Task.Delay(100);
-				if(agent.remainingDistance <= agent.stoppingDistance)
-					return true;
-			}
-			return false;
+		public override async Task<object> TeleportTo(Vector3 position) {
+			await Task.Delay(1);
+			return lastArrived = agent.Warp(position);
 		}
 
-		public void Awake() {
-			walkableLayerMask = LayerMask.GetMask("Walkable");
+		public async Task<object> NavigateTo(Vector3 position, float tolerance = 1f) {
+			lastArrived = false;
+			agent.stoppingDistance = tolerance;
+			agent.SetDestination(position);
+			agent.isStopped = false;
+			while(Application.isPlaying) {
+				await Task.Delay(100);
+				if(agent.remainingDistance <= agent.stoppingDistance) {
+					lastArrived = agent.pathStatus == NavMeshPathStatus.PathComplete;
+					break;
+				}
+			}
+			return lastArrived;
 		}
 
 		public new void Start() {

@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Unapparent {
 	[Serializable]
 	public class Carrier : MonoBehaviour {
 		public State initialState = null;
-
 		Stack<State> currentStates = new Stack<State>();
-
 		public State State {
 			get => currentStates.Peek();
 			set {
@@ -28,6 +27,14 @@ namespace Unapparent {
 					currentStates.Push(added);
 				}
 			}
+		}
+
+		[NonSerialized] public bool lastArrived = false;
+
+		public virtual async Task<object> TeleportTo(Vector3 position) {
+			await Task.Delay(1);
+			transform.position = position;
+			return lastArrived = true;
 		}
 
 		public void OnTriggerEnter(Collider other) {
