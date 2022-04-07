@@ -12,7 +12,8 @@ namespace Unapparent {
 			set => arrival = value;
 		}
 
-		public LogueProfile profile;
+		public Identity identity;
+		public virtual Identity appearance => identity;
 
 		public float checkFrequency = .5f;
 

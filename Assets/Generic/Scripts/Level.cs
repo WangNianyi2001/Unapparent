@@ -19,7 +19,7 @@ namespace Unapparent {
 		public async Task<object> ShowMonologue(Monologue monologue) {
 			ClearOptions();
 			Transform info = monologueObj.transform.Find("Content/Info");
-			info.Find("Name").GetComponent<Text>().text = monologue.character.profile.name;
+			info.Find("Name").GetComponent<Text>().text = monologue.character.identity.name;
 			info.Find("Text").GetComponent<Text>().text = monologue.text;
 			GameObject optionsObj = monologueObj.transform.Find("Content/Options").gameObject;
 			TaskCompletionSource<object> promise = new TaskCompletionSource<object>();

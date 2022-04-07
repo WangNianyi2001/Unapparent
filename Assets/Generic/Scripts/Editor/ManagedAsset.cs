@@ -4,9 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Unapparent {
-	public class ManagedAsset : ScriptableObject {
-		protected string guid;
-
+	public static class ManagedAsset {
 		public const string sceneFolderName = "Managed";
 		public static string scenePath => Path.GetDirectoryName(SceneManager.GetActiveScene().path);
 
@@ -31,24 +29,20 @@ namespace Unapparent {
 
 		// Create asset and return GUID
 
-		public static string CreateAsset(Object obj, string folderName, string suffix = ".asset", string name = null) {
+		public static string CreateAsset(Object obj, string folderName, string name = null, string suffix = ".asset") {
 			if(Application.isPlaying)
 				return null;
 			string folder = EstablishSceneFolder(folderName);
-			string path = Path.Combine(folder, "Generated Asset");
-			path += suffix;
+			string path = Path.Combine(folder, "Generated Asset" + suffix);
 			path = AssetDatabase.GenerateUniqueAssetPath(path);
 			AssetDatabase.CreateAsset(obj, path);
 			string guid = AssetDatabase.AssetPathToGUID(path);
-			string res = AssetDatabase.RenameAsset(path, (name != null ? name : guid) + suffix);
+			string newName = Path.Combine(folder, (name != null ? name : guid) + suffix);
+			newName = AssetDatabase.GenerateUniqueAssetPath(newName);
+			newName = Path.GetFileName(newName);
+			string res = AssetDatabase.RenameAsset(path, newName);
 			if(!string.IsNullOrEmpty(res))
 				Debug.LogWarning(res);
-			return guid;
-		}
-
-		public static string CreateAsset(ManagedAsset obj, string folderName, string suffix = ".asset", string name = null) {
-			string guid = CreateAsset(obj as Object, folderName, suffix, name);
-			obj.guid = guid;
 			return guid;
 		}
 	}
