@@ -222,20 +222,6 @@ Transform:
   m_Father: {fileID: 734699437}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &138719643
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bc375302c0749b46b881942d478f478, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sequence:
-  - {fileID: 2007214735}
 --- !u!1 &242660017
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,21 +482,6 @@ Transform:
   m_Father: {fileID: 1472400285}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &610806285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e41df596e9f2c9747b0fbaa99dddbe4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  subject: {fileID: 1025284390}
-  destination: {fileID: 2044079951}
-  tolerance: 1
 --- !u!1 &688751367
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,7 +528,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.0031219, y: 1}
+    m_SensorSize: {x: 1.9719043, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -582,23 +553,6 @@ Transform:
   m_Father: {fileID: 2137512770}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
---- !u!114 &713428084
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd03c70757b91f74f96c0d0b3e811039, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  character: {fileID: 1025284390}
-  text: Arrived
-  options:
-  - text: Done
-    action: {fileID: 0}
 --- !u!1 &734699436
 GameObject:
   m_ObjectHideFlags: 0
@@ -992,22 +946,6 @@ Transform:
   m_Father: {fileID: 2137512770}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!114 &1092091586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bc375302c0749b46b881942d478f478, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sequence:
-  - {fileID: 948951414}
-  - {fileID: 610806285}
-  - {fileID: 713428084}
 --- !u!1 &1264457751
 GameObject:
   m_ObjectHideFlags: 0
@@ -1053,8 +991,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parent: {fileID: 0}
-  listeners:
-  - {fileID: 1477984614}
+  listeners: []
 --- !u!1 &1277645131
 GameObject:
   m_ObjectHideFlags: 0
@@ -1252,19 +1189,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1472400284}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1477984614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 933d9044e538cdc4aa92649e0d5c0524, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  action: {fileID: 138719643}
 --- !u!1 &1503875911
 GameObject:
   m_ObjectHideFlags: 3
@@ -1486,21 +1410,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4214099901942593145, guid: 827a33254da50ad4a825672067d97b70, type: 3}
   m_PrefabInstance: {fileID: 1888609662}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2007214735
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd03c70757b91f74f96c0d0b3e811039, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  character: {fileID: 0}
-  text: Hello
-  options: []
 --- !u!1 &2044079950
 GameObject:
   m_ObjectHideFlags: 0
