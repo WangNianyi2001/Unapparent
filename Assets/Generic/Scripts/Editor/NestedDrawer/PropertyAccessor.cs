@@ -1,158 +1,145 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
 using Object = UnityEngine.Object;
+using System.Collections.Generic;
 
 namespace Unapparent {
-	public class PropertyAccessor {
-		public struct Directory {
-			public readonly string name;
-			public readonly bool isElement;
+	public abstract class SerializedWrapper {
+		public abstract SerializedWrapper GetField(string name);
+		public abstract SerializedWrapper GetElement(int index);
+
+		public class Root : SerializedWrapper {
+			public readonly SerializedObject so;
+			public Root(SerializedObject so) => this.so = so;
+			public override SerializedWrapper GetField(string name) => so.FindProperty(name);
+			public override SerializedWrapper GetElement(int index) => throw new NotImplementedException();
+		}
+
+		public class Field : SerializedWrapper {
+			public readonly SerializedProperty sp;
+			public Field(SerializedProperty sp) => this.sp = sp.Copy();
+			public override SerializedWrapper GetField(string name) => sp.FindPropertyRelative(name);
+			public override SerializedWrapper GetElement(int index) => sp.GetArrayElementAtIndex(index);
+		}
+
+		public static implicit operator SerializedWrapper(SerializedObject so) => new Root(so);
+		public static implicit operator SerializedWrapper(SerializedProperty sp) => new Field(sp);
+	}
+
+	public static class DrawerTypeGetter {
+		public static Assembly assembly = Assembly.GetAssembly(typeof(Editor));
+		public static object instance = assembly.CreateInstance("UnityEditor.ScriptAttributeUtility");
+		public static MethodInfo method = instance.GetType().GetMethod("GetDrawerTypeForType",
+				BindingFlags.Instance | BindingFlags.Static |
+				BindingFlags.Public | BindingFlags.NonPublic);
+
+		public static Type Direct(Type type) =>
+			(Type)method?.Invoke(instance, new object[] { type });
+
+		public static Type Closest(Type type) {
+			for(; type != null; type = type.BaseType) {
+				Type result = Direct(type);
+				if(result != null)
+					return result;
+			}
+			return null;
+		}
+	}
+
+	public abstract class PropertyAccessor {
+		public abstract Type type { get; }
+		public bool isArray => typeof(IList).IsAssignableFrom(type);
+		public abstract object value { get; set; }
+		public abstract PropertyAccessor root { get; }
+		public abstract string path { get; }
+
+		public override abstract string ToString();
+		public abstract SerializedWrapper Serialize();
+
+		public class Root : PropertyAccessor {
+			public readonly object obj;
+			public override Type type => obj.GetType();
+			public Root(object obj) => this.obj = obj;
+			public override object value {
+				get => obj;
+				set => throw new NotImplementedException();
+			}
+			public override PropertyAccessor root => this;
+			public override string path => "";
+			public override string ToString() => obj.GetType().Name;
+			public override SerializedWrapper Serialize() =>
+				new SerializedWrapper.Root(new SerializedObject(obj as Object));
+		}
+
+		public abstract class Sub : PropertyAccessor {
+			public readonly PropertyAccessor parent;
+			public override PropertyAccessor root => parent.root;
+			public override string path => parent.path + ToString();
+			public Sub(PropertyAccessor parent) => this.parent = parent;
+			public override abstract string ToString();
+		}
+
+		public class Field : Sub {
+			public readonly FieldInfo fi;
+			public string name => fi.Name;
+			public override Type type => fi.FieldType;
+			public Field(PropertyAccessor parent, string name) : base(parent) =>
+				fi = parent.type.GetField(name);
+			public override object value {
+				get => fi.GetValue(parent.value);
+				set => fi.SetValue(parent.value, value);
+			}
+			public override string ToString() => $".{name}";
+			public override SerializedWrapper Serialize() => parent.Serialize().GetField(name);
+		}
+
+		public class Element : Sub {
 			public readonly int index;
-			public FieldInfo fi;
-
-			public Type fieldType => fi.FieldType;
-			public bool isArray => typeof(IList).IsAssignableFrom(fieldType);
-			public Type elementType => fieldType.IsGenericType ? fieldType.GenericTypeArguments[0] : typeof(object);
-			public Type iterType => isElement ? elementType : fieldType;
-			public Type contentType => isArray ? elementType : fieldType;
-
-			public Directory(Type parent, string dirStr) {
-				Match match = new Regex(@"^([^[]+?)(?:\[([^]]+)\])?$").Match(dirStr);
-				GroupCollection groups = match.Groups;
-				name = groups[1].Value;
-				const BindingFlags bindFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
-				fi = parent.GetField(name, bindFlags);
-				if(fi == null)
-					throw new NullReferenceException("Field not found");
-				string indexStr = groups[2].Value;
-				if(!string.IsNullOrWhiteSpace(indexStr)) {
-					isElement = true;
-					index = Convert.ToInt32(indexStr);
-				} else {
-					isElement = false;
-					index = -1;
-				}
+			public Element(PropertyAccessor parent, int index) : base(parent) =>
+				this.index = index;
+			public override Type type => parent.type.IsGenericType ? parent.type.GenericTypeArguments[0] : typeof(object);
+			public override object value {
+				get => (parent.value as IList)[index];
+				set => (parent.value as IList)[index] = value;
 			}
-
-			public object GetValue(object parent) {
-				object field = fi.GetValue(parent);
-				return isElement ? (field as IList)[index] : field;
-			}
-
-			public void SetValue(object parent, object value) {
-				if(isElement)
-					(fi.GetValue(parent) as IList)[index] = value;
-				else
-					fi.SetValue(parent, value);
-			}
-
-			public override string ToString() => isElement ? $"{name}[{index}]" : name;
+			public override string ToString() => $"[{index}]";
+			public override SerializedWrapper Serialize() => parent.Serialize().GetElement(index);
 		}
 
-		public readonly object root;
-		public readonly List<Directory> path;
-
-		public object value {
-			get {
-				object obj = root;
-				for(int i = 0; i < path.Count; ++i) {
-					var dir = path[i];
-					if(obj == null)
-						return null;
-					obj = dir.GetValue(obj);
+		public static PropertyAccessor FromProperty(SerializedProperty property) {
+			PropertyAccessor accessor = new Root(property.serializedObject.targetObject);
+			string path = '.' + property.propertyPath.Replace(".Array.data[", "[");
+			while(path.Length != 0) {
+				if(path[0] == '.') {
+					Match match = new Regex(@"^\.([_a-zA-Z][_a-zA-Z\d]*)").Match(path);
+					if(!match.Success)
+						throw new FormatException();
+					string name = match.Groups[1].Value;
+					accessor = new Field(accessor, name);
+					path = path.Substring(match.Groups[0].Value.Length);
+					continue;
 				}
-				return obj;
-			}
-			set {
-				object obj = root;
-				for(int i = 0; i < path.Count - 1; ++i) {
-					var dir = path[i];
-					if(obj == null)
-						throw new NullReferenceException("Value to set has a null in path");
-					obj = dir.GetValue(obj);
-				}
-				path.Last().SetValue(obj, value);
-			}
-		}
-
-		public Directory final => path.Last();
-		public string name => final.name;
-
-		public Type targetType => final.iterType;
-		class DrawerTypeGetter {
-			public Assembly assembly;
-			public object instance;
-			public MethodInfo method;
-			public DrawerTypeGetter() {
-				assembly = Assembly.GetAssembly(typeof(Editor));
-				instance = assembly.CreateInstance("UnityEditor.ScriptAttributeUtility");
-				method = instance.GetType().GetMethod("GetDrawerTypeForType",
-					BindingFlags.Instance | BindingFlags.Static |
-					BindingFlags.Public | BindingFlags.NonPublic);
-			}
-			public Type get(Type type) =>
-				(Type)method?.Invoke(instance, new object[] { type });
-		}
-		static DrawerTypeGetter drawerTypeGetter = new DrawerTypeGetter();
-		public Type drawerType => drawerTypeGetter.get(targetType);
-		public Type closestDrawerType {
-			get {
-				for(Type type = targetType; type != null; type = type.BaseType) {
-					Type result = drawerTypeGetter.get(type);
-					if(result != null)
-						return result;
+				if(path[0] == '[') {
+					Match match = new Regex(@"^\[([^]]+)\]").Match(path);
+					if(!match.Success)
+						throw new FormatException();
+					int index = Convert.ToInt32(match.Groups[1].Value);
+					accessor = new Element(accessor, index);
+					path = path.Substring(match.Groups[0].Value.Length);
+					continue;
 				}
 				return null;
 			}
+			return accessor;
 		}
 
-		public PropertyAccessor(object root, string[] dirStrs) {
-			this.root = root;
-			path = new List<Directory>();
-			Type last = root.GetType();
-			foreach(var dirSir in dirStrs) {
-				Directory dir = new Directory(last, dirSir);
-				path.Add(dir);
-				last = dir.iterType;
-			}
-		}
-		public PropertyAccessor(object root, string path) : this(root, path.Split('.')) { }
+		public SerializedProperty MakeProperty() => (Serialize() as SerializedWrapper.Field)?.sp;
 
-		public override string ToString() => string.Join("", path.Select((Directory dir) => '.' + dir.ToString()));
-
-		public static implicit operator PropertyAccessor(SerializedProperty property) {
-			try {
-				return new PropertyAccessor(
-					property.serializedObject.targetObject,
-					property.propertyPath.Replace(".Array.data[", "["));
-			} catch(Exception) {
-				return null;
-			}
-		}
-
-		public static implicit operator SerializedProperty(PropertyAccessor accessor) {
-			var so = new SerializedObject(accessor.root as Object);
-			if(so == null)
-				throw new InvalidCastException();
-			Directory first = accessor.path[0];
-			SerializedProperty sp = so.FindProperty(first.name);
-			if(first.isElement)
-				sp = sp.GetArrayElementAtIndex(first.index);
-			for(int i = 1; i < accessor.path.Count; ++i) {
-				if(sp == null)
-					return null;
-				Directory dir = accessor.path[i];
-				sp = sp.FindPropertyRelative(dir.name);
-				if(dir.isElement)
-					sp = sp.GetArrayElementAtIndex(dir.index);
-			}
-			return sp;
-		}
+		public PropertyAccessor GetField(string name) => new Field(this, name);
+		public PropertyAccessor GetElement(int index) => new Element(this, index);
 	}
 }
