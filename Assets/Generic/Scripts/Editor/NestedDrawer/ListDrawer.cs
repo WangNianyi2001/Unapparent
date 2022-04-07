@@ -9,9 +9,10 @@ namespace Unapparent {
 		protected PropertyAccessor accessor;
 		protected IList source;
 		protected ReorderableList list;
+		protected GUIContent label;
 
 		protected void Init(SerializedProperty property) {
-			if(SerializedProperty.DataEquals(property, this.property))
+			if(accessor != null && SerializedProperty.DataEquals(property, this.property))
 				return;
 			this.property = property;
 			accessor = PropertyAccessor.FromProperty(property);
@@ -21,9 +22,8 @@ namespace Unapparent {
 				return;
 			}
 			list = new ReorderableList(source, accessor.type) {
-				onAddCallback = (ReorderableList list) => {
-					source.Add(null);
-				},
+				drawHeaderCallback = (Rect rect) => EditorGUI.LabelField(rect, label),
+				onAddCallback = (ReorderableList list) => source.Add(null),
 				drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
 					var child = accessor.GetElement(index);
 					var key = child.ToString();
@@ -50,8 +50,9 @@ namespace Unapparent {
 		}
 
 		public override void InstanceGUI(PropertyAccessor accessor, GUIContent label) {
+			this.label = label;
 			float height = list.GetHeight();
-			Rect area = MakeArea(height);
+			Rect area = EditorGUI.IndentedRect(MakeArea(height));
 			if(draw)
 				list.DoList(area);
 		}
@@ -68,7 +69,7 @@ namespace Unapparent {
 			this.position.height = 0;
 			Init(property);
 			if(accessor.value == null)
-				DrawProperty(accessor, label);
+				NullGUI(accessor, label);
 			else
 				InstanceGUI(accessor, label);
 		}

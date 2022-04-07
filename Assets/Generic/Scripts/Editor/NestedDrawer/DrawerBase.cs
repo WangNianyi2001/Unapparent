@@ -27,7 +27,7 @@ namespace Unapparent {
 
 		public void Label(GUIContent label) {
 			var area = MakeArea();
-			if(draw)
+			if(draw && label != GUIContent.none)
 				EditorGUI.LabelField(area, label);
 		}
 
