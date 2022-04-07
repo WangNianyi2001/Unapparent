@@ -18,7 +18,12 @@ namespace Unapparent {
 
 		public override void InstanceGUI(PropertyAccessor accessor, GUIContent label) {
 			label = new GUIContent(label);
-			label.text += $": {accessor.value.GetType().Name}";
+			string appendText = accessor.value.GetType().Name;
+			if(!string.IsNullOrWhiteSpace(appendText)) {
+				label.text = string.IsNullOrWhiteSpace(label.text)
+					? appendText
+					: label.text + $": {appendText}";
+			}
 			const float buttonWidth = 50;
 			Rect rect = MakeArea();
 			Rect buttonRect = rect;

@@ -1,28 +1,36 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Unapparent {
 	public class NestedDrawer : DrawerBase {
 		public delegate bool PropertyFilter(PropertyAccessor accessor);
-		public PropertyFilter propertyFilter = declaredProperties;
 
-		public static PropertyFilter declaredProperties = (PropertyAccessor accessor) =>
-			accessor.type.GetField((accessor as PropertyAccessor.Field).name,
-					BindingFlags.Instance |
-					BindingFlags.DeclaredOnly |
-					BindingFlags.Public |
-					BindingFlags.NonPublic) != null;
-		public static PropertyFilter isPropertyOf(Type type) => (PropertyAccessor accessor) =>
-			type.IsAssignableFrom((
-				accessor.root.GetType().GetField((accessor as PropertyAccessor.Field).name,
-						BindingFlags.Instance |
-						BindingFlags.Public |
-						BindingFlags.NonPublic)
-				)?.DeclaringType);
+		protected PropertyFilter propertyFilter = declaredProperties;
+
+		const BindingFlags instanceBindingFlags = BindingFlags.Instance |
+			BindingFlags.Public | BindingFlags.NonPublic;
+		const BindingFlags declaredBindingFlags = instanceBindingFlags | BindingFlags.DeclaredOnly;
+
+		public static PropertyFilter declaredProperties = (PropertyAccessor accessor) => {
+			if(accessor == null)
+				return false;
+			string name = (accessor as PropertyAccessor.Field).name;
+			return accessor.type.GetField(name, declaredBindingFlags) != null;
+		};
+
+		public static PropertyFilter isPropertyOf(Type type) => (PropertyAccessor accessor) => {
+			if(accessor == null)
+				return false;
+			string name = (accessor as PropertyAccessor.Field).name;
+			FieldInfo fi = accessor.root.type.GetField(name, instanceBindingFlags);
+			return type.IsAssignableFrom(fi?.DeclaringType);
+		};
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
 			position.height = 0;
@@ -33,33 +41,73 @@ namespace Unapparent {
 		}
 
 		protected Dictionary<string, PropertyDrawer> drawerCache = new Dictionary<string, PropertyDrawer>();
+		protected Dictionary<string, ReorderableList> listCache = new Dictionary<string, ReorderableList>();
+
+		protected ReorderableList MakeList(PropertyAccessor accessor) {
+			var list = new ReorderableList(accessor.value as IList, accessor.type) {
+				onAddCallback = (ReorderableList list) => {
+					(accessor.value as IList).Add(null);
+				},
+				drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
+					var child = accessor.GetElement(index);
+					var key = child.ToString();
+					PropertyDrawer drawer = drawerCache.ContainsKey(key)
+						? drawerCache[key]
+						: new NestedDrawer();
+					SerializedProperty property = child.MakeProperty();
+					if(property != null)
+						drawer.OnGUI(rect, property, GUIContent.none);
+				},
+				elementHeightCallback = (int index) => {
+					var child = accessor.GetElement(index);
+					var key = child.ToString();
+					PropertyDrawer drawer = drawerCache.ContainsKey(key)
+						? drawerCache[key]
+						: new NestedDrawer();
+					SerializedProperty property = child.MakeProperty();
+					if(property != null)
+						return drawer.GetPropertyHeight(property, GUIContent.none);
+					else
+						return 0;
+				},
+			};
+			return list;
+		}
 
 		public void DrawProperty(PropertyAccessor accessor, GUIContent label) {
-			SerializedProperty property = accessor.MakeProperty();
+			SerializedProperty property = accessor?.MakeProperty();
 			if(property == null)
 				return;
+			var key = accessor.ToString();
 			Type drawerType = DrawerTypeGetter.Closest(accessor.type);
 			EditorGUI.BeginChangeCheck();
-			if(drawerType == null) {
-				Property(property, label);
-			} else {
-				if(GetType().Equals(drawerType)) {
+			if(drawerType != null) {
+				if(drawerType.Equals(GetType())) {
 					if(accessor.value == null)
 						NullGUI(accessor, label);
 					else
 						InstanceGUI(accessor, label);
-				} else {
-					var key = accessor.ToString();
-					PropertyDrawer drawer;
-					if(drawerCache.ContainsKey(key))
-						drawer = drawerCache[key];
-					else
-						drawerCache[key] = drawer = Activator.CreateInstance(drawerType) as PropertyDrawer;
+				}
+				else {
+					PropertyDrawer drawer = drawerCache.ContainsKey(key)
+						? drawerCache[key]
+						: (drawerCache[key] = Activator.CreateInstance(drawerType) as PropertyDrawer);
 					if(draw)
 						drawer.OnGUI(TempArea(), property, label);
 					position.height += drawer.GetPropertyHeight(property, label);
 				}
 			}
+			else if(accessor.isArray) {
+				ReorderableList list = listCache.ContainsKey(key)
+					? listCache[key]
+					: (listCache[key] = MakeList(accessor));
+				float height = list.GetHeight();
+				Rect area = MakeArea(height);
+				if(draw)
+					list.DoList(area);
+			}
+			else
+				Property(property, label);
 			MakeArea(EditorGUIUtility.standardVerticalSpacing);
 			if(EditorGUI.EndChangeCheck())
 				property.serializedObject.ApplyModifiedProperties();
