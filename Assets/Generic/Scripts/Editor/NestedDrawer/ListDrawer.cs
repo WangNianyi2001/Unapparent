@@ -68,7 +68,7 @@ namespace Unapparent {
 			this.position.height = 0;
 			Init(property);
 			if(accessor.value == null)
-				NullGUI(accessor, label);
+				DrawProperty(accessor, label);
 			else
 				InstanceGUI(accessor, label);
 		}

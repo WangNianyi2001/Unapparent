@@ -34,6 +34,14 @@ namespace Unapparent {
 
 		protected Dictionary<string, PropertyDrawer> drawerCache = new Dictionary<string, PropertyDrawer>();
 
+		protected PropertyDrawer GetDrawer(string key, Type type) {
+			if(drawerCache.ContainsKey(key))
+				return drawerCache[key];
+			PropertyDrawer drawer = Activator.CreateInstance(type) as PropertyDrawer;
+			drawerCache[key] = drawer;
+			return drawer;
+		}
+
 		public void DrawProperty(PropertyAccessor accessor, GUIContent label) {
 			SerializedProperty property = accessor?.MakeProperty();
 			if(property == null)
@@ -41,30 +49,14 @@ namespace Unapparent {
 			var key = accessor.ToString();
 			Type drawerType = DrawerTypeGetter.Closest(accessor.type);
 			EditorGUI.BeginChangeCheck();
-			if(drawerCache.ContainsKey(key)) {
-				PropertyDrawer drawer = drawerCache[key];
-				if(draw)
-					drawer.OnGUI(TempArea(), property, label);
-				position.height += drawer.GetPropertyHeight(property, label);
+			if(GetType().Equals(drawerType)) {
+				if(accessor.value == null)
+					NullGUI(accessor, label);
+				else
+					InstanceGUI(accessor, label);
 			}
-			else if(drawerType != null) {
-				if(drawerType.Equals(GetType())) {
-					if(accessor.value == null)
-						NullGUI(accessor, label);
-					else
-						InstanceGUI(accessor, label);
-				}
-				else {
-					PropertyDrawer drawer = drawerCache[key] =
-						Activator.CreateInstance(drawerType) as PropertyDrawer;
-					if(draw)
-						drawer.OnGUI(TempArea(), property, label);
-					position.height += drawer.GetPropertyHeight(property, label);
-				}
-			}
-			else if(accessor.isArray) {
-				PropertyDrawer drawer = drawerCache[key] =
-					Activator.CreateInstance(typeof(ListDrawer)) as PropertyDrawer;
+			else if(drawerType != null || accessor.isArray) {
+				PropertyDrawer drawer = GetDrawer(key, accessor.isArray ? typeof(ListDrawer) : drawerType);
 				if(draw)
 					drawer.OnGUI(TempArea(), property, label);
 				position.height += drawer.GetPropertyHeight(property, label);
