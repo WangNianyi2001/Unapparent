@@ -154,7 +154,8 @@ namespace Unapparent {
 					return null;
 				}
 				return accessor;
-			} catch(Exception) {
+			}
+			catch(Exception) {
 				return null;
 			}
 		}
