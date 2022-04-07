@@ -31,10 +31,14 @@ namespace Unapparent {
 
 		[NonSerialized] public bool lastArrived = false;
 
-		public virtual async Task<object> TeleportTo(Vector3 position) {
+		public virtual async Task<object> Teleport(Vector3 position) {
 			await Task.Delay(1);
 			transform.position = position;
 			return lastArrived = true;
+		}
+
+		public void Start() {
+			State = initialState;
 		}
 
 		public void OnTriggerEnter(Collider other) {
@@ -43,10 +47,6 @@ namespace Unapparent {
 
 		public void OnTriggerExit(Collider other) {
 			State.TryFire(typeof(ExitTrigger), this, other);
-		}
-
-		public void Start() {
-			State = initialState;
 		}
 	}
 }

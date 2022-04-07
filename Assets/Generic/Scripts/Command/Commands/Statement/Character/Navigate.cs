@@ -2,11 +2,12 @@
 using UnityEngine;
 
 namespace Unapparent {
-	public class TeleportTo : Statement {
-		public Carrier subject;
+	public class Navigate : Statement {
+		public Character subject;
 		public Transform destination;
+		public float tolerance = 1f;
 
 		public override async Task<object> Execute() =>
-			await subject.TeleportTo(destination.position);
+			await subject.Navigate(destination.position, tolerance);
 	}
 }
