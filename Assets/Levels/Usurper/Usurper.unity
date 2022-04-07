@@ -497,7 +497,6 @@ MonoBehaviour:
   subject: {fileID: 1025284390}
   destination: {fileID: 2044079951}
   tolerance: 1
-  arrival: {fileID: 0}
 --- !u!1 &688751367
 GameObject:
   m_ObjectHideFlags: 0
@@ -544,7 +543,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.1492064, y: 1}
+    m_SensorSize: {x: 2.0031219, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -569,6 +568,23 @@ Transform:
   m_Father: {fileID: 2137512770}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
+--- !u!114 &713428084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd03c70757b91f74f96c0d0b3e811039, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 1025284390}
+  text: Arrived
+  options:
+  - text: Done
+    action: {fileID: 0}
 --- !u!1 &734699436
 GameObject:
   m_ObjectHideFlags: 0
@@ -858,8 +874,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialState: {fileID: 1264457753}
-  profile: {fileID: 11400000, guid: df534965fa9be0c4ba5b41a3e7516964, type: 2}
-  checkFrequency: 0.5
+  identity: {fileID: 11400000, guid: df534965fa9be0c4ba5b41a3e7516964, type: 2}
+  shape: {fileID: 0}
 --- !u!195 &1025284391
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1007,6 +1023,7 @@ MonoBehaviour:
   sequence:
   - {fileID: 948951414}
   - {fileID: 610806285}
+  - {fileID: 713428084}
 --- !u!1 &1264457751
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,28 +8,18 @@ namespace Unapparent {
 
 		NavMeshAgent agent;
 
-		Statement arrival = null;
-		public Statement Arrival {
-			set => arrival = value;
-		}
-
 		public Identity identity;
 		public virtual Identity appearance => identity;
 
-		public float checkFrequency = .5f;
-
-		void CheckArrival() {
-			if(agent.remainingDistance <= agent.stoppingDistance) {
-				arrival?.Execute();
-				return;
-			}
-			Invoke("CheckArrival", checkFrequency);
-		}
-
-		public void NavigateTo(Vector3 location, float tolerance = 1f) {
+		public async Task<object> NavigateTo(Vector3 location, float tolerance = 1f) {
 			agent.stoppingDistance = tolerance;
 			agent.SetDestination(location);
-			Invoke("CheckArrival", checkFrequency);
+			while(Application.isPlaying) {
+				await Task.Delay(100);
+				if(agent.remainingDistance <= agent.stoppingDistance)
+					return true;
+			}
+			return false;
 		}
 
 		public void Awake() {
