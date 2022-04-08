@@ -44,6 +44,10 @@ namespace Unapparent {
 			}
 		}
 
+		public void ReceiveMessage(string message) {
+			AddToFireQueue(State, typeof(ReceiveMessage), message);
+		}
+
 		[NonSerialized] public bool lastArrived = false;
 
 		public virtual async Task<object> Teleport(Vector3 position) {

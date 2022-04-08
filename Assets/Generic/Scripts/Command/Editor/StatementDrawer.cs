@@ -7,6 +7,7 @@ namespace Unapparent {
 			"Carrier",
 			typeof(SwitchState),
 			typeof(TeleportTo),
+			typeof(SendMessage),
 			"Character",
 			typeof(NavigateTo),
 			typeof(Monologue),
