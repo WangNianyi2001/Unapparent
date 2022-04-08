@@ -5,9 +5,9 @@ namespace Unapparent {
 	public class Delegate : Statement {
 		public Action action;
 
-		public override async Task<object> Execute() => await Task.Run<object>(() => {
+		public override Task<object> Execute() {
 			action?.Invoke();
-			return null;
-		});
+			return Task.FromResult<object>(null);
+		}
 	}
 }

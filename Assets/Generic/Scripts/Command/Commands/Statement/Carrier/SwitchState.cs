@@ -5,7 +5,6 @@ namespace Unapparent {
 		public Carrier subject;
 		public State targetState = null;
 
-		public override async Task<object> Execute() =>
-			await Task.Run(() => subject.State = targetState);
+		public override Task<object> Execute() => Task.FromResult<object>(subject.State = targetState);
 	}
 }

@@ -4,7 +4,6 @@ namespace Unapparent {
 	public class LastArrived : Expression {
 		public Carrier subject;
 
-		public override async Task<object> Execute() =>
-			await Task.Run(() => subject.lastArrived);
+		public override Task<object> Execute() => Task.FromResult<object>(subject.lastArrived);
 	}
 }

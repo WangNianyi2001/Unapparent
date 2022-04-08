@@ -6,6 +6,7 @@ namespace Unapparent {
 		public static new CommandMenu menu = new CommandMenu {
 			"Carrier",
 			typeof(LastArrived),
+			typeof(IsInState),
 		};
 	}
 }

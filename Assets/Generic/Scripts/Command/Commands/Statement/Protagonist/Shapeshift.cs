@@ -5,9 +5,7 @@ namespace Unapparent {
 		public Protagonist subject;
 		public Identity targetIdentity;
 
-		public override async Task<object> Execute() {
-			await Task.Delay(1);
-			return subject.Shapeshift(targetIdentity);
-		}
+		public override Task<object> Execute() =>
+			Task.FromResult<object>(subject.Shapeshift(targetIdentity));
 	}
 }
