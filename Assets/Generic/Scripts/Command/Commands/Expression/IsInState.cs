@@ -2,10 +2,9 @@
 
 namespace Unapparent {
 	public class IsInState : Expression {
-		public Carrier subject;
 		public State target;
 
-		public override Task<object> Execute() =>
+		public override Task<object> Execute(Carrier subject) =>
 			Task.FromResult<object>(target.isParentOf(subject.State));
 	}
 }

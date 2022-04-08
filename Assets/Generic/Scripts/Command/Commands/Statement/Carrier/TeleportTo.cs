@@ -2,11 +2,10 @@
 using UnityEngine;
 
 namespace Unapparent {
-	public class Teleport : Statement {
-		public Carrier subject;
+	public class TeleportTo : Statement {
 		public Transform destination;
 
-		public override async Task<object> Execute() =>
+		public override async Task<object> Execute(Carrier subject) =>
 			await subject.Teleport(destination.position);
 	}
 }

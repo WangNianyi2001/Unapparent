@@ -2,8 +2,6 @@
 
 namespace Unapparent {
 	public class LastArrived : Expression {
-		public Carrier subject;
-
-		public override Task<object> Execute() => Task.FromResult<object>(subject.lastArrived);
+		public override Task<object> Execute(Carrier subject) => Task.FromResult<object>(subject.lastArrived);
 	}
 }

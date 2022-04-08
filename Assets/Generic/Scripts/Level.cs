@@ -30,11 +30,9 @@ namespace Unapparent {
 				GameObject optionOBtn = Instantiate(Resources.Load<GameObject>("Option Button"));
 				optionOBtn.GetComponentInChildren<Text>().text = option.text;
 				Button.ButtonClickedEvent ev = new Button.ButtonClickedEvent();
-				ev.AddListener(async () => {
-					var a = option.action?.Execute();
-					if(a != null)
-						await a;
+				ev.AddListener(() => {
 					current.CloseMonologue();
+					option.action?.Execute(character);
 					promise.TrySetResult(null);
 				});
 				optionOBtn.GetComponentInChildren<Button>().onClick = ev;

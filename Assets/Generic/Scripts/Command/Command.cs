@@ -9,6 +9,6 @@ namespace Unapparent {
 
 		public static T Create<T>() where T : Command => Create(typeof(T)) as T;
 
-		public abstract Task<object> Execute();
+		public abstract Task<object> Execute(Carrier subject);
 	}
 }
