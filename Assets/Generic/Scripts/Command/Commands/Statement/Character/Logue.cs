@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 
 namespace Unapparent {
 	public class Logue : Statement {
-		public Character character;
 		public List<string> contents = new List<string>() { "Text" };
 		public List<Monologue.Content.Option> options = new List<Monologue.Content.Option>() {
 			new Monologue.Content.Option()
 		};
 
-		public override async Task<object> Execute() {
+		public override async Task<object> Execute(Carrier subject) {
+			Character character = subject as Character;
 			Monologue.Content content;
 			for(int i = 0; i < contents.Count - 1; ++i) {
 				content = new Monologue.Content();

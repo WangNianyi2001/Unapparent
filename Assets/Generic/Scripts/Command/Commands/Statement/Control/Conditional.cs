@@ -6,7 +6,7 @@ namespace Unapparent {
 
 		public Statement then = null, @else = null;
 
-		public override async Task<object> Execute() =>
-			((bool)await @if?.Execute() ? then : @else)?.Execute();
+		public override async Task<object> Execute(Carrier subject) =>
+			((bool)await @if?.Execute(subject) ? then : @else)?.Execute(subject);
 	}
 }

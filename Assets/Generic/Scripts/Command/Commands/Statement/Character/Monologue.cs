@@ -15,10 +15,9 @@ namespace Unapparent {
 			public List<Option> options = new List<Option>() { new Option() };
 		}
 
-		public Character character;
 		public Content content = new Content();
 		[NonSerialized] public Monologue next = null;
 
-		public override async Task<object> Execute() => await Level.current.ShowMonologue(character, content);
+		public override async Task<object> Execute(Carrier subject) => await Level.current.ShowMonologue(subject as Character, content);
 	}
 }
