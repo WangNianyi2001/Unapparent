@@ -6,7 +6,7 @@ namespace Unapparent {
 		public List<Statement> sequence = new List<Statement>();
 
 		public override async Task<object> Execute(Carrier subject) {
-			foreach(Command command in sequence)
+			foreach(var command in sequence)
 				await command.Execute(subject);
 			return null;
 		}

@@ -21,39 +21,26 @@ namespace Unapparent {
 			agent.stoppingDistance = tolerance;
 			agent.SetDestination(position);
 			agent.isStopped = false;
-			while(Application.isPlaying) {
-				await Task.Delay(100);
+			while(Application.isPlaying && !agent.isStopped) {
 				if(agent.remainingDistance <= agent.stoppingDistance) {
 					lastArrived = agent.pathStatus == NavMeshPathStatus.PathComplete;
 					break;
 				}
+				await Task.Delay(100);
 			}
 			return lastArrived;
 		}
 
-		public void CheckMouseNavigation() {
-			if(!Input.GetMouseButtonDown(0))
-				return;
-			Ray ray = Level.current.camera.ScreenPointToRay(Input.mousePosition);
-			RaycastHit hit;
-			if(!Physics.Raycast(ray, out hit, Level.current.camera.farClipPlane))
-				return;
-			agent.SetDestination(hit.point);
-		}
+		public void StopNavigation() => agent.isStopped = true;
 
 		public new void Start() {
 			base.Start();
 			agent = GetComponent<NavMeshAgent>();
 		}
 
-		public new void Update() {
-			base.Update();
-			CheckMouseNavigation();
-		}
-
 #if UNITY_EDITOR
 		public void OnDrawGizmos() {
-			string text = identity.name;
+			string text = identity == null ? "(No identity)" : identity.name;
 			if(appearance != null && identity != appearance)
 				text += $" ({appearance.name})";
 			Handles.Label(transform.position + transform.up, text);

@@ -16,6 +16,10 @@ namespace Unapparent {
 
 		public void TryFire(Type type, Carrier target, params object[] args) {
 			foreach(Listener listener in listeners) {
+				if(listener == null) {
+					Debug.LogWarning($"Listener {target.name}/{name}/{type.Name} is null");
+					continue;
+				}
 				if(type.IsAssignableFrom(listener.GetType()))
 					listener.TryExecute(target, args);
 			}
