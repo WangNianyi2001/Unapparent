@@ -5,6 +5,6 @@ namespace Unapparent {
 		public Identity target;
 
 		public override Task<object> Execute(Carrier subject) =>
-			Task.FromResult<object>((subject as Protagonist).Shapeshift(target));
+			Task.FromResult<object>((subject as Protagonist).ShapeshiftInto(target));
 	}
 }

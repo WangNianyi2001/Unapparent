@@ -9,10 +9,14 @@ namespace Unapparent {
 	public class Level : MonoBehaviour {
 		public static Level current => SceneManager.GetActiveScene().GetRootGameObjects()[0]?.GetComponent<Level>();
 
-		public GameObject canvas, monologueObj;
+		public new Camera camera;
+		public RectTransform monologue;
+		public Text logueName;
+		public Text logueText;
+		public RectTransform logueOptions;
 
 		public void ClearOptions() {
-			GameObject optionsObj = monologueObj.transform.Find("Content/Options").gameObject;
+			GameObject optionsObj = monologue.transform.Find("Content/Options").gameObject;
 			foreach(Transform child in optionsObj.transform)
 				Destroy(child.gameObject);
 		}
@@ -21,10 +25,8 @@ namespace Unapparent {
 			if(character == null)
 				return new NullReferenceException();
 			ClearOptions();
-			Transform info = monologueObj.transform.Find("Content/Info");
-			info.Find("Name").GetComponent<Text>().text = character.identity.name;
-			info.Find("Text").GetComponent<Text>().text = content.text;
-			GameObject optionsObj = monologueObj.transform.Find("Content/Options").gameObject;
+			logueName.text = character.identity.name;
+			logueText.text = content.text;
 			TaskCompletionSource<object> promise = new TaskCompletionSource<object>();
 			foreach(Monologue.Content.Option option in content.options) {
 				GameObject optionOBtn = Instantiate(Resources.Load<GameObject>("Option Button"));
@@ -36,22 +38,15 @@ namespace Unapparent {
 					promise.TrySetResult(null);
 				});
 				optionOBtn.GetComponentInChildren<Button>().onClick = ev;
-				optionOBtn.transform.SetParent(optionsObj.transform, false);
+				optionOBtn.transform.SetParent(logueOptions.gameObject.transform, false);
 			}
-			monologueObj.SetActive(true);
+			monologue.gameObject.SetActive(true);
 			return await promise.Task;
 		}
 
 		public void CloseMonologue() {
-			monologueObj.SetActive(false);
+			monologue.gameObject.SetActive(false);
 			ClearOptions();
 		}
-
-#if UNITY_EDITOR
-		public void Update() {
-			canvas = current.gameObject.GetComponentInChildren<Canvas>(true).gameObject;
-			monologueObj = canvas.transform.Find("Monologue").gameObject;
-		}
-#endif
 	}
 }

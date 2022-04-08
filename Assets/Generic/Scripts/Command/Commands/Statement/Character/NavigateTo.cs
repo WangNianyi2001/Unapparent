@@ -7,6 +7,6 @@ namespace Unapparent {
 		public float tolerance = 1f;
 
 		public override async Task<object> Execute(Carrier subject) =>
-			await (subject as Character).Navigate(destination.position, tolerance);
+			await (subject as Character).NavigateTo(destination.position, tolerance);
 	}
 }

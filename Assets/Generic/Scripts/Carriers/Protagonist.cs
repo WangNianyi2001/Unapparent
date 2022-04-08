@@ -5,7 +5,7 @@ namespace Unapparent {
 		[NonSerialized] public Identity shape;
 		public override Identity appearance => shape;
 
-		public bool Shapeshift(Identity target) {
+		public bool ShapeshiftInto(Identity target) {
 			shape = target;
 			return true;
 		}

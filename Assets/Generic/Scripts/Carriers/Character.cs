@@ -13,12 +13,10 @@ namespace Unapparent {
 		public Identity identity;
 		public virtual Identity appearance => identity;
 
-		public override async Task<object> Teleport(Vector3 position) {
-			await Task.Delay(1);
-			return lastArrived = agent.Warp(position);
-		}
+		public override Task<object> TeleportTo(Vector3 position) =>
+			Task.FromResult<object>(lastArrived = agent.Warp(position));
 
-		public async Task<object> Navigate(Vector3 position, float tolerance = 1f) {
+		public async Task<object> NavigateTo(Vector3 position, float tolerance = 1f) {
 			lastArrived = false;
 			agent.stoppingDistance = tolerance;
 			agent.SetDestination(position);
@@ -33,9 +31,24 @@ namespace Unapparent {
 			return lastArrived;
 		}
 
+		public void CheckMouseNavigation() {
+			if(!Input.GetMouseButtonDown(0))
+				return;
+			Ray ray = Level.current.camera.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit;
+			if(!Physics.Raycast(ray, out hit, Level.current.camera.farClipPlane))
+				return;
+			agent.SetDestination(hit.point);
+		}
+
 		public new void Start() {
 			base.Start();
 			agent = GetComponent<NavMeshAgent>();
+		}
+
+		public new void Update() {
+			base.Update();
+			CheckMouseNavigation();
 		}
 
 #if UNITY_EDITOR

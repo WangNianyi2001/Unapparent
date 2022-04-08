@@ -6,6 +6,6 @@ namespace Unapparent {
 		public Transform destination;
 
 		public override async Task<object> Execute(Carrier subject) =>
-			await subject.Teleport(destination.position);
+			await subject.TeleportTo(destination.position);
 	}
 }
