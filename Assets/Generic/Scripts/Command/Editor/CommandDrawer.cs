@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 namespace Unapparent {
-	public class CommandMenu : Menu<Type> {
+	public class CommandMenu : GenericSelectMenu<Type> {
 		public CommandMenu() => OnLabelize = (Type target) => target.Name;
 	}
 
@@ -42,7 +42,7 @@ namespace Unapparent {
 		}
 
 		public override void NullGUI(PropertyAccessor accessor, GUIContent label) {
-			Type drawerType = DrawerTypeGetter.Closest(accessor.type);
+			Type drawerType = TypeFinder.ClosestDrawerType(accessor.type);
 			var fi = drawerType.GetField("menu", BindingFlags.Static | BindingFlags.Public);
 			var menu = fi.GetValue(null) as CommandMenu;
 			Label(label);
