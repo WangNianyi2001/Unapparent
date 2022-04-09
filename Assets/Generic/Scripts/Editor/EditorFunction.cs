@@ -9,5 +9,14 @@ namespace Unapparent {
 			ManagedAsset.CreateAsset(obj, "Identity", "New Identity");
 			EditorGUIUtility.PingObject(obj.GetInstanceID());
 		}
+
+		[MenuItem("GameObject/Unapparent/State", false, 1)]
+		public static void CreateState() {
+			GameObject gameObject = new GameObject("New State");
+			gameObject.AddComponent<State>();
+			if(Selection.activeGameObject == null)
+				return;
+			gameObject.transform.parent = Selection.activeGameObject.transform;
+		}
 	}
 }

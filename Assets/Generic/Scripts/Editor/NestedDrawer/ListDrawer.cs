@@ -65,8 +65,7 @@ namespace Unapparent {
 		}
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
-			this.position = position;
-			this.position.height = 0;
+			InitPos(position);
 			Init(property);
 			if(accessor.value == null)
 				NullGUI(accessor, label);

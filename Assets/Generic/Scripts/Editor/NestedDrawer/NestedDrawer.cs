@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -47,7 +45,7 @@ namespace Unapparent {
 			if(property == null)
 				return;
 			var key = accessor.ToString();
-			Type drawerType = DrawerTypeGetter.Closest(accessor.type);
+			Type drawerType = TypeFinder.ClosestDrawerType(accessor.type);
 			EditorGUI.BeginChangeCheck();
 			if(GetType().Equals(drawerType)) {
 				if(accessor.value == null)
@@ -66,6 +64,11 @@ namespace Unapparent {
 			MakeArea(EditorGUIUtility.standardVerticalSpacing);
 			if(EditorGUI.EndChangeCheck())
 				property.serializedObject.ApplyModifiedProperties();
+		}
+
+		public void InitPos(Rect position) {
+			this.position = position;
+			this.position.height = 0;
 		}
 
 		public virtual void InstanceGUI(PropertyAccessor accessor, GUIContent label) {
@@ -101,8 +104,7 @@ namespace Unapparent {
 		}
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
-			this.position = position;
-			this.position.height = 0;
+			InitPos(position);
 			DrawProperty(PropertyAccessor.FromProperty(property), label);
 		}
 	}

@@ -1,20 +1,24 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
 namespace Unapparent {
-	public class Menu<T> : List<Menu<T>.Entry> {
-		public class Entry {
+	public class GenericSelectMenu<T> :
+		List<GenericSelectMenu<T>.Entry>, GenericSelectMenu<T>.Initializer {
+		public interface Initializer {
+			public void AddTo(GenericSelectMenu<T> menu);
+		}
+
+		public class Entry : Initializer {
 			public string text = null;
 			public T target;
 
 			public Entry(T target) => this.target = target;
-
 			public Entry(string text) => this.text = text;
 
-			public static implicit operator Entry(T element) => new Entry(element);
+			public void AddTo(GenericSelectMenu<T> menu) => menu.Add(this);
 
+			public static implicit operator Entry(T element) => new Entry(element);
 			public static implicit operator Entry(string text) => new Entry(text);
 		}
 
@@ -26,15 +30,16 @@ namespace Unapparent {
 
 		public void SelectCallback(object target) => OnSelect((T)target);
 
-		public Menu() { }
+		public GenericSelectMenu() { }
 
-		public Menu(IEnumerable<T> entries) :
-			base(entries.Select(entry => new Entry(entry))) {
+		public GenericSelectMenu(IEnumerable<Initializer> initializers) {
+			foreach(var initializer in initializers)
+				initializer.AddTo(this);
 		}
 
-		public Menu(IEnumerable<Entry> entries) : base(entries) { }
+		public void AddTo(GenericSelectMenu<T> menu) => menu.AddRange(this);
 
-		public void AddTo(GenericMenu menu) {
+		public void ApplyTo(GenericMenu menu) {
 			string path = "";
 			foreach(Entry entry in this) {
 				if(entry.text != null) {
@@ -54,7 +59,7 @@ namespace Unapparent {
 
 		public void Show() {
 			GenericMenu menu = new GenericMenu();
-			AddTo(menu);
+			ApplyTo(menu);
 			menu.ShowAsContext();
 		}
 	}

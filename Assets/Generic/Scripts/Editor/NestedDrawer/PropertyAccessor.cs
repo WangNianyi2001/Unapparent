@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using UnityEngine;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
@@ -39,26 +38,6 @@ namespace Unapparent {
 
 		public static implicit operator SerializedWrapper(SerializedObject so) => new Root(so);
 		public static implicit operator SerializedWrapper(SerializedProperty sp) => new Field(sp);
-	}
-
-	public static class DrawerTypeGetter {
-		public static Assembly assembly = Assembly.GetAssembly(typeof(Editor));
-		public static object instance = assembly.CreateInstance("UnityEditor.ScriptAttributeUtility");
-		public static MethodInfo method = instance.GetType().GetMethod("GetDrawerTypeForType",
-				BindingFlags.Instance | BindingFlags.Static |
-				BindingFlags.Public | BindingFlags.NonPublic);
-
-		public static Type Direct(Type type) =>
-			(Type)method?.Invoke(instance, new object[] { type });
-
-		public static Type Closest(Type type) {
-			for(; type != null; type = type.BaseType) {
-				Type result = Direct(type);
-				if(result != null)
-					return result;
-			}
-			return null;
-		}
 	}
 
 	public abstract class PropertyAccessor {
