@@ -8,6 +8,7 @@ namespace Unapparent {
 			typeof(Sequential),
 			typeof(Conditional),
 			typeof(Async),
+			typeof(CallMacro),
 			"Variable",
 			typeof(DeclareInteger),
 			typeof(SucceedInteger),
