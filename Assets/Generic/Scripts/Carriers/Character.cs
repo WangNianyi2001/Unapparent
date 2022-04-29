@@ -9,6 +9,8 @@ using UnityEditor;
 namespace Unapparent {
 	public class Character : Carrier {
 		[NonSerialized] public NavMeshAgent agent;
+		Billboard billboard;
+		Material billboardMat;
 
 		public Identity identity;
 		public virtual Identity appearance => identity;
@@ -36,6 +38,11 @@ namespace Unapparent {
 		public new void Start() {
 			base.Start();
 			agent = GetComponent<NavMeshAgent>();
+			billboard = GetComponentInChildren<Billboard>();
+			MeshRenderer renderer = billboard.GetComponentInChildren<MeshRenderer>();
+			renderer.sharedMaterial = Resources.Load<Material>("Visual/Transparent Diffuse");
+			billboardMat = renderer.material;
+			billboardMat.SetTexture("_MainTex", identity.right);
 		}
 
 #if UNITY_EDITOR

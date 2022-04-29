@@ -10,6 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45bb0a8ab69b0b845aa0bfb449af9935, type: 3}
-  m_Name: Guard
+  m_Name: Warden
   m_EditorClassIdentifier: 
   name: "\u4FDD\u5B89"
+  portrait: {fileID: 2800000, guid: 83a023d234006774a80899d486c47300, type: 3}
+  avatar: {fileID: 2800000, guid: 1a68962c9e211e1489921775776ed6ed, type: 3}
+  left: {fileID: 2800000, guid: 69abb3aa247573d4b9392ab50708806b, type: 3}
+  right: {fileID: 2800000, guid: 1de2638cda3f3ec4cb0998b03280ddc2, type: 3}
