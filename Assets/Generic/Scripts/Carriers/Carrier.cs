@@ -17,7 +17,8 @@ namespace Unapparent {
 			}
 		}
 		protected Queue<FireInfo> fires = new Queue<FireInfo>();
-		protected void AddToFireQueue(State target, Type type, params object[] arguments) {
+
+		public void AddToFireQueue(State target, Type type, params object[] arguments) {
 			fires.Enqueue(new FireInfo(target, type, arguments));
 		}
 
@@ -50,9 +51,10 @@ namespace Unapparent {
 
 		[NonSerialized] public bool lastArrived = false;
 
-		public virtual async Task<object> TeleportTo(Vector3 position) {
+		public virtual async Task<object> TeleportTo(Transform target) {
 			await Task.Delay(1);
-			transform.position = position;
+			transform.parent = target.parent;
+			transform.position = target.position;
 			return lastArrived = true;
 		}
 

@@ -4,7 +4,6 @@ using UnityEngine.EventSystems;
 
 namespace Unapparent {
 	public class Protagonist : Character {
-
 		public bool ShapeshiftInto(Identity target) {
 			Appearance = target;
 			return true;
@@ -12,10 +11,11 @@ namespace Unapparent {
 
 		[NonSerialized] public bool canMoveActively = true;
 
+		static LayerMask walkable;
 		public void DoMouseNavigation() {
 			Ray ray = Level.current.camera.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
-			if(!Physics.Raycast(ray, out hit, Level.current.camera.farClipPlane))
+			if(!Physics.Raycast(ray, out hit, Level.current.camera.farClipPlane, walkable))
 				return;
 			agent.SetDestination(hit.point);
 			agent.isStopped = false;
@@ -26,6 +26,10 @@ namespace Unapparent {
 				if(canMoveActively)
 					DoMouseNavigation();
 			}
+		}
+
+		public void Awake() {
+			walkable = LayerMask.GetMask("Walkable");
 		}
 
 		public new void Update() {

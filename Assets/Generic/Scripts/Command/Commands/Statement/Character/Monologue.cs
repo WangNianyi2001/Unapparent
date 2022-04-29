@@ -9,6 +9,7 @@ namespace Unapparent {
 			[Serializable]
 			public class Option {
 				public string text = "Next";
+				public Expression condition = null;
 				public Statement action;
 			}
 			public string text = "Text";

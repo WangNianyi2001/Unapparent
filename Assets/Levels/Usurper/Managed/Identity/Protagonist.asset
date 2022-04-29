@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45bb0a8ab69b0b845aa0bfb449af9935, type: 3}
   m_Name: Protagonist
   m_EditorClassIdentifier: 
-  name: Protagonist
+  name: "\u4FA6\u63A2"
   portrait: {fileID: 2800000, guid: 81be427f7d5c55748ba823c9153cc9ee, type: 3}
   avatar: {fileID: 2800000, guid: b2ada58d13e70814a8213fa534edf3e6, type: 3}
   left: {fileID: 2800000, guid: d6371e647280cfa429db2e6aba88a7ed, type: 3}

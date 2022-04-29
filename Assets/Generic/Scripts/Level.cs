@@ -9,7 +9,24 @@ namespace Unapparent {
 	public class Level : MonoBehaviour {
 		public static Level current => SceneManager.GetActiveScene().GetRootGameObjects()[0]?.GetComponent<Level>();
 
-		[Header("Fixed game objets")]
+		public Location startingLocation;
+		Location location;
+
+		void FireUnderLocation(Type type) {
+			foreach(Carrier carrier in location.GetComponentsInChildren<Carrier>())
+				carrier.AddToFireQueue(carrier.State, type);
+		}
+
+		public Location Location {
+			get => location;
+			set {
+				FireUnderLocation(typeof(ExitLocation));
+				location = value;
+				FireUnderLocation(typeof(EnterLocation));
+			}
+		}
+
+		[Header("Fixed game objects")]
 		public new Camera camera;
 		public Protagonist protagonist;
 

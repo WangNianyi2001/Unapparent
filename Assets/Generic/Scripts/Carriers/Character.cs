@@ -38,8 +38,8 @@ namespace Unapparent {
 			billboard.transform.localScale = scale;
 		}
 
-		public override Task<object> TeleportTo(Vector3 position) =>
-			Task.FromResult<object>(lastArrived = agent.Warp(position));
+		public override Task<object> TeleportTo(Transform target) =>
+			Task.FromResult<object>(lastArrived = agent.Warp(target.position));
 
 		public async Task<object> NavigateTo(Vector3 position, float tolerance = 1f) {
 			lastArrived = false;
