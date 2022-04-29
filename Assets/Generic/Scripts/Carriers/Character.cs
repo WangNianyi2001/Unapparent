@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,12 +7,36 @@ using UnityEditor;
 
 namespace Unapparent {
 	public class Character : Carrier {
-		[NonSerialized] public NavMeshAgent agent;
+		protected NavMeshAgent agent;
+
+		public Identity identity;
+		Identity appearance;
+
 		Billboard billboard;
 		Material billboardMat;
 
-		public Identity identity;
-		public virtual Identity appearance => identity;
+		public Identity Appearance {
+			get => appearance;
+			set {
+				appearance = value;
+				billboardMat.SetTexture("_MainTex", appearance.right);
+			}
+		}
+
+		void UpdateBillboardOrientation() {
+			float x = Vector3.Dot(agent.velocity, billboard.right);
+			if(Mathf.Abs(x) < .1f)
+				return;
+			Vector3 scale = billboard.transform.localScale;
+			if(x > 0) {
+				scale.x = 1;
+				billboardMat.SetTexture("_MainTex", appearance.right);
+			} else {
+				scale.x = -1;
+				billboardMat.SetTexture("_MainTex", appearance.left);
+			}
+			billboard.transform.localScale = scale;
+		}
 
 		public override Task<object> TeleportTo(Vector3 position) =>
 			Task.FromResult<object>(lastArrived = agent.Warp(position));
@@ -42,7 +65,12 @@ namespace Unapparent {
 			MeshRenderer renderer = billboard.GetComponentInChildren<MeshRenderer>();
 			renderer.sharedMaterial = Resources.Load<Material>("Visual/Transparent Diffuse");
 			billboardMat = renderer.material;
-			billboardMat.SetTexture("_MainTex", identity.right);
+			Appearance = identity;
+		}
+
+		public new void Update() {
+			base.Update();
+			UpdateBillboardOrientation();
 		}
 
 #if UNITY_EDITOR

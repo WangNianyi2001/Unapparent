@@ -5,6 +5,6 @@ namespace Unapparent {
 		public Identity expected;
 
 		public override Task<object> Execute(Carrier subject) =>
-			Task.FromResult<object>((subject as Character).appearance == expected);
+			Task.FromResult<object>((subject as Character).Appearance == expected);
 	}
 }

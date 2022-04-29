@@ -4,11 +4,9 @@ using UnityEngine.EventSystems;
 
 namespace Unapparent {
 	public class Protagonist : Character {
-		[NonSerialized] public Identity shape;
-		public override Identity appearance => shape;
 
 		public bool ShapeshiftInto(Identity target) {
-			shape = target;
+			Appearance = target;
 			return true;
 		}
 
@@ -28,11 +26,6 @@ namespace Unapparent {
 				if(canMoveActively)
 					DoMouseNavigation();
 			}
-		}
-
-		public new void Start() {
-			base.Start();
-			shape = identity;
 		}
 
 		public new void Update() {
