@@ -9,7 +9,7 @@ namespace Unapparent {
 	public class Character : Carrier {
 		protected NavMeshAgent agent;
 
-		public Identity identity;
+		[SerializeField] Identity identity;
 		Identity appearance;
 
 		Billboard billboard;

@@ -15,6 +15,7 @@ namespace Unapparent {
 
 		[Header("UI elements")]
 		public RectTransform monologue;
+		public Image logueAvatar;
 		public Text logueName;
 		public Text logueText;
 		public RectTransform logueOptions;
@@ -29,7 +30,14 @@ namespace Unapparent {
 			if(character == null)
 				return new NullReferenceException();
 			ClearOptions();
-			logueName.text = character.identity.name;
+			logueName.text = character.Appearance.name;
+			Texture2D tex = character.Appearance.avatar;
+			Sprite avatar = Sprite.Create(
+				tex,
+				new Rect(0, 0, tex.width, tex.height),
+				Vector2.zero
+			);
+			logueAvatar.sprite = avatar;
 			logueText.text = content.text;
 			TaskCompletionSource<object> promise = new TaskCompletionSource<object>();
 			foreach(Monologue.Content.Option option in content.options) {
