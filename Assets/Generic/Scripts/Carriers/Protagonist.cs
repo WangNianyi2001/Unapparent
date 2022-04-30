@@ -11,7 +11,7 @@ namespace Unapparent {
 		}
 
 		[NonSerialized] public bool canMoveActively = true;
-		public List<Identity> shapeshiftables;
+		public HashSet<Identity> shapeshiftables;
 
 		static LayerMask walkable;
 		public void DoMouseNavigation() {

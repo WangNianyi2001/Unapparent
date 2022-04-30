@@ -24,6 +24,8 @@ namespace Unapparent {
 			typeof(Logue),
 			"Protagonist",
 			typeof(ShapeshiftInto),
+			typeof(ChooseShapeshift),
+			typeof(UnlockIdentity)
 		};
 	}
 }

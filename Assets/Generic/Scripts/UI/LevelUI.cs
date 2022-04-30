@@ -38,7 +38,7 @@ namespace Unapparent {
 			ExitUIPanel(shapeshift);
 		}
 
-		void AddShapeshiftOption(Identity id) {
+		void AddShapeshiftOption(TaskCompletionSource<object> promise, Identity id) {
 			GameObject option = Instantiate(shapeshiftOptionTemplate);
 			option.GetComponent<Image>().sprite = CreateSprite(id.portrait);
 			option.GetComponentInChildren<Text>().text = id.name;
@@ -50,12 +50,15 @@ namespace Unapparent {
 			option.GetComponentInChildren<Button>().onClick = ev;
 		}
 
-		public void ShowShapeshift() {
+		public async Task<object> ShowShapeshift() {
 			shapeshift.gameObject.SetActive(true);
-			Level.current.protagonist.shapeshiftables.ForEach(AddShapeshiftOption);
+			TaskCompletionSource<object> promise = new TaskCompletionSource<object>();
+			foreach(Identity id in Level.current.protagonist.shapeshiftables)
+				AddShapeshiftOption(promise, id);
+			return await promise.Task;
 		}
 
-		void AddLogueOption(Character character, Monologue.Content.Option option, TaskCompletionSource<object> promise) {
+		void AddLogueOption(TaskCompletionSource<object> promise, Character character, Monologue.Content.Option option) {
 			GameObject button = Instantiate(logueOptionTemplate);
 			button.GetComponentInChildren<Text>().text = option.text;
 			Button.ButtonClickedEvent ev = new Button.ButtonClickedEvent();
@@ -77,7 +80,7 @@ namespace Unapparent {
 			logueText.text = content.text;
 			TaskCompletionSource<object> promise = new TaskCompletionSource<object>();
 			foreach(Monologue.Content.Option option in content.options)
-				AddLogueOption(character, option, promise);
+				AddLogueOption(promise, character, option);
 			logue.gameObject.SetActive(true);
 			Level.current.protagonist.canMoveActively = false;
 			return await promise.Task;
