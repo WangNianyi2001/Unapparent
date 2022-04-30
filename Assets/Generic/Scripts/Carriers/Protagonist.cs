@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,6 +11,7 @@ namespace Unapparent {
 		}
 
 		[NonSerialized] public bool canMoveActively = true;
+		public List<Identity> shapeshiftables;
 
 		static LayerMask walkable;
 		public void DoMouseNavigation() {

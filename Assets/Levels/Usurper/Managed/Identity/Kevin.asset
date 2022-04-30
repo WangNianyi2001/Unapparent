@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45bb0a8ab69b0b845aa0bfb449af9935, type: 3}
+  m_Name: Kevin
+  m_EditorClassIdentifier: 
+  name: "\u744A\u6E29"
+  portrait: {fileID: 2800000, guid: 4acb57a69c0b4184eb5072039fcce6c9, type: 3}
+  avatar: {fileID: 2800000, guid: 271d0ba28fbb1ea4b83d2e962084e73e, type: 3}
+  left: {fileID: 2800000, guid: d53fa3245ecc2194d839c2405abe7c01, type: 3}
+  right: {fileID: 2800000, guid: af38330aea12df54994a7f33d83a4df9, type: 3}

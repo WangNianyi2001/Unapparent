@@ -14,12 +14,12 @@ namespace Unapparent {
 			for(int i = 0; i < contents.Count - 1; ++i) {
 				content = new Monologue.Content();
 				content.text = contents[i];
-				await Level.current.ShowMonologue(character, content);
+				await Level.current.ui.ShowMonologue(character, content);
 			}
 			content = new Monologue.Content();
 			content.text = contents[contents.Count - 1];
 			content.options = options;
-			return await Level.current.ShowMonologue(character, content);
+			return await Level.current.ui.ShowMonologue(character, content);
 		}
 	}
 }

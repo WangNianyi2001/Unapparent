@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45bb0a8ab69b0b845aa0bfb449af9935, type: 3}
+  m_Name: Spencer
+  m_EditorClassIdentifier: 
+  name: "\u65AF\u541B"
+  portrait: {fileID: 2800000, guid: bfcf138a97a7688418cb56327acf4529, type: 3}
+  avatar: {fileID: 2800000, guid: 7390c8efd462c6e4692cc81da389ddb1, type: 3}
+  left: {fileID: 2800000, guid: 26741858855c0b1408d7d4e1b93966c2, type: 3}
+  right: {fileID: 2800000, guid: 4c3fc9a13ee71aa4ea8cd18e74eee3fa, type: 3}
