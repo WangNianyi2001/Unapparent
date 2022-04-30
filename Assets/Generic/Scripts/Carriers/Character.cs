@@ -19,16 +19,18 @@ namespace Unapparent {
 			get => appearance;
 			set {
 				appearance = value;
-				billboardMat.SetTexture("_MainTex", appearance.right);
+				UpdateBillboardOrientation(true);
 			}
 		}
 
-		void UpdateBillboardOrientation() {
+		float orientation = 1;
+		void UpdateBillboardOrientation(bool force = false) {
 			float x = Vector3.Dot(agent.velocity, billboard.right);
-			if(Mathf.Abs(x) < .1f)
+			if(!force && x * orientation >= 0)
 				return;
+			orientation = x > 0 ? 1 : -1;
 			Vector3 scale = billboard.transform.localScale;
-			if(x > 0) {
+			if(orientation > 0) {
 				scale.x = 1;
 				billboardMat.SetTexture("_MainTex", appearance.right);
 			} else {
@@ -68,8 +70,7 @@ namespace Unapparent {
 			Appearance = identity;
 		}
 
-		public new void Update() {
-			base.Update();
+		public void FixedUpdate() {
 			UpdateBillboardOrientation();
 		}
 

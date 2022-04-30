@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7147708918034401037}
   - component: {fileID: 7854136082558750655}
   - component: {fileID: 2250049905478715890}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 3132679821649796508}
   - component: {fileID: 1567225751745788695}
   - component: {fileID: 1163423054325214155}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -195,7 +195,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8849134923058285985}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: States
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -228,7 +228,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3821608484551203284}
   - component: {fileID: 6789216726852586857}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Billboard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,7 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f5b8c74f4c12424984ef3a4f1ddff26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upRight: {x: 0, y: 1, z: 0}
+  upward: {x: 0, y: 1, z: 0}
   orientation: {x: 0, y: 0, z: 1}
 --- !u!1 &8084490336655854738
 GameObject:
@@ -275,7 +275,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7925934822491653206}
   - component: {fileID: 4054459467834296609}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Init State
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -11,7 +11,7 @@ namespace Unapparent {
 		}
 
 		[NonSerialized] public bool canMoveActively = true;
-		public HashSet<Identity> shapeshiftables;
+		public List<Identity> shapeshiftables;
 
 		static LayerMask walkable;
 		public void DoMouseNavigation() {
@@ -31,7 +31,7 @@ namespace Unapparent {
 		}
 
 		public void Awake() {
-			walkable = LayerMask.GetMask("Walkable");
+			walkable = ~LayerMask.GetMask("Ignore Raycast");
 		}
 
 		public new void Update() {

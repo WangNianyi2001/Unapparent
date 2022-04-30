@@ -27,16 +27,8 @@ namespace Unapparent {
 			}
 		}
 
-		void InitUI() {
-			GameObject uiObj = Instantiate(
-				Resources.Load<GameObject>("UI/Level UI"),
-				transform
-			);
-			ui = uiObj.GetComponent<LevelUI>();
-		}
-
 		void Start() {
-			InitUI();
+			ui = GetComponentInChildren<LevelUI>();
 		}
 	}
 }
