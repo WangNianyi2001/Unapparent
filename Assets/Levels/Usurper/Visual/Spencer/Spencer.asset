@@ -17,3 +17,5 @@ MonoBehaviour:
   avatar: {fileID: 2800000, guid: 7390c8efd462c6e4692cc81da389ddb1, type: 3}
   left: {fileID: 2800000, guid: 26741858855c0b1408d7d4e1b93966c2, type: 3}
   right: {fileID: 2800000, guid: 4c3fc9a13ee71aa4ea8cd18e74eee3fa, type: 3}
+  tags:
+  - Gang

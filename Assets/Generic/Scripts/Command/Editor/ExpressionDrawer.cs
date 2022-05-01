@@ -11,6 +11,7 @@ namespace Unapparent {
 			typeof(IsInState),
 			"Character",
 			typeof(AppearingAs),
+			typeof(HasTag),
 		};
 	}
 }

@@ -15,13 +15,19 @@ namespace Unapparent {
 			}
 		}
 
+		void CheckInteraction() {
+			if(!Active || !Input.GetKeyDown(key))
+				return;
+			Level.current.protagonist.StopNavigation();
+			command.Execute(Level.current.protagonist);
+		}
+
 		void Start() {
 			ui.gameObject.SetActive(false);
 		}
 
 		void Update() {
-			if(Active && Input.GetKeyDown(key))
-				command.Execute(Level.current.protagonist);
+			CheckInteraction();
 		}
 
 		void OnTriggerEnter(Collider other) {

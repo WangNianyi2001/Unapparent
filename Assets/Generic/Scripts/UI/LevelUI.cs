@@ -26,7 +26,7 @@ namespace Unapparent {
 			shapeshiftOptionTemplate = Resources.Load<GameObject>("UI/Shapeshift Option");
 		}
 
-		void AddShapeshiftOption(TaskCompletionSource<object> promise, Protagonist protagonist, Identity id) {
+		void AddShapeshiftOption(TaskCompletionSource<object> promise, Identity id) {
 			GameObject option = Instantiate(shapeshiftOptionTemplate);
 			option.GetComponent<RawImage>().texture = id.portrait;
 			option.GetComponentInChildren<Text>().text = id.name;
@@ -35,18 +35,19 @@ namespace Unapparent {
 			ev.AddListener(() => {
 				ClearUIChildren(shapeshift);
 				shapeshift.gameObject.SetActive(false);
-				protagonist.Appearance = id;
+				Level.current.protagonist.canMoveActively = true;
+				Level.current.protagonist.Appearance = id;
 				promise.TrySetResult(null);
 			});
 			option.GetComponentInChildren<Button>().onClick = ev;
 		}
 
-		public Task<object> ShowShapeshift(Protagonist protagonist) {
+		public Task<object> ShowShapeshift() {
 			TaskCompletionSource<object> promise = new TaskCompletionSource<object>();
-			foreach(Identity id in protagonist.shapeshiftables)
-				AddShapeshiftOption(promise, protagonist, id);
-			LayoutRebuilder.ForceRebuildLayoutImmediate(shapeshift);
+			foreach(Identity id in Level.current.protagonist.shapeshiftables)
+				AddShapeshiftOption(promise, id);
 			shapeshift.gameObject.SetActive(true);
+			LayoutRebuilder.ForceRebuildLayoutImmediate(shapeshift);
 			Level.current.protagonist.canMoveActively = false;
 			return promise.Task;
 		}
