@@ -17,3 +17,4 @@ MonoBehaviour:
   avatar: {fileID: 2800000, guid: b2ada58d13e70814a8213fa534edf3e6, type: 3}
   left: {fileID: 2800000, guid: d6371e647280cfa429db2e6aba88a7ed, type: 3}
   right: {fileID: 2800000, guid: 4967d6bbe67b80f4da4c8a5e298cccf1, type: 3}
+  tags: []

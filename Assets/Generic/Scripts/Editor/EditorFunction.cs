@@ -6,7 +6,7 @@ namespace Unapparent {
 		[MenuItem("Assets/Create/Unapparent/Identity", false, 1)]
 		public static void CreateIdentityAsset() {
 			Identity obj = ScriptableObject.CreateInstance<Identity>();
-			ManagedAsset.CreateAsset(obj, "Identity", "New Identity");
+			AssetManager.CreateAssetInCurrentFolder(obj, "New Identity");
 			EditorGUIUtility.PingObject(obj.GetInstanceID());
 		}
 

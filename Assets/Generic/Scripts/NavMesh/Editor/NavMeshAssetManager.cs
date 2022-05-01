@@ -97,7 +97,7 @@ namespace UnityEditor.AI {
 
 					if(surface.isActiveAndEnabled)
 						surface.AddData();
-					ManagedAsset.CreateAsset(surface.navMeshData, "NavMesh");
+					AssetManager.CreateManagedAsset(surface.navMeshData, "NavMesh");
 					EditorSceneManager.MarkSceneDirty(surface.gameObject.scene);
 				}
 			}
