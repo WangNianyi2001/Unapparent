@@ -43,10 +43,12 @@ namespace Unapparent {
 		}
 
 		public Task<object> ShowShapeshift(Protagonist protagonist) {
-			shapeshift.gameObject.SetActive(true);
 			TaskCompletionSource<object> promise = new TaskCompletionSource<object>();
 			foreach(Identity id in protagonist.shapeshiftables)
 				AddShapeshiftOption(promise, protagonist, id);
+			LayoutRebuilder.ForceRebuildLayoutImmediate(shapeshift);
+			shapeshift.gameObject.SetActive(true);
+			Level.current.protagonist.canMoveActively = false;
 			return promise.Task;
 		}
 
@@ -66,8 +68,6 @@ namespace Unapparent {
 		}
 
 		public async Task<object> ShowMonologue(Character character, Monologue.Content content) {
-			if(character == null)
-				return new NullReferenceException();
 			logueName.text = character.Appearance.name;
 			logueAvatar.texture = character.Appearance.avatar;
 			logueText.text = content.text;
@@ -75,6 +75,7 @@ namespace Unapparent {
 			foreach(Monologue.Content.Option option in content.options)
 				AddLogueOption(promise, character, option);
 			logue.gameObject.SetActive(true);
+			LayoutRebuilder.ForceRebuildLayoutImmediate(logue);
 			Level.current.protagonist.canMoveActively = false;
 			return await promise.Task;
 		}
