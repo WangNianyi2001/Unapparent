@@ -7,7 +7,6 @@ namespace Unapparent {
 			"Variable",
 			typeof(IntegerIs),
 			"Carrier",
-			typeof(LastArrived),
 			typeof(IsInState),
 			"Character",
 			typeof(AppearingAs),

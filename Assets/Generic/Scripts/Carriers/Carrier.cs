@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Unapparent {
@@ -47,15 +46,6 @@ namespace Unapparent {
 
 		public void ReceiveMessage(string message) {
 			AddToFireQueue(State, typeof(ReceiveMessage), message);
-		}
-
-		[NonSerialized] public bool lastArrived = false;
-
-		public virtual async Task<object> TeleportTo(Transform target) {
-			await Task.Delay(1);
-			transform.parent = target.parent;
-			transform.position = target.position;
-			return lastArrived = true;
 		}
 
 		public void Start() {

@@ -10,13 +10,22 @@ namespace Unapparent {
 			EditorGUIUtility.PingObject(obj.GetInstanceID());
 		}
 
+		static GameObject CreateGameObjectWithSingleComponent<T>(string name = "Gameobject") where T : Component {
+			GameObject gameObject = new GameObject(name);
+			gameObject.AddComponent<T>();
+			if(Selection.activeGameObject != null)
+				gameObject.transform.parent = Selection.activeGameObject.transform;
+			return gameObject;
+		}
+
 		[MenuItem("GameObject/Unapparent/State", false, 1)]
 		public static void CreateState() {
-			GameObject gameObject = new GameObject("New State");
-			gameObject.AddComponent<State>();
-			if(Selection.activeGameObject == null)
-				return;
-			gameObject.transform.parent = Selection.activeGameObject.transform;
+			CreateGameObjectWithSingleComponent<State>("State");
+		}
+
+		[MenuItem("GameObject/Unapparent/Macro", false, 1)]
+		public static void CreateMacro() {
+			CreateGameObjectWithSingleComponent<Macro>("Macro");
 		}
 	}
 }

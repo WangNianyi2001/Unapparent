@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
+using System;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -40,22 +41,22 @@ namespace Unapparent {
 			billboard.transform.localScale = scale;
 		}
 
-		public override Task<object> TeleportTo(Transform target) =>
-			Task.FromResult<object>(lastArrived = agent.Warp(target.position));
+		public Task<object> TeleportTo(Transform target) {
+			NavMeshHit hit;
+			NavMesh.SamplePosition(target.position, out hit, Mathf.Infinity, NavMesh.AllAreas);
+			return Task.FromResult<object>(agent.Warp(hit.position));
+		}
 
 		public async Task<object> NavigateTo(Vector3 position, float tolerance = 1f) {
-			lastArrived = false;
 			agent.stoppingDistance = tolerance;
 			agent.SetDestination(position);
 			agent.isStopped = false;
 			while(Application.isPlaying && !agent.isStopped) {
-				if(agent.remainingDistance <= agent.stoppingDistance) {
-					lastArrived = agent.pathStatus == NavMeshPathStatus.PathComplete;
+				if(agent.remainingDistance <= agent.stoppingDistance)
 					break;
-				}
 				await Task.Delay(100);
 			}
-			return lastArrived;
+			return null;
 		}
 
 		public void StopNavigation() => agent.isStopped = true;
