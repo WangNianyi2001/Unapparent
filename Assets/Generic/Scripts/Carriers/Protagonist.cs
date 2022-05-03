@@ -31,7 +31,7 @@ namespace Unapparent {
 		}
 
 		public void Awake() {
-			walkable = ~LayerMask.GetMask("Ignore Raycast");
+			walkable = ~LayerMask.GetMask("Movable");
 		}
 
 		public new void Update() {
